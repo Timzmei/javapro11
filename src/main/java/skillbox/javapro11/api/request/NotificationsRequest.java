@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class NotificationsRequest {
 
-    private NotificationTypeCode notificationTypeCode;
+    private NotificationTypeCode notification_type;
     private Boolean enable;
 }
