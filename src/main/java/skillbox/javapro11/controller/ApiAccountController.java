@@ -15,30 +15,30 @@ public class ApiAccountController {
 
     @PostMapping("/register")
     public ResponseEntity userRegister(@RequestBody RegisterRequest registerRequest){
-        return ;
+        return null;
     }
 
     @PutMapping("/password/recovery")
     public ResponseEntity passwordRecovery(@RequestBody EmailRequest emailRequest){
-        return ;
+        return null;
     }
 
     @PutMapping("/password/set")
     @PreAuthorize("")
     public ResponseEntity passwordChange(@RequestBody SetPasswordRequest setPasswordRequest){
-        return ;
+        return null;
     }
 
     @PutMapping("/password/email")
     @PreAuthorize("")
     public ResponseEntity emailChange(@RequestBody EmailRequest emailRequest){
-        return ;
+        return null;
     }
 
     @PutMapping("/notifications")
     @PreAuthorize("")
     public ResponseEntity accountNotifications(@RequestBody NotificationsRequest notificationsRequest){
-        return ;
+        return null;
     }
 
 }
