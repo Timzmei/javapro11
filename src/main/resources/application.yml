@@ -6,7 +6,9 @@ spring:
       ddl-auto: none
   datasource:
     platform: postgres
-    url: jdbc:postgresql://localhost:5432/test
+    url: jdbc:postgresql://localhost:5432/test?createDatabaseIfNotExist=true
     username: postgres
     password: password
     driverClassName: org.postgresql.Driver
+  flyway:
+    baselineOnMigrate: true
