@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -30,7 +31,7 @@ public class Comment {
     private Post post;
 
     @NotNull
-    private long time;
+    private LocalDateTime time;
 
     @Column(name = "author_id")
     @NotNull
