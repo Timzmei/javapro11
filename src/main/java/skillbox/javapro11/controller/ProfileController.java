@@ -1,4 +1,4 @@
-package skillbox.javapro11.controllers;
+package skillbox.javapro11.controller;
 
 import org.springframework.web.bind.annotation.*;
 
