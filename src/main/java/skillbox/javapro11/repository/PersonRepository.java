@@ -8,6 +8,4 @@ import skillbox.javapro11.model.entity.Person;
 public interface PersonRepository extends JpaRepository<Person, Integer> {
 
     Person findByEmail(String email);
-
-    Person findByEmailAndPassword(String email, String password);
 }
