@@ -2,6 +2,8 @@ package skillbox.javapro11.service;
 
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.ProfileEditRequest;
 import skillbox.javapro11.model.entity.Person;
@@ -14,7 +16,9 @@ public class ProfileService {
     private final PersonRepository personRepository;
 
     public Person getCurrentUser() {
-        return personRepository.getOne(0L); // Stub for getting the current user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Person person = (Person) authentication.getPrincipal();
+        return personRepository.findByEmail(person.getFirstName());
     }
 
     public Person editCurrentUser(@NotNull ProfileEditRequest profileEditRequest) {
@@ -51,7 +55,7 @@ public class ProfileService {
         personRepository.delete(person);
     }
 
-    public Person findUserById(long id){
-       return personRepository.getOne(id);
+    public Person findUserById(long id) {
+        return personRepository.getOne(id);
     }
 }
