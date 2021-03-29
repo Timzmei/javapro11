@@ -1,34 +1,61 @@
 package skillbox.javapro11.controller;
 
+import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import skillbox.javapro11.api.request.ProfileEditRequest;
+import skillbox.javapro11.model.entity.Person;
+import skillbox.javapro11.service.ProfileService;
 
 @RestController
+@AllArgsConstructor
+@RequestMapping("/api/v1/users")
 public class ProfileController {
 
-    @GetMapping("/api/v1/users/me")
-    public void getCurrentUser() {}
+    private final ProfileService profileService;
 
-    @PutMapping("/api/v1/users/me")
-    public void editCurrentUser() {}
+    @GetMapping("/me")
+    public ResponseEntity<Person> getCurrentUser() {
+        Person person = this.profileService.getCurrentUser();
+        return ResponseEntity.ok(person);
+    }
 
-    @DeleteMapping("/api/v1/users/me")
-    public void deleteCurrentUser() {}
+    @PutMapping("/me")
+    public ResponseEntity<Person> editCurrentUser(@RequestBody ProfileEditRequest profileEditRequest) {
+        return ResponseEntity.ok(profileService.editCurrentUser(profileEditRequest));
+    }
 
-    @GetMapping("/api/v1/users/{id}")
-    public void getUserById() {}
+    @DeleteMapping("/me")
+    public ResponseEntity<?> deleteCurrentUser() {
+        profileService.deleteCurrentUser();
+        return ResponseEntity.ok(new Person()); // Just to avoid compile error, fix it later
+    }
 
-    @GetMapping("/api/v1/users/{id}/wall")
-    public void getPostsUserWall() {}
+    @GetMapping("/{id}")
+    public ResponseEntity<Person> getUserById(@PathVariable("id") long id) {
+        Person person = profileService.findUserById(id);
+        return ResponseEntity.ok(person);
+    }
 
-    @PostMapping("/api/v1/users/{id}/wall")
-    public void addPostUserWall() {}
+    @GetMapping("/{id}/wall")
+    @PreAuthorize("")
+    public void getPostsUserWall() {
+    }
 
-    @GetMapping("/api/v1/users/search")
-    public void searchUser() {}
+    @PostMapping("/{id}/wall")
+    public void addPostUserWall() {
+    }
 
-    @PutMapping("/api/v1/users/block/{id}")
-    public void blockUserById() {}
+    @GetMapping("/search")
+    public void searchUser() {
+    }
 
-    @DeleteMapping("/api/v1/users/block/{id}")
-    public void unblockUserById() {}
+    @PutMapping("/block/{id}")
+    public void blockUserById() {
+    }
+
+    @DeleteMapping("/block/{id}")
+    public void unblockUserById() {
+    }
 }
