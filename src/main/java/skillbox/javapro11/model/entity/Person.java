@@ -2,6 +2,7 @@ package skillbox.javapro11.model.entity;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
@@ -20,6 +21,7 @@ import java.time.LocalTime;
 @Table(name = "person")
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
