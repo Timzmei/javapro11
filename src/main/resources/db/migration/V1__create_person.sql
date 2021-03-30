@@ -1,7 +1,7 @@
 CREATE TYPE perm_message AS ENUM ('ALL', 'FRIENDS');
 
 CREATE TABLE person (
-	id int8 NOT NULL,
+	id bigserial NOT NULL,
 	first_name varchar(255) NOT NULL,
 	last_name varchar(255),
 	reg_date timestamp NOT NULL,
