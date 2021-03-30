@@ -4,6 +4,7 @@ package skillbox.javapro11.model.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import skillbox.javapro11.enums.PermissionMessage;
 
 import javax.persistence.Entity;
 import javax.persistence.Column;
@@ -26,29 +27,43 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
     @Column(name = "first_name", nullable = false)
     private String firstName;
+
     @Column(name = "last_name")
     private String lastName;
+
     @Column(name = "reg_date", nullable = false)
     private LocalDateTime registrationDate;
+
     @Column(name = "birth_date")
     private LocalDate birthday;
+
     private String email;
+
     private String phone;
+
     @Column(nullable = false)
     private String password;
+
     private String photo;
+
     @Column(length = 2048)
     private String about;
+
     private String town;
+
     @Column(name = "is_approved", nullable = false)
     private boolean isApproved;
+
     @Column(name = "messages_permission", nullable = false)
     @Enumerated(EnumType.STRING)
     private PermissionMessage permissionMessage;
+
     @Column(name = "last_online_time", nullable = false)
     private LocalTime lastTimeOnline;
+
     @Column(name = "is_blocked", nullable = false)
     private boolean isBlocked;
 }
