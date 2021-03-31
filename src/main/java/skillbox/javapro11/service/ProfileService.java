@@ -1,12 +1,13 @@
 package skillbox.javapro11.service;
 
 import com.sun.istack.NotNull;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.ProfileEditRequest;
 import skillbox.javapro11.model.entity.Person;
@@ -34,7 +35,9 @@ public class ProfileService {
     }
 
     public Person getCurrentUser() {
-        return personRepository.getOne(0L); // Stub for getting the current user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Person person = (Person) authentication.getPrincipal();
+        return personRepository.findByEmail(person.getFirstName());
     }
 
     public Person editCurrentUser(@NotNull ProfileEditRequest profileEditRequest) {
@@ -71,8 +74,8 @@ public class ProfileService {
         personRepository.delete(person);
     }
 
-    public Person findUserById(long id){
-       return personRepository.getOne(id);
+    public Person findUserById(long id) {
+        return personRepository.getOne(id);
     }
 
 	public ResponseEntity<?> getUserWall(long userId, long offset, int itemPerPage) { //TODO Stub
