@@ -8,5 +8,8 @@ import skillbox.javapro11.model.entity.Person;
 public interface PersonRepository extends JpaRepository<Person, Long> {
 
     Person findByEmail(String email);
+
     void updatePerson(Person person);
+
+    Person findById(long id);
 }
