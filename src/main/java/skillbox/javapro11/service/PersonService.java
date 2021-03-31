@@ -20,14 +20,6 @@ public class PersonService {
         return personRepository.findByEmail(email);
     }
 
-    private Person getCurPerson() {
-        return null;
-    }
-
-    private Person getCurPersonByToken(String token) {
-        return null;
-    }
-
     public Person save(Person person) {
         return personRepository.save(person);
     }
@@ -48,9 +40,17 @@ public class PersonService {
 
     public String changeEmail(String email) {
         String message = "";// for checking error if necessary
-        Person curPerson = getCurPerson();
+        Person curPerson = getCurrentPerson(); // need to be changed
         curPerson.setEmail(email);
         save(curPerson);
         return message;
+    }
+
+    private Person getCurrentPerson() {
+        return null;
+    }
+
+    private Person getCurPersonByToken(String token) {
+        return null;
     }
 }

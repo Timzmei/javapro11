@@ -20,13 +20,13 @@ public class AccountService {
 
     public String saveNotificationSetting(NotificationTypeCode notificationTypeCode, Boolean enable) {
         String message = "";
-        Person curPerson = getCurPerson();
+        Person curPerson = getCurrentPerson();
         // пока нет данных о notifications
 //        notificationSettingService.save(new NotificationSetting(notificationTypeCode, enable, curPerson));
         return message;
     }
 
-    private Person getCurPerson() {
+    private Person getCurrentPerson() {
         return null;
     }
 
