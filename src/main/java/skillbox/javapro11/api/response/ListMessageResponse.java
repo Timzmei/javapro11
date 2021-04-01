@@ -2,12 +2,14 @@ package skillbox.javapro11.api.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
-public class ListMessageDTO implements ResponseData {
+public class ListMessageResponse extends ResponseData {
     private long count;
-    private List<MessageDTO> messages;
+    private List<MessageResponse> messages;
 }

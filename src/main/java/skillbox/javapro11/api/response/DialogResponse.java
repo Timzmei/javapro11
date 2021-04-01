@@ -3,10 +3,12 @@ package skillbox.javapro11.api.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
-public class DialogDTO implements ResponseData {
+public class DialogResponse extends ResponseData {
 
     private long id;
 
@@ -14,5 +16,5 @@ public class DialogDTO implements ResponseData {
     private int unreadCount;
 
     @JsonProperty(value = "last_message")
-    private MessageDTO lastMessage;
+    private MessageResponse lastMessage;
 }

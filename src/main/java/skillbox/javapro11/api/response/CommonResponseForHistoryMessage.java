@@ -9,6 +9,6 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseArrayData {
-    private List<ResponseData> data;
+public class CommonResponseForHistoryMessage extends CommonResponseData {
+    private List<PersonResponse> profiles;
 }

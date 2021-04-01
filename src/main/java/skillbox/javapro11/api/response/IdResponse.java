@@ -1,10 +1,13 @@
 package skillbox.javapro11.api.response;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
-public class LinkDTO implements ResponseData{
-    private String link;
+public class IdResponse extends ResponseData {
+    private long id;
 }
