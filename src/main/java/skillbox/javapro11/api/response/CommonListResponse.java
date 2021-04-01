@@ -6,9 +6,13 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseArrayData {
+public class CommonListResponse extends CommonResponse {
+    private long total;
+    private long offset;
+    private int perPage;
     private List<ResponseData> data;
 }

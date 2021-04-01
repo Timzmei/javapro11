@@ -1,16 +1,19 @@
 package skillbox.javapro11.api.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import skillbox.javapro11.enums.PermissionMessage;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Setter
 @Getter
-public class PersonDTO implements ResponseData {
+@NoArgsConstructor
+@AllArgsConstructor
+public class PersonResponse extends ResponseData {
 
     private long id;
 
@@ -34,9 +37,9 @@ public class PersonDTO implements ResponseData {
 
     private String about;
 
-    private LocationOrLanguageDTO city;
+    private String city;
 
-    private LocationOrLanguageDTO country;
+    private String country;
 
     @JsonProperty(value = "messages_permission")
     private PermissionMessage messagesPermission;

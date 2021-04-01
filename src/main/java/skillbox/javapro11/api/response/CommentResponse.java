@@ -1,14 +1,17 @@
 package skillbox.javapro11.api.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Setter
 @Getter
-public class CommentDTO implements ResponseData {
+@NoArgsConstructor
+@AllArgsConstructor
+public class CommentResponse extends ResponseData {
     @JsonProperty(value="parent_id")
     private long parentId;
 
