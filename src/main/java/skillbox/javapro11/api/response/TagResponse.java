@@ -2,10 +2,12 @@ package skillbox.javapro11.api.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
-public class FriendDTO implements ResponseData {
+public class TagResponse extends ResponseData {
     private long id;
-    private String status;
+    private String tag;
 }

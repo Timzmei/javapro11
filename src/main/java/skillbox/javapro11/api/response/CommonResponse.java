@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
-public class ResponseForm {
+@AllArgsConstructor
+public class CommonResponse {
     private String error;
     private LocalDateTime timestamp;
 
-    public ResponseForm(String errorMessage) {
+    public CommonResponse(String errorMessage) {
         this.error = errorMessage;
         this.timestamp = LocalDateTime.now();
     }

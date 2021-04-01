@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import skillbox.javapro11.api.request.NotificationsRequest;
 import skillbox.javapro11.api.request.RegisterRequest;
 import skillbox.javapro11.api.request.SetPasswordRequest;
-import skillbox.javapro11.api.response.ResponseForm;
+import skillbox.javapro11.api.response.CommonResponse;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.service.AccountService;
 
@@ -22,7 +22,7 @@ public class AccountController {
     private AccountService accountService;
 
     @PostMapping("/register")
-    public ResponseEntity<ResponseForm> personRegister(@RequestBody RegisterRequest registerRequest){
+    public ResponseEntity<CommonResponse> personRegister(@RequestBody RegisterRequest registerRequest){
         LOGGER.trace("/api/v1/account/register");
 
         String email = registerRequest.getEmail();
@@ -34,11 +34,11 @@ public class AccountController {
         else{
             accountService.addNewPerson(registerRequest);
         }
-        return new ResponseEntity<>(new ResponseForm(message), HttpStatus.OK);
+        return new ResponseEntity<>(new CommonResponse(message), HttpStatus.OK);
     }
 
     @PutMapping("/password/recovery")
-    public ResponseEntity<ResponseForm> passwordRecovery(@RequestBody String email){
+    public ResponseEntity<CommonResponse> passwordRecovery(@RequestBody String email){
         LOGGER.trace("/api/v1/account/password/recovery");
 
         String message = "";
@@ -46,31 +46,31 @@ public class AccountController {
         if (!mailIsSend){
             message = String.format("Mail was not send to %s", email);
         }
-        return new ResponseEntity<>(new ResponseForm(message), HttpStatus.OK);
+        return new ResponseEntity<>(new CommonResponse(message), HttpStatus.OK);
     }
 
     @PutMapping("/password/set")
-    public ResponseEntity<ResponseForm> passwordChange(@RequestBody SetPasswordRequest setPasswordRequest){
+    public ResponseEntity<CommonResponse> passwordChange(@RequestBody SetPasswordRequest setPasswordRequest){
         LOGGER.trace("/api/v1/account/password/set");
 
         String message = accountService.changePersonPassword(setPasswordRequest.getToken(), setPasswordRequest.getPassword());
-        return new ResponseEntity<>(new ResponseForm(message), HttpStatus.OK);
+        return new ResponseEntity<>(new CommonResponse(message), HttpStatus.OK);
     }
 
     @PutMapping("/password/email")
-    public ResponseEntity<ResponseForm> emailChange(@RequestBody String email){
+    public ResponseEntity<CommonResponse> emailChange(@RequestBody String email){
         LOGGER.trace("/api/v1/account/password/email");
 
         String message = accountService.changePersonEmail(email);
-        return new ResponseEntity<>(new ResponseForm(message), HttpStatus.OK);
+        return new ResponseEntity<>(new CommonResponse(message), HttpStatus.OK);
     }
 
     @PutMapping("/notifications")
-    public ResponseEntity<ResponseForm> accountNotifications(@RequestBody NotificationsRequest notificationsRequest){
+    public ResponseEntity<CommonResponse> accountNotifications(@RequestBody NotificationsRequest notificationsRequest){
         LOGGER.trace("/api/v1/account/notifications");
         String message = accountService
                 .saveNotificationSetting(notificationsRequest.getNotificationTypeCode(),notificationsRequest.getEnable());
-        return new ResponseEntity<>(new ResponseForm(message), HttpStatus.OK);
+        return new ResponseEntity<>(new CommonResponse(message), HttpStatus.OK);
     }
 
 }

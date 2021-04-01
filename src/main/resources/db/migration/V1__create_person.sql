@@ -14,6 +14,6 @@ CREATE TABLE person (
 	town varchar(255),
 	is_approved boolean NOT NULL,
 	messages_permission perm_message NOT NULL,
-	last_online_time time NOT NULL,
+	last_online_time timestamp NOT NULL,
 	is_blocked boolean NOT NULL,
 	PRIMARY KEY (id));
