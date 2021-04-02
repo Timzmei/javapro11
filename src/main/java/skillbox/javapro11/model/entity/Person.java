@@ -52,7 +52,9 @@ public class Person {
     @Column(length = 2048)
     private String about;
 
-    private String town;
+    private String country;
+
+    private String city;
 
     @Column(name = "is_approved", nullable = false)
     private boolean isApproved;

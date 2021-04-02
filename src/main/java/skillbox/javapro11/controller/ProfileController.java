@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import skillbox.javapro11.api.request.ProfileEditRequest;
+import skillbox.javapro11.api.response.ResponseFormListData;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.service.ProfileService;
 
@@ -45,8 +46,7 @@ public class ProfileController {
     }
 
     @GetMapping("/{id}/wall")
-    @PreAuthorize("")
-    public ResponseEntity<?> getPostsUserWall(
+    public ResponseEntity<ResponseFormListData> getPostsUserWall(
             @PathVariable("id") long id,
             @RequestParam("offset") long offset,
             @RequestParam("itemPerPage") int itemPerPage) { //TODO change generic to real class
@@ -67,12 +67,13 @@ public class ProfileController {
             @RequestParam(name = "last_name", required = false) String lastName,
             @RequestParam(name = "age_from", required = false) Integer ageFrom,
             @RequestParam(name = "age_to", required = false) Integer ageTo,
-            @RequestParam(name = "country", required = false) String country,
+            @RequestParam(name = "country_id", required = false) String country,
+            @RequestParam(name = "city_id", required = false) String city,
             @RequestParam("offset") long offset,
-            @RequestParam("itemPerPage") Long itemPerPage
+            @RequestParam("itemPerPage") int itemPerPage
     ) {
         return ResponseEntity.ok(profileService
-                .searchUser(firstName, lastName, ageFrom, ageTo, country, offset, itemPerPage));
+                .searchUser(firstName, lastName, ageFrom, ageTo, country, city, offset, itemPerPage));
     }
 
     @PutMapping("/block/{id}")

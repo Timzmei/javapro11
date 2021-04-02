@@ -5,19 +5,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.ProfileEditRequest;
+import skillbox.javapro11.api.response.*;
+import skillbox.javapro11.model.entity.Comment;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.model.entity.Post;
 import skillbox.javapro11.repository.PersonRepository;
 import skillbox.javapro11.repository.PostRepository;
+import skillbox.javapro11.repository.util.PersonSpecificationsBuilder;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ProfileService {
@@ -59,7 +65,7 @@ public class ProfileService {
             currentPerson.setPhoto(profileEditRequest.getPhoto());
         }
         if (profileEditRequest.getTown() != null) {
-            currentPerson.setTown(profileEditRequest.getTown());
+            currentPerson.setCity(profileEditRequest.getTown());
         }
         if (profileEditRequest.getPermissionMessage() != null) {
             currentPerson.setPermissionMessage(profileEditRequest.getPermissionMessage());
@@ -78,14 +84,69 @@ public class ProfileService {
         return personRepository.getOne(id);
     }
 
-	public ResponseEntity<?> getUserWall(long userId, long offset, int itemPerPage) { //TODO Stub
+	public ResponseFormListData getUserWall(long userId, long offset, int itemPerPage) { //TODO Stub
         Person person = personRepository.findById(userId);
         Pageable pageable = getPageable(offset, itemPerPage);
 
         Page<Post> postPage = postRepository.findAllWherePerson(person, pageable);
         //build response
-        return null;
+        return new ResponseFormListData(
+                "string",
+                LocalDateTime.now(),
+                (int) postPage.getTotalElements(), //int ? total and offset
+                (int) offset,
+                itemPerPage,
+                new ArrayList<>(getPostDTOListFromPostList(postPage.getContent()))
+        );
 	}
+
+    public List<PostDTO> getPostDTOListFromPostList(List<Post> postList) {
+        List<PostDTO> postDTOList = new ArrayList<>();
+        postList.forEach(post -> postDTOList.add(getPostDTOFromPost(post)));
+        return postDTOList;
+    }
+
+    public PostDTO getPostDTOFromPost(Post post) {
+        PostDTO postDTO = new PostDTO();
+        postDTO.setId(post.getId());
+        postDTO.setTime(post.getTime());
+        postDTO.setAuthor(getPersonDTOFromPerson(post.getPerson()));
+        postDTO.setTitle(post.getTitle());
+        postDTO.setPostText(post.getText());
+        postDTO.setBlocked(post.isBlocked());
+        postDTO.setLikes(post.getPostLikeList().size());
+        postDTO.setComments(getCommentDTOListFromCommentList(post.getComments()));
+        postDTO.setType(post.getTime().isBefore(LocalDateTime.now()) ? "POSTED" : "QUEUED"); //Enum?
+        return postDTO;
+    }
+
+    public PersonDTO getPersonDTOFromPerson(Person person) {
+        PersonDTO personDTO = new PersonDTO();
+        personDTO.setId(person.getId());
+        personDTO.setFirstName(person.getFirstName());
+        personDTO.setLastName(person.getLastName());
+        personDTO.setBirthDate(person.getBirthday());
+        personDTO.setEmail(person.getEmail());
+        personDTO.setPhone(person.getPhone());
+        personDTO.setPhoto(person.getPhoto());
+        personDTO.setAbout(person.getAbout());
+        personDTO.setCity(); // it must be String
+        personDTO.setCountry(); //it must be String
+        personDTO.setMessagesPermission(person.getPermissionMessage());
+        personDTO.setLastOnlineTime(person.getLastTimeOnline()); //localTime? why not
+        personDTO.setBlocked(person.isBlocked());
+        personDTO.setToken(); //where from I have to take a token?
+    }
+
+    public List<CommentDTO> getCommentDTOListFromCommentList(List<Comment> commentList) {
+        List<CommentDTO> commentDTOList = new ArrayList<>();
+        commentList.forEach(comment -> commentDTOList.add(getCommentDTOFromComment(comment)));
+        return commentDTOList;
+    }
+
+    public CommentDTO getCommentDTOFromComment(Comment comment) {
+
+    }
 
     public Object postOnUserWall(long userId, long publishDate, PostRequestBody postBody) { //TODO Stub
         Person author = personRepository.findById(userId);
@@ -112,10 +173,37 @@ public class ProfileService {
             Integer ageFrom,
             Integer ageTo,
             String country,
+            String city,
             long offset,
-            Long itemPerPage
+            int itemPerPage
     ) {
+        Pageable pageable = getPageable(offset, itemPerPage);
 
+        PersonSpecificationsBuilder builder = new PersonSpecificationsBuilder();
+
+        if (firstName != null && !"".equals(firstName)) {
+            builder.with("firstName", ":", firstName);
+        }
+        if (lastName != null && !"".equals(lastName)) {
+            builder.with("lastName", ":", lastName);
+        }
+        if (ageFrom != null) {
+            builder.with("birthday", "<", LocalDate.now().minusYears(ageFrom));
+        }
+        if (ageTo != null) {
+            builder.with("birthday", ">", LocalDate.now().minusYears(ageTo));
+        }
+        if (country != null && !"".equals(country)) {
+            builder.with("country", ":", country);
+        }
+        if (city != null && !"".equals(city)) {
+            builder.with("city", ":", city);
+        }
+        Specification<Person> spec = builder.build();
+
+        Page<Person> personPage = personRepository.findAll(spec, pageable);
+
+        //TODO Mapping
         return null;
     }
 
@@ -126,7 +214,6 @@ public class ProfileService {
         return null;
     }
 
-    //TODO TimeZone is default but it must be not
     public LocalDateTime longToLocalDateTime(long timestamp) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
     }
