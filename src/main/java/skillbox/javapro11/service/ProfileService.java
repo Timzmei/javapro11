@@ -104,7 +104,7 @@ public class ProfileService {
     public CommonResponseData postOnUserWall(long userId, long publishDate, PostRequest postBody) {
         Person author = personRepository.findById(userId);
 
-        LocalDateTime publishLocalDateTime = longToLocalDateTime(publishDate);
+        LocalDateTime publishLocalDateTime = getLocalDateTimeFromLong(publishDate);
         publishLocalDateTime = getCorrectPublishLocalDateTime(publishLocalDateTime);
 
         Post post = new Post();
@@ -186,7 +186,7 @@ public class ProfileService {
 
     //serve methods ===========================================================================
 
-    public LocalDateTime longToLocalDateTime(long timestamp) {
+    public LocalDateTime getLocalDateTimeFromLong(long timestamp) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
     }
 
