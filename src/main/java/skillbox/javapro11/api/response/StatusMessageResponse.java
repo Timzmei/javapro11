@@ -2,9 +2,11 @@ package skillbox.javapro11.api.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
-public class StatusMessageDTO implements ResponseData {
+public class StatusMessageResponse extends ResponseData {
     private String message;
 }
