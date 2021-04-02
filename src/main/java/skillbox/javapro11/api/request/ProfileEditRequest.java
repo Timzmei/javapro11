@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import skillbox.javapro11.model.entity.PermissionMessage;
+import skillbox.javapro11.enums.PermissionMessage;
 
 import java.time.LocalDate;
 

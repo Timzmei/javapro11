@@ -64,7 +64,7 @@ public class Person {
     private PermissionMessage permissionMessage;
 
     @Column(name = "last_online_time", nullable = false)
-    private LocalTime lastTimeOnline;
+    private LocalDateTime lastTimeOnline;
 
     @Column(name = "is_blocked", nullable = false)
     private boolean isBlocked;

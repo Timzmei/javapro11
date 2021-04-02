@@ -2,10 +2,11 @@ package skillbox.javapro11.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import skillbox.javapro11.api.request.PostRequest;
 import skillbox.javapro11.api.request.ProfileEditRequest;
-import skillbox.javapro11.api.response.ResponseFormListData;
+import skillbox.javapro11.api.response.CommonListResponse;
+import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.service.ProfileService;
 
@@ -46,23 +47,23 @@ public class ProfileController {
     }
 
     @GetMapping("/{id}/wall")
-    public ResponseEntity<ResponseFormListData> getPostsUserWall(
+    public CommonListResponse getPostsUserWall(
             @PathVariable("id") long id,
             @RequestParam("offset") long offset,
-            @RequestParam("itemPerPage") int itemPerPage) { //TODO change generic to real class
-        return ResponseEntity.ok(profileService.getUserWall(id, offset, itemPerPage));
+            @RequestParam("itemPerPage") int itemPerPage) {
+        return profileService.getUserWall(id, offset, itemPerPage);
     }
 
     @PostMapping("/{id}/wall")
-    public ResponseEntity<?> addPostUserWall(
+    public CommonResponseData addPostUserWall(
             @PathVariable("id") long id,
             @RequestParam("publish_date") long publishDate,
-            @RequestBody PostRequestBody postRequestBody) {
-        return ResponseEntity.ok(profileService.postOnUserWall(id, publishDate, postRequestBody));
+            @RequestBody PostRequest postRequestBody) {
+        return profileService.postOnUserWall(id, publishDate, postRequestBody);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> searchUser(
+    public CommonListResponse searchUser(
             @RequestParam(name = "first_name", required = false) String firstName,
             @RequestParam(name = "last_name", required = false) String lastName,
             @RequestParam(name = "age_from", required = false) Integer ageFrom,
@@ -72,17 +73,17 @@ public class ProfileController {
             @RequestParam("offset") long offset,
             @RequestParam("itemPerPage") int itemPerPage
     ) {
-        return ResponseEntity.ok(profileService
-                .searchUser(firstName, lastName, ageFrom, ageTo, country, city, offset, itemPerPage));
+        return profileService
+                .searchUser(firstName, lastName, ageFrom, ageTo, country, city, offset, itemPerPage);
     }
 
     @PutMapping("/block/{id}")
-    public ResponseEntity<?> blockUserById(@PathVariable("id") long id) {
-        return ResponseEntity.ok(profileService.blockUser(true, id));
+    public CommonResponseData blockUserById(@PathVariable("id") long id) {
+        return profileService.blockUser(true, id);
     }
 
     @DeleteMapping("/block/{id}")
-    public ResponseEntity<?> unblockUserById(@PathVariable("id") long id) {
-        return ResponseEntity.ok(profileService.blockUser(false, id));
+    public CommonResponseData unblockUserById(@PathVariable("id") long id) {
+        return profileService.blockUser(false, id);
     }
 }

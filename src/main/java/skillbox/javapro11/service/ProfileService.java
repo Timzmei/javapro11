@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import skillbox.javapro11.api.request.PostRequest;
 import skillbox.javapro11.api.request.ProfileEditRequest;
 import skillbox.javapro11.api.response.*;
 import skillbox.javapro11.model.entity.Comment;
@@ -84,71 +85,23 @@ public class ProfileService {
         return personRepository.getOne(id);
     }
 
-	public ResponseFormListData getUserWall(long userId, long offset, int itemPerPage) { //TODO Stub
+	public CommonListResponse getUserWall(long userId, long offset, int itemPerPage) {
         Person person = personRepository.findById(userId);
         Pageable pageable = getPageable(offset, itemPerPage);
 
         Page<Post> postPage = postRepository.findAllWherePerson(person, pageable);
         //build response
-        return new ResponseFormListData(
+        return new CommonListResponse(
                 "string",
                 LocalDateTime.now(),
-                (int) postPage.getTotalElements(), //int ? total and offset
-                (int) offset,
+                postPage.getTotalElements(),
+                offset,
                 itemPerPage,
-                new ArrayList<>(getPostDTOListFromPostList(postPage.getContent()))
+                new ArrayList<>(getPostResponseListFromPostList(postPage.getContent()))
         );
 	}
 
-    public List<PostDTO> getPostDTOListFromPostList(List<Post> postList) {
-        List<PostDTO> postDTOList = new ArrayList<>();
-        postList.forEach(post -> postDTOList.add(getPostDTOFromPost(post)));
-        return postDTOList;
-    }
-
-    public PostDTO getPostDTOFromPost(Post post) {
-        PostDTO postDTO = new PostDTO();
-        postDTO.setId(post.getId());
-        postDTO.setTime(post.getTime());
-        postDTO.setAuthor(getPersonDTOFromPerson(post.getPerson()));
-        postDTO.setTitle(post.getTitle());
-        postDTO.setPostText(post.getText());
-        postDTO.setBlocked(post.isBlocked());
-        postDTO.setLikes(post.getPostLikeList().size());
-        postDTO.setComments(getCommentDTOListFromCommentList(post.getComments()));
-        postDTO.setType(post.getTime().isBefore(LocalDateTime.now()) ? "POSTED" : "QUEUED"); //Enum?
-        return postDTO;
-    }
-
-    public PersonDTO getPersonDTOFromPerson(Person person) {
-        PersonDTO personDTO = new PersonDTO();
-        personDTO.setId(person.getId());
-        personDTO.setFirstName(person.getFirstName());
-        personDTO.setLastName(person.getLastName());
-        personDTO.setBirthDate(person.getBirthday());
-        personDTO.setEmail(person.getEmail());
-        personDTO.setPhone(person.getPhone());
-        personDTO.setPhoto(person.getPhoto());
-        personDTO.setAbout(person.getAbout());
-        personDTO.setCity(); // it must be String
-        personDTO.setCountry(); //it must be String
-        personDTO.setMessagesPermission(person.getPermissionMessage());
-        personDTO.setLastOnlineTime(person.getLastTimeOnline()); //localTime? why not
-        personDTO.setBlocked(person.isBlocked());
-        personDTO.setToken(); //where from I have to take a token?
-    }
-
-    public List<CommentDTO> getCommentDTOListFromCommentList(List<Comment> commentList) {
-        List<CommentDTO> commentDTOList = new ArrayList<>();
-        commentList.forEach(comment -> commentDTOList.add(getCommentDTOFromComment(comment)));
-        return commentDTOList;
-    }
-
-    public CommentDTO getCommentDTOFromComment(Comment comment) {
-
-    }
-
-    public Object postOnUserWall(long userId, long publishDate, PostRequestBody postBody) { //TODO Stub
+    public CommonResponseData postOnUserWall(long userId, long publishDate, PostRequest postBody) {
         Person author = personRepository.findById(userId);
 
         LocalDateTime publishLocalDateTime = longToLocalDateTime(publishDate);
@@ -158,16 +111,22 @@ public class ProfileService {
         post.setPerson(author);
         post.setTime(publishLocalDateTime);
         post.setTitle(postBody.getTitle());
-        post.setText(postBody.getText);
+        post.setText(postBody.getText());
         post.setBlocked(false);
+        //do I need to initial fields 'comments' and 'postLikesList' if object was created by @NoArgsConstructor Lombok
+        //Below I use this fields in mapping method - getPostResponseFromPost(Post p)
 
         postRepository.save(post);
 
-        //build response
-        return null;
+        CommonResponseData response = new CommonResponseData();
+        response.setError("string");
+        response.setTimestamp(LocalDateTime.now());
+        response.setData(getPostResponseFromPost(post));
+
+        return response;
     }
 
-    public Object searchUser(
+    public CommonListResponse searchUser(
             String firstName,
             String lastName,
             Integer ageFrom,
@@ -203,16 +162,29 @@ public class ProfileService {
 
         Page<Person> personPage = personRepository.findAll(spec, pageable);
 
-        //TODO Mapping
-        return null;
+        return new CommonListResponse(
+                "string",
+                LocalDateTime.now(),
+                personPage.getTotalElements(),
+                offset,
+                itemPerPage,
+                new ArrayList<>(getPersonResponseListFromPersonList(personPage.getContent()))
+        );
     }
 
-    public Object blockUser(boolean isBlocked, long userId) {
+    public CommonResponseData blockUser(boolean isBlocked, long userId) {
         Person person = personRepository.findById(userId);
         person.setBlocked(isBlocked);
         personRepository.save(person);
-        return null;
+
+        CommonResponseData responseData = new CommonResponseData();
+        responseData.setError("string");
+        responseData.setTimestamp(LocalDateTime.now());
+        responseData.setData(new StatusMessageResponse("ok"));
+        return responseData;
     }
+
+    //serve methods ===========================================================================
 
     public LocalDateTime longToLocalDateTime(long timestamp) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
@@ -228,5 +200,71 @@ public class ProfileService {
 
     public LocalDateTime getCorrectPublishLocalDateTime(LocalDateTime publishLocalDateTime) {
         return publishLocalDateTime.isBefore(LocalDateTime.now()) ? LocalDateTime.now() : publishLocalDateTime;
+    }
+
+    //Mapping methods ==============================================================================
+
+    public List<PersonResponse> getPersonResponseListFromPersonList(List<Person> personList) {
+        List<PersonResponse> personResponseList = new ArrayList<>();
+        personList.forEach(person -> personResponseList.add(getPersonResponseFromPerson(person)));
+        return personResponseList;
+    }
+
+    public PersonResponse getPersonResponseFromPerson(Person person) {
+        return new PersonResponse(
+                person.getId(),
+                person.getFirstName(),
+                person.getLastName(),
+                person.getRegistrationDate(),
+                person.getBirthday(),
+                person.getEmail(),
+                person.getPhone(),
+                person.getPhoto(),
+                person.getAbout(),
+                person.getCity(),
+                person.getCountry(),
+                person.getPermissionMessage(),
+                person.getLastTimeOnline(),
+                person.isBlocked(),
+                null
+        );
+    }
+
+    public List<PostResponse> getPostResponseListFromPostList(List<Post> postList) {
+        List<PostResponse> postResponseList = new ArrayList<>();
+        postList.forEach(post -> postResponseList.add(getPostResponseFromPost(post)));
+        return postResponseList;
+    }
+
+    public PostResponse getPostResponseFromPost(Post post) {
+        PostResponse postResponse = new PostResponse();
+        postResponse.setId(post.getId());
+        postResponse.setTime(post.getTime());
+        postResponse.setAuthor(getPersonResponseFromPerson(post.getPerson()));
+        postResponse.setTitle(post.getTitle());
+        postResponse.setPostText(post.getText());
+        postResponse.setBlocked(post.isBlocked());
+        postResponse.setLikes(post.getPostLikeList().size());
+        postResponse.setComments(getCommentResponseListFromCommentList(post.getComments()));
+        postResponse.setType(post.getTime().isBefore(LocalDateTime.now()) ? PostType.POSTED : PostType.QUEUED);
+        return postResponse;
+    }
+
+    public List<CommentResponse> getCommentResponseListFromCommentList(List<Comment> commentList) {
+        List<CommentResponse> commentDTOList = new ArrayList<>();
+        commentList.forEach(comment -> commentDTOList.add(getCommentResponseFromComment(comment)));
+        return commentDTOList;
+    }
+
+    public CommentResponse getCommentResponseFromComment(Comment comment) {
+        return new CommentResponse(
+                comment.getParentId(),
+                comment.getCommentText(),
+                comment.getId(),
+                comment.getPost().getId(),
+                comment.getTime(),
+                comment.getAuthorId(),
+                comment.isBlocked()
+        );
     }
 }

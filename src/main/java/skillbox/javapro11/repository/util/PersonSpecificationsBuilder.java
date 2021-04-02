@@ -15,7 +15,7 @@ public class PersonSpecificationsBuilder {
 	private final List<SearchCriteria> params;
 
 	public PersonSpecificationsBuilder() {
-		params = new ArrayList<SearchCriteria>();
+		params = new ArrayList<>();
 	}
 
 	public PersonSpecificationsBuilder with(String key, String operator, Object value) {
