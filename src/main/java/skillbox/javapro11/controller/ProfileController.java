@@ -1,13 +1,12 @@
 package skillbox.javapro11.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import skillbox.javapro11.api.request.PostRequest;
 import skillbox.javapro11.api.request.ProfileEditRequest;
 import skillbox.javapro11.api.response.CommonListResponse;
 import skillbox.javapro11.api.response.CommonResponseData;
-import skillbox.javapro11.model.entity.Person;
+import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.service.ProfileService;
 
 @RestController
@@ -24,26 +23,23 @@ public class ProfileController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<Person> getCurrentUser() {
-        Person person = this.profileService.getCurrentUser();
-        return ResponseEntity.ok(person);
+    public PersonResponse getCurrentUser() {
+        return profileService.getCurrentUser();
     }
 
     @PutMapping("/me")
-    public ResponseEntity<Person> editCurrentUser(@RequestBody ProfileEditRequest profileEditRequest) {
-        return ResponseEntity.ok(profileService.editCurrentUser(profileEditRequest));
+    public PersonResponse editCurrentUser(@RequestBody ProfileEditRequest profileEditRequest) {
+        return profileService.editCurrentUser(profileEditRequest);
     }
 
     @DeleteMapping("/me")
-    public ResponseEntity<?> deleteCurrentUser() {
-        profileService.deleteCurrentUser();
-        return ResponseEntity.ok(new Person()); // Just to avoid compile error, fix it later
+    public CommonResponseData deleteCurrentUser() {
+        return profileService.deleteCurrentUser();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Person> getUserById(@PathVariable("id") long id) {
-        Person person = profileService.findUserById(id);
-        return ResponseEntity.ok(person);
+    public PersonResponse getUserById(@PathVariable("id") long id) {
+        return profileService.findUserById(id);
     }
 
     @GetMapping("/{id}/wall")

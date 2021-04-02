@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.PostRequest;
 import skillbox.javapro11.api.request.ProfileEditRequest;
@@ -29,26 +30,34 @@ import java.util.List;
 @Service
 public class ProfileService {
 
+    //private final AccountService accountService;
     private final PersonRepository personRepository;
     private final PostRepository postRepository;
 
     @Autowired
-    public ProfileService (
-        PersonRepository personRepository,
-        PostRepository postRepository
+    public ProfileService(
+            //    AccountService accountService,
+            PersonRepository personRepository,
+            PostRepository postRepository
     ) {
+        //    this.accountService = accountService;
         this.personRepository = personRepository;
         this.postRepository = postRepository;
     }
 
-    public Person getCurrentUser() {
+    public PersonResponse getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Person person = (Person) authentication.getPrincipal();
-        return personRepository.findByEmail(person.getFirstName());
+        User user = (User) authentication.getPrincipal();
+        return getPersonResponseFromPerson(personRepository.findByEmail(user.getUsername()));
+        //return getPersonResponseFromPerson(accountService.getCurrentUser());
+        // ToDo: Change after AccountService will be complete. Get current user from it.
     }
 
-    public Person editCurrentUser(@NotNull ProfileEditRequest profileEditRequest) {
-        Person currentPerson = getCurrentUser();
+    public PersonResponse editCurrentUser(@NotNull ProfileEditRequest profileEditRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        Person currentPerson = personRepository.findByEmail(user.getUsername());
+        // ToDo: Change after AccountService will be complete. Get current user from it.
 
         if (profileEditRequest.getFirstName() != null) {
             currentPerson.setFirstName(profileEditRequest.getFirstName());
@@ -65,27 +74,49 @@ public class ProfileService {
         if (profileEditRequest.getPhoto() != null) {
             currentPerson.setPhoto(profileEditRequest.getPhoto());
         }
+
+        if (profileEditRequest.getAbout() != null) {
+            currentPerson.setAbout(profileEditRequest.getAbout());
+        }
+
         if (profileEditRequest.getTown() != null) {
             currentPerson.setCity(profileEditRequest.getTown());
         }
+
+        if (profileEditRequest.getCountry() != null) {
+            currentPerson.setCountry(profileEditRequest.getCountry());
+        }
+
         if (profileEditRequest.getPermissionMessage() != null) {
             currentPerson.setPermissionMessage(profileEditRequest.getPermissionMessage());
         }
 
         personRepository.updatePerson(currentPerson);
-        return currentPerson;
+
+        return getPersonResponseFromPerson(currentPerson);
     }
 
-    public void deleteCurrentUser() {
-        Person person = getCurrentUser();
-        personRepository.delete(person);
+    public CommonResponseData deleteCurrentUser() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        Person currentPerson = personRepository.findByEmail(user.getUsername());
+        // ToDo: change when AccountService will be merged. Get current user from it.
+
+        personRepository.delete(currentPerson);
+
+        CommonResponseData responseData = new CommonResponseData();
+        responseData.setError("string");
+        responseData.setTimestamp(LocalDateTime.now());
+        responseData.setData(new StatusMessageResponse("ok"));
+        return responseData;
     }
 
-    public Person findUserById(long id) {
-        return personRepository.getOne(id);
+    public PersonResponse findUserById(long id) {
+        return getPersonResponseFromPerson(personRepository.getOne(id));
     }
 
-	public CommonListResponse getUserWall(long userId, long offset, int itemPerPage) {
+    public CommonListResponse getUserWall(long userId, long offset, int itemPerPage) {
         Person person = personRepository.findById(userId);
         Pageable pageable = getPageable(offset, itemPerPage);
 
@@ -99,7 +130,7 @@ public class ProfileService {
                 itemPerPage,
                 new ArrayList<>(getPostResponseListFromPostList(postPage.getContent()))
         );
-	}
+    }
 
     public CommonResponseData postOnUserWall(long userId, long publishDate, PostRequest postBody) {
         Person author = personRepository.findById(userId);
@@ -194,7 +225,7 @@ public class ProfileService {
         //itemPerPage can't be equal 0, cause we'll use it like divisor
         //I don't know why it may be equals 0, but anyway we are ready for this!
         itemPerPage = itemPerPage == 0 ? 1 : itemPerPage;
-        int page =  (int) (offset / itemPerPage);
+        int page = (int) (offset / itemPerPage);
         return PageRequest.of(page, itemPerPage);
     }
 
