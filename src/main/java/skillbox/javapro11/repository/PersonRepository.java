@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import skillbox.javapro11.model.entity.Person;
 
 @Repository
-public interface PersonRepository extends JpaRepository<Person, Integer> {
+public interface PersonRepository extends JpaRepository<Person, Long> {
 
     Person findByEmail(String email);
 }
