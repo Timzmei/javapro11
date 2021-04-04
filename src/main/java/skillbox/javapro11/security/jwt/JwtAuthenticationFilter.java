@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import skillbox.javapro11.api.createResponse.CreateResponse;
 import skillbox.javapro11.api.request.AuthRequest;
 import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.model.entity.Person;
@@ -62,10 +63,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             FilterChain chain, Authentication auth) {
         try {
             SecurityContextHolder.getContext().setAuthentication(auth);
-            PersonResponse personResponse = createPersonResponse(auth.getName());
+            Person person = personRepository.findByEmail(auth.getName());
+            String token = jwtTokenProvider.createToken(person);
+            PersonResponse personResponse = CreateResponse.createPersonResponse(person, token);
 
             /**
-             * Как тут нужно было вернуть DTO personResponse?
+             * Как тут нужно было вернуть DTO personResponse, print принимает строку поэтому использовал Gson?
              */
             Gson gson = new Gson();
             response.getWriter().print(gson.toJson(personResponse));
@@ -75,31 +78,4 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         }
     }
 
-    private PersonResponse createPersonResponse(String email) {
-        Person person = personRepository.findByEmail(email);
-        String token = jwtTokenProvider.createToken(person);
-        /**
-        * Не закончено. Закоментированный код ниже, вопрос с этими переменными, задам на встречи
-        */
-        PersonResponse personResponse = new PersonResponse();
-        personResponse.setId(person.getId());
-        personResponse.setFirstName(person.getFirstName());
-        personResponse.setLastName(person.getLastName());
-
-        //personResponse.setRegistrationDate(person.getRegistrationDate());
-        //personResponse.setBirthDate(person.getBirthday());
-        personResponse.setEmail(person.getEmail());
-        personResponse.setPhone(person.getPhone());
-        personResponse.setPhoto(person.getPhoto());
-        personResponse.setAbout(person.getAbout());
-
-        /*LocationOrLanguageDTO locationOrLanguageDTO = new LocationOrLanguageDTO();
-        personResponse.setCity(locationOrLanguageDTO);*/
-        personResponse.setMessagesPermission(person.getPermissionMessage());
-        //personResponse.setLastOnlineTime(person.getLastTimeOnline());
-        personResponse.setBlocked(person.isBlocked());
-        personResponse.setToken(token);
-
-        return personResponse;
-    }
 }
