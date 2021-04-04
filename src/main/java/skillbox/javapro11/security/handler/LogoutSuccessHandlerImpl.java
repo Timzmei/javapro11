@@ -28,6 +28,9 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
         if (token != null) {
             jwtTokenProvider.deleteToken(token);
         }
+        /**
+         * Не закончено, есть вопрос по response, вроде кто-то должен был общий создать DTO
+         */
         response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().flush();
     }

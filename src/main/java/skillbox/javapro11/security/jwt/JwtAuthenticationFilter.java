@@ -9,7 +9,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import skillbox.javapro11.api.request.AuthRequest;
-import skillbox.javapro11.api.response.PersonDTO;
+import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.repository.PersonRepository;
 
@@ -62,8 +62,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             FilterChain chain, Authentication auth) {
         try {
             SecurityContextHolder.getContext().setAuthentication(auth);
-            PersonDTO personResponse = createPersonResponse(auth.getName());
+            PersonResponse personResponse = createPersonResponse(auth.getName());
 
+            /**
+             * Как тут нужно было вернуть DTO personResponse?
+             */
             Gson gson = new Gson();
             response.getWriter().print(gson.toJson(personResponse));
             response.getWriter().flush();
@@ -72,14 +75,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         }
     }
 
-    private PersonDTO createPersonResponse(String email) {
+    private PersonResponse createPersonResponse(String email) {
         Person person = personRepository.findByEmail(email);
         String token = jwtTokenProvider.createToken(person);
-
-        PersonDTO personResponse = new PersonDTO();
+        /**
+        * Не закончено. Закоментированный код ниже, вопрос с этими переменными, задам на встречи
+        */
+        PersonResponse personResponse = new PersonResponse();
         personResponse.setId(person.getId());
         personResponse.setFirstName(person.getFirstName());
         personResponse.setLastName(person.getLastName());
+
         //personResponse.setRegistrationDate(person.getRegistrationDate());
         //personResponse.setBirthDate(person.getBirthday());
         personResponse.setEmail(person.getEmail());
