@@ -2,21 +2,24 @@ package skillbox.javapro11.api.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Setter
-public class PostDTO implements ResponseData {
+@NoArgsConstructor
+@AllArgsConstructor
+public class PostResponse extends ResponseData {
 
     private long id;
 
     private LocalDateTime time;
 
-    private PersonDTO author;
+    private PersonResponse author;
 
     private String title;
 
@@ -28,8 +31,8 @@ public class PostDTO implements ResponseData {
 
     private int likes;
 
-    private List<CommentDTO> comments;
+    private List<CommentResponse> comments;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String type;
+    private PostType type;
 }
