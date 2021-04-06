@@ -13,4 +13,9 @@ import java.time.LocalDateTime;
 public class CommonResponse {
     private String error;
     private LocalDateTime timestamp;
+
+    public CommonResponse(String errorMessage) {
+        this.error = errorMessage;
+        this.timestamp = LocalDateTime.now();
+    }
 }
