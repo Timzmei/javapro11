@@ -1,47 +1,52 @@
 package skillbox.javapro11.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import skillbox.javapro11.service.post.PostService;
 
 /**
  * Created by Artem on 03.04.2021.
  */
 
 @RestController
+@RequestMapping("/api/v1/post")
 public class PostsController {
+    @Autowired
+    private PostService postService;
 
-    @GetMapping("/api/v1/post/")
+    @GetMapping("")
     public void searchPublication (){}
 
-    @GetMapping("/api/v1/post/{id}")
+    @GetMapping("/{id}")
     public void getPublicationById() {}
 
-    @PutMapping("/api/v1/post/{id}")
+    @PutMapping("/{id}")
     public void editPublicationById(){}
 
-    @DeleteMapping("/api/v1/post/{id}")
+    @DeleteMapping("/{id}")
     public void deletePublicationById(){}
 
-    @PutMapping("/api/v1/post/{id}/recover")
+    @PutMapping("/{id}/recover")
     public void recoverPublicationById(){}
 
-    @GetMapping("/api/v1/post/{id}/comments")
+    @GetMapping("/{id}/comments")
     public void getCommentsOnPublication(){}
 
-    @PostMapping("/api/v1/post/{id}/comments")
+    @PostMapping("/{id}/comments")
     public void creationCommentForPublication(){}
 
-    @PutMapping("/api/v1/post/{id}/comments/{comment_id}")
+    @PutMapping("/{id}/comments/{comment_id}")
     public void editCommentForPublication(){}
 
-    @DeleteMapping("/api/v1/post/{id}/comments/{comment_id}")
+    @DeleteMapping("/{id}/comments/{comment_id}")
     public void deleteCommentForPublication(){}
 
-    @PutMapping("/api/v1/post/{id}/comments/{comment_id}/recover")
+    @PutMapping("/{id}/comments/{comment_id}/recover")
     public void recoverComment(){}
 
-    @PostMapping("/api/v1/post/{id}/report")
+    @PostMapping("/{id}/report")
     public void reportPublication(){}
 
-    @PostMapping("/api/v1/post/{id}/comments/{comment_id}/report")
+    @PostMapping("/{id}/comments/{comment_id}/report")
     public void reportCommentOnPublication(){}
 }
