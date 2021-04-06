@@ -29,7 +29,7 @@ public class AccountService {
         return message;
     }
 
-    private Person getCurrentPerson() {
+    public Person getCurrentPerson() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         org.springframework.security.core.userdetails.User user =
                 (org.springframework.security.core.userdetails.User) auth.getPrincipal();

@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.api.response.UploadImageResponse;
 import skillbox.javapro11.api.response.UserStatusResponse;
+import skillbox.javapro11.model.entity.Person;
+import skillbox.javapro11.repository.PersonRepository;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,6 +33,9 @@ public class StorageService {
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private PersonRepository personRepository;
+
     public CommonResponseData uploadImage(MultipartFile file, String type) {
         String error = "";
         Cloudinary cloudinary = new Cloudinary(cloudinaryUrl);
@@ -38,9 +43,12 @@ public class StorageService {
         UploadImageResponse uploadImageResponse = new UploadImageResponse();
 
         try {
+            Person currentPerson = accountService.getCurrentPerson();
             File uploadedFile = convertMultiPartToFile(file);
             uploadResult = cloudinary.uploader().upload(uploadedFile, ObjectUtils.emptyMap());
-            uploadImageResponse = getUploadImageResponse(uploadResult, type);
+            uploadImageResponse = getUploadImageResponse(uploadResult, currentPerson);
+            currentPerson.setPhoto(uploadImageResponse.getRelativeFilePath());
+            personRepository.updatePerson(currentPerson);
         } catch (IOException e) {
             error = e.getMessage();
         }
@@ -51,27 +59,15 @@ public class StorageService {
                 uploadImageResponse
         );
 
-
         return commonResponseData;
     }
 
-    private UploadImageResponse getUploadImageResponse(Map uploadResult, String path) {
-//        Long currentUser = accountService.getCurrentPerson().getId();
-
-        System.out.println((String) uploadResult.get("asset_id"));
-        System.out.println((String) uploadResult.get("original_filename"));
-        System.out.println((String) uploadResult.get("url"));
-        System.out.println((String) uploadResult.get("format"));
-        System.out.println(uploadResult.get("bytes"));
-        System.out.println((String) uploadResult.get("resource_type"));
-        System.out.println(uploadResult.get("created_at"));
-
+    private UploadImageResponse getUploadImageResponse(Map uploadResult, Person person) {
         UploadImageResponse uploadImageResponse = new UploadImageResponse();
         uploadImageResponse.setId((String) uploadResult.get("asset_id"));
-//        uploadImageResponse.setOwnerId(currentUser);
+        uploadImageResponse.setOwnerId(person.getId());
         uploadImageResponse.setFileName((String) uploadResult.get("original_filename"));
         uploadImageResponse.setRelativeFilePath((String) uploadResult.get("url"));
-        uploadImageResponse.setRawFileURL(path);
         uploadImageResponse.setFileFormat((String) uploadResult.get("format"));
         uploadImageResponse.setBytes((Long) uploadResult.get("bytes"));
         uploadImageResponse.setFileType((String) uploadResult.get("resource_type"));
