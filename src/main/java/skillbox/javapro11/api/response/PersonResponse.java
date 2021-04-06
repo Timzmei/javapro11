@@ -1,5 +1,6 @@
 package skillbox.javapro11.api.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -50,5 +51,6 @@ public class PersonResponse extends ResponseData {
     @JsonProperty(value = "is_blocked")
     private boolean isBlocked;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String token;
 }
