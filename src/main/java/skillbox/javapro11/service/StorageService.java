@@ -45,10 +45,10 @@ public class StorageService {
         try {
             Person currentPerson = accountService.getCurrentPerson();
             File uploadedFile = convertMultiPartToFile(file);
-            uploadResult = cloudinary.uploader().upload(uploadedFile, ObjectUtils.emptyMap());
+            uploadResult = cloudinary.uploader().upload("", ObjectUtils.emptyMap());
             uploadImageResponse = getUploadImageResponse(uploadResult, currentPerson);
             currentPerson.setPhoto(uploadImageResponse.getRelativeFilePath());
-            personRepository.updatePerson(currentPerson);
+            personRepository.save(currentPerson);
         } catch (IOException e) {
             error = e.getMessage();
         }
