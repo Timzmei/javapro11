@@ -25,7 +25,8 @@ public class StorageController {
     }
 
     @PostMapping("/storage")
-    public ResponseEntity storageFile(@PathVariable MultipartFile file){
+    public ResponseEntity storageFile(@RequestParam("file") MultipartFile file,
+                                        @RequestParam("type") String type){ //не совесм понятно где этот тайп используется
 
         log.trace("/api/v1/storage");
         return ResponseEntity.ok(storageService.uploadImage(file));
