@@ -14,7 +14,10 @@ import skillbox.javapro11.repository.PersonRepository;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -45,7 +48,7 @@ public class StorageService {
         try {
             Person currentPerson = accountService.getCurrentPerson();
             File uploadedFile = convertMultiPartToFile(file);
-            uploadResult = cloudinary.uploader().upload("", ObjectUtils.emptyMap());
+            uploadResult = cloudinary.uploader().upload(uploadedFile, ObjectUtils.emptyMap());
             uploadImageResponse = getUploadImageResponse(uploadResult, currentPerson);
             currentPerson.setPhoto(uploadImageResponse.getRelativeFilePath());
             personRepository.save(currentPerson);
@@ -53,11 +56,12 @@ public class StorageService {
             error = e.getMessage();
         }
 
-        return new CommonResponseData(
-                error,
-                LocalDateTime.now(),
-                uploadImageResponse
-        );
+        CommonResponseData commonResponseData = new CommonResponseData();
+        commonResponseData.setError(error);
+        commonResponseData.setTimestamp(LocalDateTime.now());
+        commonResponseData.setData(uploadImageResponse);
+
+        return commonResponseData;
     }
 
     private UploadImageResponse getUploadImageResponse(Map uploadResult, Person person) {
@@ -67,11 +71,14 @@ public class StorageService {
         uploadImageResponse.setFileName((String) uploadResult.get("original_filename"));
         uploadImageResponse.setRelativeFilePath((String) uploadResult.get("url"));
         uploadImageResponse.setFileFormat((String) uploadResult.get("format"));
-        uploadImageResponse.setBytes((Long) uploadResult.get("bytes"));
+        uploadImageResponse.setBytes((Integer) uploadResult.get("bytes"));
         uploadImageResponse.setFileType((String) uploadResult.get("resource_type"));
-        uploadImageResponse.setCreatedAt((LocalDateTime) uploadResult.get("created_at"));
-
+        uploadImageResponse.setCreatedAt(getCreatedAt(uploadResult));
         return uploadImageResponse;
+    }
+
+    private LocalDateTime getCreatedAt(Map uploadResult) {
+        return LocalDateTime.parse((String) uploadResult.get("created_at"), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH));
     }
 
     private File convertMultiPartToFile(MultipartFile file) throws IOException {
@@ -81,4 +88,6 @@ public class StorageService {
         fos.close();
         return convFile;
     }
+
+
 }
