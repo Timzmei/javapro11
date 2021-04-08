@@ -13,12 +13,3 @@ Build project:
     script:
         - mvn $MAVEN_OPTS compile
 
-Test project:
-    stage: test
-    script:
-        - mvn $MAVEN_OPTS test
-    artifacts:
-        paths:
-            - target/surefire-reports/TEST-*.xml
-        reports:
-            junit: target/surefire-reports/TEST-*.xml
