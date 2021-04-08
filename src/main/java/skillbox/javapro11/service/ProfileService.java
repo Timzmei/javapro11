@@ -6,9 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.PostRequest;
 import skillbox.javapro11.api.request.ProfileEditRequest;
@@ -30,34 +27,27 @@ import java.util.List;
 @Service
 public class ProfileService {
 
-    //private final AccountService accountService;
+    private final AccountService accountService;
     private final PersonRepository personRepository;
     private final PostRepository postRepository;
 
     @Autowired
     public ProfileService(
-            //    AccountService accountService,
+            AccountService accountService,
             PersonRepository personRepository,
             PostRepository postRepository
     ) {
-        //    this.accountService = accountService;
+        this.accountService = accountService;
         this.personRepository = personRepository;
         this.postRepository = postRepository;
     }
 
     public PersonResponse getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        return getPersonResponseFromPerson(personRepository.findByEmail(user.getUsername()));
-        //return getPersonResponseFromPerson(accountService.getCurrentUser());
-        // ToDo: Change after AccountService will be complete. Get current user from it.
+        return getPersonResponseFromPerson(accountService.getCurrentPerson());
     }
 
     public PersonResponse editCurrentUser(@NotNull ProfileEditRequest profileEditRequest) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        Person currentPerson = personRepository.findByEmail(user.getUsername());
-        // ToDo: Change after AccountService will be complete. Get current user from it.
+        Person currentPerson = accountService.getCurrentPerson();
 
         if (profileEditRequest.getFirstName() != null) {
             currentPerson.setFirstName(profileEditRequest.getFirstName());
@@ -71,6 +61,7 @@ public class ProfileService {
         if (profileEditRequest.getPhone() != null) {
             currentPerson.setPhone(profileEditRequest.getPhone());
         }
+
         if (profileEditRequest.getPhoto() != null) {
             currentPerson.setPhoto(profileEditRequest.getPhoto());
         }
@@ -91,17 +82,14 @@ public class ProfileService {
             currentPerson.setPermissionMessage(profileEditRequest.getPermissionMessage());
         }
 
-        personRepository.updatePerson(currentPerson);
+        personRepository.save(currentPerson);
 
         return getPersonResponseFromPerson(currentPerson);
     }
 
     public CommonResponseData deleteCurrentUser() {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        Person currentPerson = personRepository.findByEmail(user.getUsername());
-        // ToDo: change when AccountService will be merged. Get current user from it.
+        Person currentPerson = accountService.getCurrentPerson();
 
         personRepository.delete(currentPerson);
 
@@ -120,7 +108,7 @@ public class ProfileService {
         Person person = personRepository.findById(userId);
         Pageable pageable = getPageable(offset, itemPerPage);
 
-        Page<Post> postPage = postRepository.findAllWherePerson(person, pageable);
+        Page<Post> postPage = postRepository.findAllByPerson(person, pageable);
         //build response
         return new CommonListResponse(
                 "string",

@@ -10,7 +10,5 @@ public interface PersonRepository extends JpaRepository<Person, Long>, JpaSpecif
 
     Person findByEmail(String email);
 
-    void updatePerson(Person person);
-
     Person findById(long id);
 }

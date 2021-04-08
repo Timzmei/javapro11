@@ -1,10 +1,24 @@
 image: maven:3.6.3-jdk-11
 
-stages:
-    - build
+variables:
+    MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
-build:
+cache:
+    paths:
+        - .m2/repository
+
+
+Build project:
     stage: build
     script:
-        - echo 'Statring building...'
-        - mvn clean compile
+        - mvn $MAVEN_OPTS compile
+
+Test project:
+    stage: test
+    script:
+        - mvn $MAVEN_OPTS test
+    artifacts:
+        paths:
+            - target/surefire-reports/TEST-*.xml
+        reports:
+            junit: target/surefire-reports/TEST-*.xml
