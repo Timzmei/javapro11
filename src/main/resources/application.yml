@@ -6,18 +6,18 @@ spring:
       ddl-auto: none
   datasource:
     platform: postgres
-    url: jdbc:postgresql://localhost:5432/test?createDatabaseIfNotExist=true
+    url: jdbc:postgresql://localhost:5433/test?createDatabaseIfNotExist=true
     username: postgres
-    password: password
+    password: 12357
     driverClassName: org.postgresql.Driver
   mail:
     host: smtp.gmail.com
-      port: 587
-      username: socialnetwok2021@gmail.com
-      password: sizadrhjufeacfpw
-      protocol: smtp
-      tls: true
-      properties.mail.smtp:
-        auth: true
-        starttls.enable: true
-        ssl.trust: smtp.gmail.com
+    port: 587
+    username: socialnetwok2021@gmail.com
+    password: sizadrhjufeacfpw
+    protocol: smtp
+    tls: true
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
+      ssl.trust: smtp.gmail.com

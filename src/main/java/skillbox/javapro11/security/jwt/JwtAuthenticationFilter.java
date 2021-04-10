@@ -1,14 +1,14 @@
 package skillbox.javapro11.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import skillbox.javapro11.api.createResponse.CreateResponse;
+import skillbox.javapro11.api.createresponse.CreateResponse;
 import skillbox.javapro11.api.request.AuthRequest;
 import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.model.entity.Person;
@@ -67,11 +67,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             String token = jwtTokenProvider.createToken(person);
             PersonResponse personResponse = CreateResponse.createPersonResponse(person, token);
 
-            /**
-             * Как тут нужно было вернуть DTO personResponse, print принимает строку поэтому использовал Gson?
-             */
-            Gson gson = new Gson();
-            response.getWriter().print(gson.toJson(personResponse));
+            //response.getWriter().print(gson.toJson(personResponse));
             response.getWriter().flush();
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -25,10 +25,10 @@ public class PersonResponse extends ResponseData {
     private String lastName;
 
     @JsonProperty(value = "reg_date")
-    private LocalDateTime registrationDate;
+    private long registrationDate;
 
     @JsonProperty(value = "birth_date")
-    private LocalDate birthDate;
+    private long birthDate;
 
     private String email;
 
@@ -46,7 +46,7 @@ public class PersonResponse extends ResponseData {
     private PermissionMessage messagesPermission;
 
     @JsonProperty(value = "last_online_time")
-    private LocalDateTime lastOnlineTime;
+    private long lastOnlineTime;
 
     @JsonProperty(value = "is_blocked")
     private boolean isBlocked;
