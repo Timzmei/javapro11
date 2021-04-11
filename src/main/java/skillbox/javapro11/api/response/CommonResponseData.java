@@ -1,10 +1,10 @@
 package skillbox.javapro11.api.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommonResponseData extends CommonResponse {
