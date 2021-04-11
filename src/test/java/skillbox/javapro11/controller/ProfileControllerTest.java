@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.enums.PermissionMessage;
@@ -23,7 +24,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -106,5 +107,26 @@ public class ProfileControllerTest {
     @DisplayName("Get user by Id")
     void getUserById(){
 
+    }
+
+    @Test
+    @DisplayName("Block user by ID")
+    @WithMockUser
+    void blockUserById() throws Exception {
+        mockMvc.perform(put("/users/block/1"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error").value("message"))
+                .andExpect(jsonPath("$.data.message").value("ok"));
+    }
+
+    @Test
+    @DisplayName("Unblock user by ID")
+    void unblockUserById() throws Exception {
+        mockMvc.perform(delete("/users/block/1"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error").value("string"))
+                .andExpect(jsonPath("$.data.message").value("ok"));
     }
 }
