@@ -65,7 +65,6 @@ public class ProfileServiceTest {
 
         Mockito.when(accountService.getCurrentPerson()).thenReturn(currentPerson);
     }
-
     @Test
     @DisplayName("Getting current user")
     void getCurrentUserTest() {

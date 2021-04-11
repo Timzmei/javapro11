@@ -10,7 +10,7 @@ import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.service.ProfileService;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/users")
 public class ProfileController {
 
     private final ProfileService profileService;
