@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,18 +27,8 @@ public class JwtTokenProvider {
     @Getter
     private String secretKey;
 
-    /**
-     * tokenList - хранит токены, нужен для logout, при выходе из учетной записи
-     * из списка удалится токен или если не валидный
-     */
-    private final ArrayList<String> tokenList;
-
     @Autowired
     private UserDetailsServiceImpl userDetailsServiceImpl;
-
-    public JwtTokenProvider(ArrayList<String> tokenList) {
-        this.tokenList = tokenList;
-    }
 
     @PostConstruct
     //При запуске приложения создает и кодирует секретный код
@@ -66,7 +55,7 @@ public class JwtTokenProvider {
                 .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
-        tokenList.add(token);
+
         return token;
     }
 
@@ -90,19 +79,12 @@ public class JwtTokenProvider {
     }
 
     public boolean checkTokenIsExist(String token) {
-        if (!tokenList.contains(token)) {
-            return false;
-        }
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            deleteToken(token);
             return false;
         }
     }
 
-    public void deleteToken(String key) {
-        tokenList.remove(key);
-    }
 }

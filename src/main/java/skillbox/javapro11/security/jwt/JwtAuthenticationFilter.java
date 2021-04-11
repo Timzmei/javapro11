@@ -1,18 +1,17 @@
 package skillbox.javapro11.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import skillbox.javapro11.api.createresponse.CreateResponse;
 import skillbox.javapro11.api.request.AuthRequest;
 import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.repository.PersonRepository;
+import skillbox.javapro11.service.PersonService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
@@ -24,14 +23,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private AuthenticationManager authManager;
     private JwtTokenProvider jwtTokenProvider;
     private PersonRepository personRepository;
+    private PersonService personService;
 
 
     public JwtAuthenticationFilter(AuthenticationManager authManager,
                                    JwtTokenProvider jwtTokenProvider,
-                                   PersonRepository personRepository) {
+                                   PersonRepository personRepository,
+                                   PersonService personService) {
         this.authManager = authManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.personRepository = personRepository;
+        this.personService = personService;
     }
 
     @Override
@@ -65,13 +67,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             SecurityContextHolder.getContext().setAuthentication(auth);
             Person person = personRepository.findByEmail(auth.getName());
             String token = jwtTokenProvider.createToken(person);
-            PersonResponse personResponse = CreateResponse.createPersonResponse(person, token);
+            PersonResponse personResponse = personService.createPersonResponse(person, token);
 
-            //response.getWriter().print(gson.toJson(personResponse));
+            ObjectMapper objectMapper = new ObjectMapper();
+            response.getWriter().print(objectMapper.writeValueAsString(personResponse));
             response.getWriter().flush();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-
 }

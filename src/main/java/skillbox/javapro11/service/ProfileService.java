@@ -120,7 +120,7 @@ public class ProfileService {
         Person person = personRepository.findById(userId);
         Pageable pageable = getPageable(offset, itemPerPage);
 
-        Page<Post> postPage = postRepository.findAllWherePerson(person, pageable);
+        Page<Post> postPage = postRepository.findAllByPerson(person, pageable);
         //build response
         return new CommonListResponse(
                 "string",
@@ -246,8 +246,8 @@ public class ProfileService {
                 person.getId(),
                 person.getFirstName(),
                 person.getLastName(),
-                person.getRegistrationDate(),
-                person.getBirthday(),
+                person.getRegistrationDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                person.getBirthday().atStartOfDay(ZoneId.systemDefault()).toEpochSecond(),
                 person.getEmail(),
                 person.getPhone(),
                 person.getPhoto(),
@@ -255,7 +255,7 @@ public class ProfileService {
                 person.getCity(),
                 person.getCountry(),
                 person.getPermissionMessage(),
-                person.getLastTimeOnline(),
+                person.getLastTimeOnline().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
                 person.isBlocked(),
                 null
         );
