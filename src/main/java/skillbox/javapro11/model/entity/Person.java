@@ -4,6 +4,7 @@ package skillbox.javapro11.model.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import skillbox.javapro11.api.request.RegisterRequest;
 import skillbox.javapro11.enums.PermissionMessage;
 
 import javax.persistence.Entity;
@@ -52,7 +53,9 @@ public class Person {
     @Column(length = 2048)
     private String about;
 
-    private String town;
+    private String country;
+
+    private String city;
 
     @Column(name = "is_approved", nullable = false)
     private boolean isApproved;
@@ -62,8 +65,16 @@ public class Person {
     private PermissionMessage permissionMessage;
 
     @Column(name = "last_online_time", nullable = false)
-    private LocalTime lastTimeOnline;
+    private LocalDateTime lastTimeOnline;
 
     @Column(name = "is_blocked", nullable = false)
     private boolean isBlocked;
+
+    public Person(RegisterRequest registerRequest) {
+        this.email = registerRequest.getEmail();
+        this.password = registerRequest.getEmail();
+        this.firstName = registerRequest.getFirstName();
+        this.lastName = registerRequest.getLastName();
+        this.registrationDate = LocalDateTime.now();
+    }
 }

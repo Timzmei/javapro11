@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CommentResponse extends ResponseData {
     @JsonProperty(value="parent_id")
-    private long parentId;
+    private Long parentId;
 
     @JsonProperty(value="comment_text")
     private String commentText;
@@ -20,7 +20,7 @@ public class CommentResponse extends ResponseData {
     private long id;
 
     @JsonProperty(value="post_id")
-    private String postId;
+    private Long postId;
 
     private LocalDateTime time;
 
