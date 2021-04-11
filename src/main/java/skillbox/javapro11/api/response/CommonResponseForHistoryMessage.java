@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Deprecated
 public class CommonResponseForHistoryMessage extends CommonResponseData {
     private List<PersonResponse> profiles;
 }

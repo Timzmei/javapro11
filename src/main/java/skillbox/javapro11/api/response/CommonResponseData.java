@@ -5,10 +5,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommonResponseData extends CommonResponse {
     private ResponseData data;
+
+    public CommonResponseData(ResponseData data, String errorMassage){
+        super(errorMassage);
+        this.data = data;
+    }
 }

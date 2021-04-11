@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommonResponse {
-    private String error;
-    private LocalDateTime timestamp;
+    protected String error;
+    protected LocalDateTime timestamp;
 
     public CommonResponse(String errorMessage) {
         this.error = errorMessage;

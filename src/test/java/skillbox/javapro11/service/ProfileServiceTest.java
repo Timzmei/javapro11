@@ -68,13 +68,10 @@ public class ProfileServiceTest {
     @Test
     @DisplayName("Getting current user")
     void getCurrentUserTest() {
-        PersonResponse personResponse = profileService.getCurrentUser();
+        CommonResponseData commonResponseData = profileService.getCurrentUser();
 
-        assertThat(personResponse)
+        assertThat(commonResponseData)
                 .isNotNull();
-        //.hasNoNullFieldsOrProperties();
-        // TODO: Test failed cause token field is empty!!!
-        //  Demand help with it, maybe add same Spring Security Class ass mock
     }
 
     @Test
@@ -93,10 +90,11 @@ public class ProfileServiceTest {
                 PermissionMessage.FRIEND
         );
 
-        PersonResponse personResponse = profileService.editCurrentUser(profileEditRequest);
+        CommonResponseData commonResponseData = profileService.editCurrentUser(profileEditRequest);
 
-        assertThat(personResponse).isNotNull();
+        assertThat(commonResponseData).isNotNull();
 
+        PersonResponse personResponse = (PersonResponse) commonResponseData.getData();
         assertEquals("check first name", profileEditRequest.getFirstName(), personResponse.getFirstName());
         assertEquals("check last name", profileEditRequest.getLastName(), personResponse.getLastName());
         assertEquals("check phone", profileEditRequest.getPhone(), personResponse.getPhone());
@@ -126,8 +124,7 @@ public class ProfileServiceTest {
 
         Mockito.when(personRepository.getOne(id)).thenReturn(person);
 
-        PersonResponse personResponse = profileService.findUserById(id);
-        assertThat(personResponse).isNotNull();
+        CommonResponseData userById = profileService.findUserById(id);
+        assertThat(userById).isNotNull();
     }
-
 }

@@ -42,11 +42,11 @@ public class ProfileService {
         this.postRepository = postRepository;
     }
 
-    public PersonResponse getCurrentUser() {
-        return getPersonResponseFromPerson(accountService.getCurrentPerson());
+    public CommonResponseData getCurrentUser() {
+        return new CommonResponseData(getPersonResponseFromPerson(accountService.getCurrentPerson()), "string");
     }
 
-    public PersonResponse editCurrentUser(@NotNull ProfileEditRequest profileEditRequest) {
+    public CommonResponseData editCurrentUser(@NotNull ProfileEditRequest profileEditRequest) {
         Person currentPerson = accountService.getCurrentPerson();
 
         if (profileEditRequest.getFirstName() != null) {
@@ -84,7 +84,7 @@ public class ProfileService {
 
         personRepository.save(currentPerson);
 
-        return getPersonResponseFromPerson(currentPerson);
+        return new CommonResponseData(getPersonResponseFromPerson(currentPerson), "string");
     }
 
     public CommonResponseData deleteCurrentUser() {
@@ -100,8 +100,9 @@ public class ProfileService {
         return responseData;
     }
 
-    public PersonResponse findUserById(long id) {
-        return getPersonResponseFromPerson(personRepository.getOne(id));
+    public CommonResponseData findUserById(long id) {
+        PersonResponse personResponse = getPersonResponseFromPerson(personRepository.getOne(id));
+        return new CommonResponseData(personResponse, "string");
     }
 
     public CommonListResponse getUserWall(long userId, long offset, int itemPerPage) {
