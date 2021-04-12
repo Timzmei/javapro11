@@ -64,7 +64,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain chain, Authentication auth) {
         try {
-            SecurityContextHolder.getContext().setAuthentication(auth);
             Person person = personRepository.findByEmail(auth.getName());
             String token = jwtTokenProvider.createToken(person);
             PersonResponse personResponse = personService.createPersonResponse(person, token);

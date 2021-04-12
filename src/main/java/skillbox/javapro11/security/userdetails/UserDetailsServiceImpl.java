@@ -1,6 +1,7 @@
 package skillbox.javapro11.security.userdetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,7 +21,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (person == null) {
             throw new UsernameNotFoundException("Unknown user: " + email);
         }
-        UserDetails userDetails = UserDetailsImpl.fromUser(person);
-        return userDetails;
+        User user = UserImpl.fromUser(person);
+        return user;
     }
 }
