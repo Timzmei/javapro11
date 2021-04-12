@@ -34,6 +34,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 @SpringBootTest(classes = ServiceTestConfiguration.class)
 @ExtendWith(SpringExtension.class)
@@ -205,7 +206,7 @@ public class ProfileServiceTest {
         assertEquals("Check author by email", person.getEmail(), postResponse.getAuthor().getEmail());
         assertEquals("Check title", title, postResponse.getTitle());
         assertEquals("Check text", text, postResponse.getPostText());
-        assertThat(!postResponse.getTime().isBefore(nowLDT));
+        assertTrue("Correct post time", !postResponse.getTime().isBefore(nowLDT));
     }
 
     @Test
@@ -252,7 +253,7 @@ public class ProfileServiceTest {
         personList.add(new Person());
         List<PersonResponse> personResponseList = profileService.getPersonResponseListFromPersonList(personList);
 
-        assertThat(personList.size() == personResponseList.size());
+        assertTrue("Correct list size", personList.size() == personResponseList.size());
     }
 
     @Test
@@ -267,6 +268,6 @@ public class ProfileServiceTest {
         postList.add(post);
         List<PostResponse> postResponseList = profileService.getPostResponseListFromPostList(postList);
 
-        assertThat(postResponseList.size() == postList.size());
+        assertTrue("Correct list size", postResponseList.size() == postList.size());
     }
 }
