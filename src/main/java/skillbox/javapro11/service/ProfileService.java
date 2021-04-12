@@ -132,8 +132,6 @@ public class ProfileService {
         post.setTitle(postBody.getTitle());
         post.setText(postBody.getText());
         post.setBlocked(false);
-        //do I need to initial fields 'comments' and 'postLikesList' if object was created by @NoArgsConstructor Lombok
-        //Below I use this fields in mapping method - getPostResponseFromPost(Post p)
 
         postRepository.save(post);
 
