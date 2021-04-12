@@ -4,19 +4,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import skillbox.javapro11.ServiceTestConfiguration;
 import skillbox.javapro11.api.request.PostRequest;
 import skillbox.javapro11.api.request.ProfileEditRequest;
-import skillbox.javapro11.api.response.*;
+import skillbox.javapro11.api.response.CommonListResponse;
+import skillbox.javapro11.api.response.CommonResponseData;
+import skillbox.javapro11.api.response.PersonResponse;
+import skillbox.javapro11.api.response.PostResponse;
 import skillbox.javapro11.enums.PermissionMessage;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.model.entity.Post;
@@ -28,7 +29,6 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,13 +83,10 @@ public class ProfileServiceTest {
     @Test
     @DisplayName("Getting current user")
     void getCurrentUserTest() {
-        PersonResponse personResponse = profileService.getCurrentUser();
+        CommonResponseData commonResponseData = profileService.getCurrentUser();
 
-        assertThat(personResponse)
+        assertThat(commonResponseData)
                 .isNotNull();
-        //.hasNoNullFieldsOrProperties();
-        // TODO: Test failed cause token field is empty!!!
-        //  Demand help with it, maybe add same Spring Security Class ass mock
     }
 
     @Test
@@ -108,10 +105,11 @@ public class ProfileServiceTest {
                 PermissionMessage.FRIEND
         );
 
-        PersonResponse personResponse = profileService.editCurrentUser(profileEditRequest);
+        CommonResponseData commonResponseData = profileService.editCurrentUser(profileEditRequest);
 
-        assertThat(personResponse).isNotNull();
+        assertThat(commonResponseData).isNotNull();
 
+        PersonResponse personResponse = (PersonResponse) commonResponseData.getData();
         assertEquals("check first name", profileEditRequest.getFirstName(), personResponse.getFirstName());
         assertEquals("check last name", profileEditRequest.getLastName(), personResponse.getLastName());
         assertEquals("check phone", profileEditRequest.getPhone(), personResponse.getPhone());
@@ -141,8 +139,8 @@ public class ProfileServiceTest {
 
         Mockito.when(personRepository.getOne(id)).thenReturn(person);
 
-        PersonResponse personResponse = profileService.findUserById(id);
-        assertThat(personResponse).isNotNull();
+        CommonResponseData userById = profileService.findUserById(id);
+        assertThat(userById).isNotNull();
     }
 
     @Test
