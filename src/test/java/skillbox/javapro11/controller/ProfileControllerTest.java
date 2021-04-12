@@ -29,7 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//@WebMvcTest //(try after creating tests instead @SpringBootTest and @AutoConfigureMvc)
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("Profile controller test")

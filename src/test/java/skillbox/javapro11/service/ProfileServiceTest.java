@@ -46,8 +46,6 @@ public class ProfileServiceTest {
     @MockBean
     private AccountService accountService;
     @MockBean
-    private ProfileEditRequest profileEditRequest;
-    @MockBean
     private PersonRepository personRepository;
     @MockBean
     private PostRepository postRepository;
@@ -86,7 +84,18 @@ public class ProfileServiceTest {
         CommonResponseData commonResponseData = profileService.getCurrentUser();
 
         assertThat(commonResponseData)
-                .isNotNull();
+                .isNotNull()
+                .isExactlyInstanceOf(CommonResponseData.class);
+
+        PersonResponse personResponse = (PersonResponse) commonResponseData.getData();
+        assertEquals("check first name", "Ivan", personResponse.getFirstName());
+        assertEquals("check last name", "Ivanov", personResponse.getLastName());
+        assertEquals("check phone", "+7(111)222-33-44", personResponse.getPhone());
+        assertEquals("check photo", "photo", personResponse.getPhoto());
+        assertEquals("about", "about", personResponse.getAbout());
+        assertEquals("check town / city", "Moscow", personResponse.getCity());
+        assertEquals("check country", "Russia", personResponse.getCountry());
+        assertEquals("check permission massage", PermissionMessage.ALL, personResponse.getMessagesPermission());
     }
 
     @Test
@@ -107,7 +116,9 @@ public class ProfileServiceTest {
 
         CommonResponseData commonResponseData = profileService.editCurrentUser(profileEditRequest);
 
-        assertThat(commonResponseData).isNotNull();
+        assertThat(commonResponseData)
+                .isNotNull()
+                .isExactlyInstanceOf(CommonResponseData.class);
 
         PersonResponse personResponse = (PersonResponse) commonResponseData.getData();
         assertEquals("check first name", profileEditRequest.getFirstName(), personResponse.getFirstName());
@@ -122,12 +133,13 @@ public class ProfileServiceTest {
 
     @Test
     @DisplayName("Delete current user")
-    void deleteCurrentUserTest(){
+    void deleteCurrentUserTest() {
 
         CommonResponseData commonResponseData = profileService.deleteCurrentUser();
 
         assertThat(commonResponseData)
                 .isNotNull()
+                .isInstanceOf(CommonResponseData.class)
                 .hasNoNullFieldsOrProperties();
     }
 
@@ -135,33 +147,45 @@ public class ProfileServiceTest {
     @DisplayName("Find user by Id")
     void findUserByIdTest() {
         final long id = 1L;
-        Person person = new Person();
+        Person person = accountService.getCurrentPerson();
 
         Mockito.when(personRepository.getOne(id)).thenReturn(person);
 
         CommonResponseData userById = profileService.findUserById(id);
-        assertThat(userById).isNotNull();
+        assertThat(userById)
+                .isNotNull()
+                .isInstanceOf(CommonResponseData.class);
+
+        PersonResponse personResponse = (PersonResponse) userById.getData();
+        assertEquals("check first name", "Ivan", personResponse.getFirstName());
+        assertEquals("check last name", "Ivanov", personResponse.getLastName());
+        assertEquals("check phone", "+7(111)222-33-44", personResponse.getPhone());
+        assertEquals("check photo", "photo", personResponse.getPhoto());
+        assertEquals("about", "about", personResponse.getAbout());
+        assertEquals("check town / city", "Moscow", personResponse.getCity());
+        assertEquals("check country", "Russia", personResponse.getCountry());
+        assertEquals("check permission massage", PermissionMessage.ALL, personResponse.getMessagesPermission());
     }
 
     @Test
-	@DisplayName("get users wall")
-	void getUserWall() {
-    	Person person = accountService.getCurrentPerson();
-		long offset = 0L;
-		int itemPerPage = 2;
-		Page<Post> postPage = Page.empty();
-		Mockito.when(postRepository.findAllByPerson(person, profileService.getPageable(offset, itemPerPage)))
-				.thenReturn(postPage);
-		Mockito.when(personRepository.findById(person.getId())).thenReturn(person);
+    @DisplayName("get users wall")
+    void getUserWall() {
+        Person person = accountService.getCurrentPerson();
+        long offset = 0L;
+        int itemPerPage = 2;
+        Page<Post> postPage = Page.empty();
+        Mockito.when(postRepository.findAllByPerson(person, profileService.getPageable(offset, itemPerPage)))
+                .thenReturn(postPage);
+        Mockito.when(personRepository.findById(person.getId())).thenReturn(person);
 
-		CommonListResponse response = profileService.getUserWall(person.getId(), offset, itemPerPage);
+        CommonListResponse response = profileService.getUserWall(person.getId(), offset, itemPerPage);
 
-		assertEquals("error field value", "string", response.getError());
-		assertEquals("total field value", 0L, response.getTotal());
-		assertEquals("offset field value", offset, response.getOffset());
-		assertEquals("itemPerPage field value", itemPerPage, response.getPerPage());
-		assertEquals("list size", 0, response.getData().size());
-	}
+        assertEquals("error field value", "string", response.getError());
+        assertEquals("total field value", 0L, response.getTotal());
+        assertEquals("offset field value", offset, response.getOffset());
+        assertEquals("itemPerPage field value", itemPerPage, response.getPerPage());
+        assertEquals("list size", 0, response.getData().size());
+    }
 
     @Test
     @DisplayName("Post on users wall")
@@ -185,26 +209,26 @@ public class ProfileServiceTest {
     }
 
     @Test
-	@DisplayName("Search users")
-	void searchUser() {
-    	long offset = 0L;
-    	int itemPerPage = 2;
-		PersonSpecificationsBuilder builder = new PersonSpecificationsBuilder();
-		Specification<Person> spec = builder.build();
-		Page<Person> personPage = Page.empty();
-    	Mockito.when(personRepository.findAll(spec, profileService.getPageable(offset, itemPerPage)))
-				.thenReturn(personPage);
+    @DisplayName("Search users")
+    void searchUser() {
+        long offset = 0L;
+        int itemPerPage = 2;
+        PersonSpecificationsBuilder builder = new PersonSpecificationsBuilder();
+        Specification<Person> spec = builder.build();
+        Page<Person> personPage = Page.empty();
+        Mockito.when(personRepository.findAll(spec, profileService.getPageable(offset, itemPerPage)))
+                .thenReturn(personPage);
 
-		CommonListResponse response = profileService.searchUser(
-				null, null, null, null, null, null, offset, itemPerPage);
+        CommonListResponse response = profileService.searchUser(
+                null, null, null, null, null, null, offset, itemPerPage);
 
 
-		assertEquals("error field value", "string", response.getError());
-		assertEquals("total field value", 0L, response.getTotal());
-		assertEquals("offset field value", offset, response.getOffset());
-		assertEquals("itemPerPage field value", itemPerPage, response.getPerPage());
-		assertEquals("list size", 0, response.getData().size());
-	}
+        assertEquals("error field value", "string", response.getError());
+        assertEquals("total field value", 0L, response.getTotal());
+        assertEquals("offset field value", offset, response.getOffset());
+        assertEquals("itemPerPage field value", itemPerPage, response.getPerPage());
+        assertEquals("list size", 0, response.getData().size());
+    }
 
     @Test
     @DisplayName("Block/unblock user")
@@ -220,29 +244,29 @@ public class ProfileServiceTest {
         assertThat(unblockResponse).isNotNull().hasNoNullFieldsOrProperties();
     }
 
-	@Test
-	@DisplayName("Mapping personList to personResponseList")
-	void getPersonResponseListFromPersonList() {
-		List<Person> personList = new ArrayList<>();
-		personList.add(new Person());
-		personList.add(new Person());
-		List<PersonResponse> personResponseList = profileService.getPersonResponseListFromPersonList(personList);
+    @Test
+    @DisplayName("Mapping personList to personResponseList")
+    void getPersonResponseListFromPersonList() {
+        List<Person> personList = new ArrayList<>();
+        personList.add(new Person());
+        personList.add(new Person());
+        List<PersonResponse> personResponseList = profileService.getPersonResponseListFromPersonList(personList);
 
-		assertThat(personList.size() == personResponseList.size());
-	}
+        assertThat(personList.size() == personResponseList.size());
+    }
 
-	@Test
-	@DisplayName("Mapping postList to postResponseList")
-	void getPostResponseListFromPostList() {
-    	List<Post> postList = new ArrayList<>();
-    	Person author = accountService.getCurrentPerson();
-    	Post post = new Post();
-    	post.setPerson(author);
-    	post.setTime(LocalDateTime.now());
-    	postList.add(post);
-    	postList.add(post);
-    	List<PostResponse> postResponseList = profileService.getPostResponseListFromPostList(postList);
+    @Test
+    @DisplayName("Mapping postList to postResponseList")
+    void getPostResponseListFromPostList() {
+        List<Post> postList = new ArrayList<>();
+        Person author = accountService.getCurrentPerson();
+        Post post = new Post();
+        post.setPerson(author);
+        post.setTime(LocalDateTime.now());
+        postList.add(post);
+        postList.add(post);
+        List<PostResponse> postResponseList = profileService.getPostResponseListFromPostList(postList);
 
-    	assertThat(postResponseList.size() == postList.size());
-	}
+        assertThat(postResponseList.size() == postList.size());
+    }
 }
