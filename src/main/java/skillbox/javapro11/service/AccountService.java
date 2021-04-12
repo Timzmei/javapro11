@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.RegisterRequest;
 import skillbox.javapro11.enums.NotificationTypeCode;
 import skillbox.javapro11.model.entity.Person;
-import skillbox.javapro11.security.JwtTokenProvider;
 
 @Service
 public class AccountService {
@@ -29,7 +28,8 @@ public class AccountService {
         return message;
     }
 
-    protected Person getCurrentPerson() {
+
+    public Person getCurrentPerson() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         org.springframework.security.core.userdetails.User user =
                 (org.springframework.security.core.userdetails.User) auth.getPrincipal();

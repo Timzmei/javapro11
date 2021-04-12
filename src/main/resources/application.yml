@@ -24,3 +24,6 @@ spring:
 server:
   servlet:
     contextPath: /api/v1
+
+cloudinary:
+  url: cloudinary://889892999924949:HBEMk4_4zYqvw8Eg6e2vwqDQxy4@dmw3gspng
