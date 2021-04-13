@@ -12,12 +12,18 @@ spring:
     driverClassName: org.postgresql.Driver
   mail:
     host: smtp.gmail.com
-      port: 587
-      username: socialnetwok2021@gmail.com
-      password: sizadrhjufeacfpw
-      protocol: smtp
-      tls: true
-      properties.mail.smtp:
-        auth: true
-        starttls.enable: true
-        ssl.trust: smtp.gmail.com
+    port: 587
+    username: socialnetwok2021@gmail.com
+    password: sizadrhjufeacfpw
+    protocol: smtp
+    tls: true
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
+      ssl.trust: smtp.gmail.com
+server:
+  servlet:
+    contextPath: /api/v1
+
+cloudinary:
+  url: cloudinary://889892999924949:HBEMk4_4zYqvw8Eg6e2vwqDQxy4@dmw3gspng
