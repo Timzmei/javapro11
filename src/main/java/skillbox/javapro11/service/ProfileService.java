@@ -91,7 +91,7 @@ public class ProfileService {
             currentPerson.setPermissionMessage(profileEditRequest.getPermissionMessage());
         }
 
-        personRepository.updatePerson(currentPerson);
+        personRepository.save(currentPerson);
 
         return getPersonResponseFromPerson(currentPerson);
     }
@@ -120,7 +120,7 @@ public class ProfileService {
         Person person = personRepository.findById(userId);
         Pageable pageable = getPageable(offset, itemPerPage);
 
-        Page<Post> postPage = postRepository.findAllWherePerson(person, pageable);
+        Page<Post> postPage = postRepository.findAllByPerson(person, pageable);
         //build response
         return new CommonListResponse(
                 "string",
