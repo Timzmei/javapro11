@@ -1,6 +1,5 @@
 package skillbox.javapro11.service.post;
 
-import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -12,9 +11,9 @@ import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.model.entity.Post;
 import skillbox.javapro11.repository.CommentRepository;
 import skillbox.javapro11.repository.PostRepository;
+import skillbox.javapro11.service.AccountService;
 
 import java.time.LocalDateTime;
-import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -22,31 +21,81 @@ import java.util.Optional;
 public class PostServiceImpl implements PostService {
   private final PostRepository postRepository;
   private final CommentRepository commentRepository;
+  private final AccountService accountService;
   private final ModelMapper modelMapper;
 
   @Override
-  public CommentResponse getComments(int postId, int limit, int offset) {
+  public CommentResponse getComments(long postId, int limit, int offset) {
     return null;
   }
 
-  public CommonResponseData editedComment(long postId, CommentRequest comment, Person person) throws NotFoundException {
-    //TODO разобраться с ошибкой
-    // разобраться с мапером
-    Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("Пост не найден"));
-    Comment comment1;
-    Comment newComment = new Comment();
+  @Override
+  public CommonResponseData editedComment(long postId, long idComment, CommentRequest comment) {
+    Person person = accountService.getCurrentPerson();
+    CommonResponseData response = new CommonResponseData();
+    Optional<Post> postOptional = postRepository.findById(postId);
+    if (!postOptional.isPresent()) {
+      response.setError("Пост не найден");
+      response.setTimestamp(LocalDateTime.now());
+      return response;
+    }
+    Post post = postOptional.get();
+    Comment newComment;
+    if (idComment != 0) {
+      Optional<Comment> commentOptional = commentRepository.findById(idComment);
+      if (!commentOptional.isPresent()) {
+        response.setError("Комментарий не найден");
+        response.setTimestamp(LocalDateTime.now());
+        return response;
+      }
+      newComment = commentOptional.get();
+      if (newComment.getAuthorId() != person.getId()) {
+        response.setError("У вас нет прав");
+        response.setTimestamp(LocalDateTime.now());
+        return response;
+      }
+    } else {
+      newComment = new Comment();
+      newComment.setPost(post);
+      newComment.setTime(LocalDateTime.now());
+      newComment.setAuthorId(person.getId());
+    }
     if (comment.getParentId() != 0) {
-      comment1 = commentRepository.findById(comment.getParentId()).orElseThrow(() -> new NotFoundException("Комментарий не найден"));
+      if (!commentRepository.findById(comment.getParentId()).isPresent()) {
+        response.setError("Комментарий не найден");
+        response.setTimestamp(LocalDateTime.now());
+        return response;
+      }
       newComment.setParentId(comment.getParentId());
     }
-    newComment.setPost(post);
     newComment.setCommentText(comment.getCommentText());
-    newComment.setTime(LocalDateTime.now());
-    newComment.setAuthorId(person.getId());
+
+    commentRepository.save(newComment);
 
     CommentResponse commentResponse = modelMapper.map(newComment, CommentResponse.class);
-    CommonResponseData response = CommonResponseData.builder().data(commentResponse).build();
-
+    response.setData(commentResponse);
     return response;
+  }
+
+  @Override
+  public CommonResponseData deleteComment(long postId, long idComment) {
+    CommonResponseData response = new CommonResponseData();
+    Optional<Post> postOptional = postRepository.findById(postId);
+    if (!postOptional.isPresent()) {
+      response.setError("Пост не найден");
+      response.setTimestamp(LocalDateTime.now());
+      return response;
+    }
+    Optional<Comment> commentOptional = commentRepository.findById(idComment);
+    if (!commentOptional.isPresent()) {
+      response.setError("Комментарий не найден");
+      response.setTimestamp(LocalDateTime.now());
+      return response;
+    }
+    Comment comment = commentOptional.get();
+//    comment.setDelet()
+    commentRepository.save(comment);
+    //TODO конвертнуть в дто и вернуть его
+    return null;
   }
 }
