@@ -79,6 +79,7 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public CommonResponseData deleteComment(long postId, long idComment) {
+    //TODO возможно нужен юзер
     CommonResponseData response = new CommonResponseData();
     Optional<Post> postOptional = postRepository.findById(postId);
     if (!postOptional.isPresent()) {
@@ -93,9 +94,10 @@ public class PostServiceImpl implements PostService {
       return response;
     }
     Comment comment = commentOptional.get();
-//    comment.setDelet()
+    comment.setDeleted(true);
     commentRepository.save(comment);
-    //TODO конвертнуть в дто и вернуть его
-    return null;
+
+    response.setData(CommentResponse.builder().id(comment.getId()).build());
+    return response;
   }
 }
