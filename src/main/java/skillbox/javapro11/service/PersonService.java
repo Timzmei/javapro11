@@ -1,6 +1,7 @@
 package skillbox.javapro11.service;
 
 import skillbox.javapro11.api.request.RegisterRequest;
+import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.model.entity.Person;
 
 public interface PersonService {
