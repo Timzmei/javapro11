@@ -6,9 +6,9 @@ spring:
       ddl-auto: none
   datasource:
     platform: postgres
-    url: jdbc:postgresql://localhost:5433/test?createDatabaseIfNotExist=true
+    url: jdbc:postgresql://localhost:5432/test?createDatabaseIfNotExist=true
     username: postgres
-    password: 12357
+    password: password
     driverClassName: org.postgresql.Driver
   mail:
     host: smtp.gmail.com
@@ -21,3 +21,9 @@ spring:
       auth: true
       starttls.enable: true
       ssl.trust: smtp.gmail.com
+server:
+  servlet:
+    contextPath: /api/v1
+
+cloudinary:
+  url: cloudinary://889892999924949:HBEMk4_4zYqvw8Eg6e2vwqDQxy4@dmw3gspng
