@@ -11,7 +11,7 @@ import skillbox.javapro11.api.request.RegisterRequest;
 import skillbox.javapro11.api.request.SetPasswordRequest;
 import skillbox.javapro11.api.response.CommonResponse;
 import skillbox.javapro11.model.entity.Person;
-import skillbox.javapro11.service.impl.AccountServiceImpl;
+import skillbox.javapro11.service.AccountService;
 
 @RestController
 @RequestMapping("/account")
@@ -19,7 +19,7 @@ public class AccountController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
 
     @Autowired
-    private AccountServiceImpl accountServiceImpl;
+    private AccountService accountService;
 
     @PostMapping("/register")
     public ResponseEntity<CommonResponse> personRegister(@RequestBody RegisterRequest registerRequest){
@@ -27,12 +27,12 @@ public class AccountController {
 
         String email = registerRequest.getEmail();
         String message = "";
-        Person curPerson =  accountServiceImpl.findPersonByEmail(email);
+        Person curPerson =  accountService.findPersonByEmail(email);
         if (curPerson != null) {
             message = String.format("User with email %s already exists", email);
         }
         else{
-            accountServiceImpl.addNewPerson(registerRequest);
+            accountService.addNewPerson(registerRequest);
         }
         return new ResponseEntity<>(new CommonResponse(message), HttpStatus.OK);
     }
@@ -42,7 +42,7 @@ public class AccountController {
         LOGGER.trace("/api/v1/account/password/recovery");
 
         String message = "";
-        boolean mailIsSend = accountServiceImpl.sendEmailToPerson(email);
+        boolean mailIsSend = accountService.sendEmailToPerson(email);
         if (!mailIsSend){
             message = String.format("Mail was not send to %s", email);
         }
@@ -53,7 +53,7 @@ public class AccountController {
     public ResponseEntity<CommonResponse> passwordChange(@RequestBody SetPasswordRequest setPasswordRequest){
         LOGGER.trace("/api/v1/account/password/set");
 
-        String message = accountServiceImpl.changePersonPassword(setPasswordRequest.getToken(), setPasswordRequest.getPassword());
+        String message = accountService.changePersonPassword(setPasswordRequest.getToken(), setPasswordRequest.getPassword());
         return new ResponseEntity<>(new CommonResponse(message), HttpStatus.OK);
     }
 
@@ -61,14 +61,14 @@ public class AccountController {
     public ResponseEntity<CommonResponse> emailChange(@RequestBody String email){
         LOGGER.trace("/api/v1/account/password/email");
 
-        String message = accountServiceImpl.changePersonEmail(email);
+        String message = accountService.changePersonEmail(email);
         return new ResponseEntity<>(new CommonResponse(message), HttpStatus.OK);
     }
 
     @PutMapping("/notifications")
     public ResponseEntity<CommonResponse> accountNotifications(@RequestBody NotificationsRequest notificationsRequest){
         LOGGER.trace("/api/v1/account/notifications");
-        String message = accountServiceImpl
+        String message = accountService
                 .saveNotificationSetting(notificationsRequest.getNotificationTypeCode(),notificationsRequest.getEnable());
         return new ResponseEntity<>(new CommonResponse(message), HttpStatus.OK);
     }

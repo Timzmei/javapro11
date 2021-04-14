@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import skillbox.javapro11.service.impl.StorageServiceImpl;
+import skillbox.javapro11.service.StorageService;
 
 /**
  * Created by timur_guliev on 31.03.2021.
@@ -16,11 +16,11 @@ import skillbox.javapro11.service.impl.StorageServiceImpl;
 @Slf4j
 public class StorageController {
 
-    private final StorageServiceImpl storageServiceImpl;
+    private final StorageService storageService;
 
     @Autowired
-    public StorageController(StorageServiceImpl storageServiceImpl) {
-        this.storageServiceImpl = storageServiceImpl;
+    public StorageController(StorageService storageService) {
+        this.storageService = storageService;
     }
 
     @PostMapping("/storage")
@@ -28,7 +28,7 @@ public class StorageController {
                                         @RequestParam("type") String type){ //не совесм понятно где этот тайп используется
 
         log.trace("/api/v1/storage");
-        return ResponseEntity.ok(storageServiceImpl.uploadImage(file));
+        return ResponseEntity.ok(storageService.uploadImage(file));
     }
 
 }
