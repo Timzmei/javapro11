@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AuthenticationTest {
 
     private String USER_EMAIL = "mail@mail.ru";
-    private String USER_PASS = "111111";
+    private String USER_PASS = "111t111";
 
     @Autowired
     MockMvc mockMvc;
@@ -56,7 +56,7 @@ public class AuthenticationTest {
 
         given(userDetailsServiceImpl.loadUserByUsername(USER_EMAIL)).willReturn(user);
         mockMvc
-                .perform(post("/api/v1/auth/login")
+                .perform(post("/auth/login")
                         .contentType(APPLICATION_JSON)
                         .content(payload)
                         .accept(APPLICATION_JSON))
@@ -81,12 +81,12 @@ public class AuthenticationTest {
         String message = "";
         try {
             mockMvc
-                    .perform(post("/api/v1/auth/login")
+                    .perform(post("/auth/login")
                             .contentType(APPLICATION_JSON)
                             .content(payload)
                             .accept(APPLICATION_JSON))
                     .andDo(print())
-                    .andExpect(status().isForbidden())
+                    .andExpect(status().is4xxClientError())
                     .andReturn().getResponse().getContentAsString();
         } catch (Exception e) {
             message = new RuntimeException(e).getMessage();

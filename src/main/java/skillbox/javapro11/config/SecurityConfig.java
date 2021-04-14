@@ -62,6 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 //authorizeRequests() - все запросы через spring security
                 .authorizeRequests()
+                .antMatchers("/account/register", "/account/password/recovery").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -81,7 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         customUsernamePasswordAuthenticationFilter
                 .setAuthenticationManager(authenticationManagerBean());
         customUsernamePasswordAuthenticationFilter
-                .setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/api/v1/auth/login", "POST"));
+                .setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/auth/login", "POST"));
         return customUsernamePasswordAuthenticationFilter;
     }
 
