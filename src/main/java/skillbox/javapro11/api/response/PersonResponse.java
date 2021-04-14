@@ -1,6 +1,8 @@
 package skillbox.javapro11.api.response;
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PersonResponse extends ResponseData {
@@ -24,10 +27,10 @@ public class PersonResponse extends ResponseData {
     private String lastName;
 
     @JsonProperty(value = "reg_date")
-    private LocalDateTime registrationDate;
+    private Long registrationDate;
 
     @JsonProperty(value = "birth_date")
-    private LocalDate birthDate;
+    private Long birthDate;
 
     private String email;
 
@@ -45,7 +48,7 @@ public class PersonResponse extends ResponseData {
     private PermissionMessage messagesPermission;
 
     @JsonProperty(value = "last_online_time")
-    private LocalDateTime lastOnlineTime;
+    private Long lastOnlineTime;
 
     @JsonProperty(value = "is_blocked")
     private boolean isBlocked;

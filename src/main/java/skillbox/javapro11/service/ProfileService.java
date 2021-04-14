@@ -233,8 +233,8 @@ public class ProfileService {
                 person.getId(),
                 person.getFirstName(),
                 person.getLastName(),
-                person.getRegistrationDate(),
-                person.getBirthday(),
+                person.getRegistrationDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                person.getBirthday().atStartOfDay(ZoneId.systemDefault()).toEpochSecond(),
                 person.getEmail(),
                 person.getPhone(),
                 person.getPhoto(),
@@ -242,7 +242,7 @@ public class ProfileService {
                 person.getCity(),
                 person.getCountry(),
                 person.getPermissionMessage(),
-                person.getLastTimeOnline(),
+                person.getLastTimeOnline().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
                 person.isBlocked(),
                 null
         );
