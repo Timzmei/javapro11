@@ -8,7 +8,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
+<<<<<<< HEAD
 @Builder
+=======
+@Setter
+>>>>>>> 8d59f25e52791733861134dcfd648ddf89eb2d54
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostResponse extends ResponseData {
