@@ -91,7 +91,7 @@ public class ProfileService {
             currentPerson.setPermissionMessage(profileEditRequest.getPermissionMessage());
         }
 
-        personRepository.updatePerson(currentPerson);
+        personRepository.save(currentPerson);
 
         return getPersonResponseFromPerson(currentPerson);
     }
