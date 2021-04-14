@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.RegisterRequest;
 import skillbox.javapro11.enums.NotificationTypeCode;
 import skillbox.javapro11.model.entity.Person;
-import skillbox.javapro11.security.JwtTokenProvider;
 
 @Service
 public class AccountService {
