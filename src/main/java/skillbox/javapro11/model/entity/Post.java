@@ -38,6 +38,9 @@ public class Post {
     @Column(name = "is_blocked", nullable = false)
     private boolean isBlocked;
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
+
     @OneToMany(mappedBy="post")
     private List<PostLike> postLikeList;
 
