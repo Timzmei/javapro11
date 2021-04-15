@@ -13,8 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import skillbox.javapro11.api.request.PostRequest;
-import skillbox.javapro11.api.response.CommonListResponse;
 import skillbox.javapro11.api.request.ProfileEditRequest;
+import skillbox.javapro11.api.response.CommonListResponse;
 import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.api.response.StatusMessageResponse;
@@ -34,7 +34,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("Profile controller test")
 public class ProfileControllerTest {
 
-    private final LocalDateTime localDateTime = LocalDateTime.of(2021, 1, 1, 12, 0);
     private final LocalDate localDate = LocalDate.of(2021, 1, 1);
 
     @Autowired
@@ -55,8 +54,8 @@ public class ProfileControllerTest {
                 1L,
                 "Ivan",
                 "Ivanov",
-                localDateTime,
-                localDate,
+                0L,
+                0L,
                 "email",
                 "phone",
                 "photo",
@@ -64,7 +63,7 @@ public class ProfileControllerTest {
                 "city",
                 "country",
                 PermissionMessage.ALL,
-                localDateTime,
+                0L,
                 false,
                 null);
         Mockito.when(profileService.getCurrentUser()).thenReturn(new CommonResponseData(personResponse, "string"));
@@ -139,8 +138,8 @@ public class ProfileControllerTest {
                 1L,
                 "Ivan",
                 "Ivanov",
-                localDateTime,
-                localDate,
+                0L,
+                0L,
                 "email",
                 "phone",
                 "photo",
@@ -148,7 +147,7 @@ public class ProfileControllerTest {
                 "city",
                 "country",
                 PermissionMessage.ALL,
-                localDateTime,
+                0L,
                 false,
                 null);
         Mockito.when(profileService.findUserById(1L)).thenReturn(new CommonResponseData(personResponse, "string"));
