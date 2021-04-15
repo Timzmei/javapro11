@@ -24,6 +24,8 @@ import skillbox.javapro11.model.entity.Post;
 import skillbox.javapro11.repository.PersonRepository;
 import skillbox.javapro11.repository.PostRepository;
 import skillbox.javapro11.repository.util.PersonSpecificationsBuilder;
+import skillbox.javapro11.service.impl.AccountServiceImpl;
+import skillbox.javapro11.service.impl.ProfileServiceImpl;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -45,14 +47,14 @@ public class ProfileServiceTest {
     private final LocalDate localDate = LocalDate.of(2021, 1, 1);
 
     @MockBean
-    private AccountService accountService;
+    private AccountServiceImpl accountService;
     @MockBean
     private PersonRepository personRepository;
     @MockBean
     private PostRepository postRepository;
 
     @Autowired
-    private ProfileService profileService;
+    private ProfileServiceImpl profileService;
 
     @BeforeEach
     public void setUp() {
@@ -249,9 +251,13 @@ public class ProfileServiceTest {
     @DisplayName("Mapping personList to personResponseList")
     void getPersonResponseListFromPersonList() {
         List<Person> personList = new ArrayList<>();
-        personList.add(new Person());
-        personList.add(new Person());
-        List<PersonResponse> personResponseList = profileService.getPersonResponseListFromPersonList(personList);
+        Person person = new Person();
+        person.setRegistrationDate(LocalDateTime.now());
+        person.setLastTimeOnline(LocalDateTime.now());
+        person.setBirthday(LocalDate.now());
+        personList.add(person);
+        personList.add(person);
+        List<PersonResponse> personResponseList = PersonResponse.fromPersonList(personList);
 
         assertTrue("Correct list size", personList.size() == personResponseList.size());
     }
@@ -266,7 +272,7 @@ public class ProfileServiceTest {
         post.setTime(LocalDateTime.now());
         postList.add(post);
         postList.add(post);
-        List<PostResponse> postResponseList = profileService.getPostResponseListFromPostList(postList);
+        List<PostResponse> postResponseList = PostResponse.fromPostList(postList);
 
         assertTrue("Correct list size", postResponseList.size() == postList.size());
     }
