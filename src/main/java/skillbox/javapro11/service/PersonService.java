@@ -15,4 +15,6 @@ public interface PersonService {
     String changePassword(String email, String password); //
 
     String changeEmail(String email);//
+
+    PersonResponse createPersonResponse(Person person, String token);
 }
