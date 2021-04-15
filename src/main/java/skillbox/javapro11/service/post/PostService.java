@@ -8,4 +8,7 @@ public interface PostService {
   CommentResponse getComments(long postId, int limit, int offset);
   CommonResponseData editedComment(long postId, long idComment, CommentRequest comment);
   CommonResponseData deleteComment(long postId, long idComment);
+  CommonResponseData reportComment(long postId, long idComment);
+  CommonResponseData recoverComment(long postId, long idComment);
+
 }

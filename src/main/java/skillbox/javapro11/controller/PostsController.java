@@ -56,11 +56,15 @@ public class PostsController {
     }
 
     @PutMapping("/{id}/comments/{comment_id}/recover")
-    public void recoverComment(){}
+    public ResponseEntity<?> recoverComment(@PathVariable(name = "id") long idPost,@PathVariable(name = "comment_id") long idComment){
+        return new ResponseEntity<>(postService.recoverComment(idPost, idComment), HttpStatus.OK);
+    }
 
     @PostMapping("/{id}/report")
     public void reportPublication(){}
 
     @PostMapping("/{id}/comments/{comment_id}/report")
-    public void reportCommentOnPublication(){}
+    public ResponseEntity<?> reportComment(@PathVariable(name = "id") long idPost,@PathVariable(name = "comment_id") long idComment){
+        return new ResponseEntity<>(postService.reportComment(idPost, idComment) ,HttpStatus.OK);
+    }
 }
