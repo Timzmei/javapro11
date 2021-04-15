@@ -226,10 +226,12 @@ public class ProfileServiceImpl implements ProfileService {
 
     //serve methods ===========================================================================
 
+    @Override
     public LocalDateTime getLocalDateTimeFromLong(long timestamp) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
     }
 
+    @Override
     public Pageable getPageable(long offset, int itemPerPage) {
         //itemPerPage can't be equal 0, cause we'll use it like divisor
         //I don't know why it may be equals 0, but anyway we are ready for this!
@@ -238,18 +240,21 @@ public class ProfileServiceImpl implements ProfileService {
         return PageRequest.of(page, itemPerPage);
     }
 
+    @Override
     public LocalDateTime getCorrectPublishLocalDateTime(LocalDateTime publishLocalDateTime) {
         return publishLocalDateTime.isBefore(LocalDateTime.now()) ? LocalDateTime.now() : publishLocalDateTime;
     }
 
     //Mapping methods ==============================================================================
 
+    @Override
     public List<PersonResponse> getPersonResponseListFromPersonList(List<Person> personList) {
         List<PersonResponse> personResponseList = new ArrayList<>();
         personList.forEach(person -> personResponseList.add(getPersonResponseFromPerson(person)));
         return personResponseList;
     }
 
+    @Override
     public PersonResponse getPersonResponseFromPerson(Person person) {
         return new PersonResponse(
                 person.getId(),
@@ -276,6 +281,7 @@ public class ProfileServiceImpl implements ProfileService {
         return postResponseList;
     }
 
+    @Override
     public PostResponse getPostResponseFromPost(Post post) {
         PostResponse postResponse = new PostResponse();
         postResponse.setId(post.getId());
@@ -290,12 +296,14 @@ public class ProfileServiceImpl implements ProfileService {
         return postResponse;
     }
 
+    @Override
     public List<CommentResponse> getCommentResponseListFromCommentList(List<Comment> commentList) {
         List<CommentResponse> commentDTOList = new ArrayList<>();
         commentList.forEach(comment -> commentDTOList.add(getCommentResponseFromComment(comment)));
         return commentDTOList;
     }
 
+    @Override
     public CommentResponse getCommentResponseFromComment(Comment comment) {
         return new CommentResponse(
                 comment.getParentId(),
