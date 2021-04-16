@@ -1,4 +1,4 @@
-package skillbox.javapro11.service.post;
+package skillbox.javapro11.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -13,6 +13,7 @@ import skillbox.javapro11.model.entity.Post;
 import skillbox.javapro11.repository.CommentRepository;
 import skillbox.javapro11.repository.PostRepository;
 import skillbox.javapro11.service.AccountService;
+import skillbox.javapro11.service.PostService;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
