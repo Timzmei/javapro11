@@ -1,4 +1,4 @@
-package skillbox.javapro11.service.post;
+package skillbox.javapro11.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -8,13 +8,14 @@ import skillbox.javapro11.api.response.PostResponse;
 import skillbox.javapro11.model.entity.Post;
 import skillbox.javapro11.repository.CommentRepository;
 import skillbox.javapro11.repository.PostRepository;
+import skillbox.javapro11.service.PostService;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class PostServiceImpl implements PostService{
+public class PostServiceImpl implements PostService {
   private final PostRepository postRepository;
   private final CommentRepository commentRepository;
 

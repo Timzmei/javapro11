@@ -3,7 +3,7 @@ package skillbox.javapro11.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import skillbox.javapro11.api.response.PostResponse;
-import skillbox.javapro11.service.post.PostService;
+import skillbox.javapro11.service.PostService;
 
 /**
  * Created by Artem on 03.04.2021.
