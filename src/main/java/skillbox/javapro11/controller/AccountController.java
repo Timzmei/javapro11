@@ -57,7 +57,7 @@ public class AccountController {
         return new ResponseEntity<>(new CommonResponse(message), HttpStatus.OK);
     }
 
-    @PutMapping("/password/email")
+    @PutMapping("/email")
     public ResponseEntity<CommonResponse> emailChange(@RequestBody String email){
         LOGGER.trace("/api/v1/account/password/email");
 

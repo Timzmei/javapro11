@@ -19,8 +19,12 @@ import skillbox.javapro11.api.response.CommonResponse;
 import skillbox.javapro11.controller.AccountController;
 import skillbox.javapro11.enums.NotificationTypeCode;
 import skillbox.javapro11.model.entity.Person;
+import skillbox.javapro11.repository.PersonRepository;
 import skillbox.javapro11.security.jwt.JwtTokenProvider;
+import skillbox.javapro11.security.userdetails.UserDetailsServiceImpl;
 import skillbox.javapro11.service.AccountService;
+import skillbox.javapro11.service.PersonService;
+import skillbox.javapro11.service.impl.AccountServiceImpl;
 
 
 @WebMvcTest(AccountController.class)
@@ -38,6 +42,15 @@ public class AccountControllerTest {
 
     @MockBean
     private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    private UserDetailsServiceImpl userDetailsServiceImpl;
+
+    @MockBean
+    private PersonService personService;
+
+    @MockBean
+    private PersonRepository personRepository;
 
     @Test
     public void testPersonRegister() throws Exception {

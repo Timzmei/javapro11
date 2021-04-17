@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter
@@ -14,10 +15,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CommonResponse {
     private String error;
-    private LocalDateTime timestamp;
+    private long timestamp;
 
     public CommonResponse(String errorMessage) {
         this.error = errorMessage;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = Instant.now().toEpochMilli();
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = Instant.now().toEpochMilli();
     }
 }
