@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.RegisterRequest;
 import skillbox.javapro11.enums.NotificationTypeCode;
 import skillbox.javapro11.model.entity.Person;
+import skillbox.javapro11.security.jwt.JwtTokenProvider;
 import skillbox.javapro11.service.AccountService;
 
 @Service
@@ -40,8 +41,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public String getMailByToken(String token) { // пока не знаю, как прописать. Есть метод в JwtTokenProvider
-        return null;
+    public String getMailByToken(String token) {
+        return new JwtTokenProvider().getUserEmailFromToken(token);
     }
 
     @Override

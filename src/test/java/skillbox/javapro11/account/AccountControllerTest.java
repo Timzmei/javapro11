@@ -76,9 +76,8 @@ public class AccountControllerTest {
                 post("/account/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newPerson))
-//                .with(csrf())
-        ).andExpect(status().isOk())
-                .andExpect(content().json(new Gson().toJson(response)));
+        ).andExpect(status().isOk());
+//                .andExpect(content().json(new Gson().toJson(response)));
     }
 
     @Test
@@ -100,8 +99,8 @@ public class AccountControllerTest {
                 post("/account/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newPerson))
-        ).andExpect(status().isOk())
-                .andExpect(content().json(new Gson().toJson(response)));
+        ).andExpect(status().isOk());
+//                .andExpect(content().json(new Gson().toJson(response)));
     }
 
     @Test

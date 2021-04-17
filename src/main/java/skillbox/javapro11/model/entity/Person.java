@@ -4,6 +4,8 @@ package skillbox.javapro11.model.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnTransformer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import skillbox.javapro11.api.request.RegisterRequest;
 import skillbox.javapro11.enums.PermissionMessage;
 
@@ -26,7 +28,7 @@ import java.time.LocalTime;
 @Data
 public class Person {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "first_name", nullable = false)
@@ -41,7 +43,7 @@ public class Person {
     @Column(name = "birth_date")
     private LocalDate birthday;
 
-    private String email;
+    private String email; // should be not null? should be unique?
 
     private String phone;
 
@@ -60,8 +62,9 @@ public class Person {
     @Column(name = "is_approved", nullable = false)
     private boolean isApproved;
 
-    @Column(name = "messages_permission", nullable = false)
     @Enumerated(EnumType.STRING)
+    @Column(name = "messages_permission", columnDefinition = "perm_message", nullable = false)
+    @ColumnTransformer(read = "messages_permission::varchar", write = "?::perm_message")
     private PermissionMessage permissionMessage;
 
     @Column(name = "last_online_time", nullable = false)
@@ -72,9 +75,35 @@ public class Person {
 
     public Person(RegisterRequest registerRequest) {
         this.email = registerRequest.getEmail();
-        this.password = registerRequest.getEmail();
+        this.password = new BCryptPasswordEncoder().encode(registerRequest.getPasswd1());
         this.firstName = registerRequest.getFirstName();
         this.lastName = registerRequest.getLastName();
         this.registrationDate = LocalDateTime.now();
+        this.lastTimeOnline = LocalDateTime.now();
+        this.isApproved = true;
+        this.permissionMessage = PermissionMessage.valueOf("ALL");
+        this.isBlocked = false;
+    }
+
+    // only mandatory fields
+    public Person(String firstName, String password) {
+        this.password = new BCryptPasswordEncoder().encode(password);
+        this.firstName = firstName;
+        this.registrationDate = LocalDateTime.now();
+        this.lastTimeOnline = LocalDateTime.now();
+        this.isApproved = true;
+        this.permissionMessage = PermissionMessage.valueOf("ALL");
+        this.isBlocked = false;
+    }
+
+    public Person(String firstName, String password, String email) {
+        this.password = new BCryptPasswordEncoder().encode(password);
+        this.firstName = firstName;
+        this.email = email;
+        this.registrationDate = LocalDateTime.now();
+        this.lastTimeOnline = LocalDateTime.now();
+        this.isApproved = true;
+        this.permissionMessage = PermissionMessage.valueOf("ALL");
+        this.isBlocked = false;
     }
 }
