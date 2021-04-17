@@ -6,6 +6,10 @@ import skillbox.javapro11.api.request.ProfileEditRequest;
 import skillbox.javapro11.api.response.CommonListResponse;
 import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.api.response.PersonResponse;
+import skillbox.javapro11.api.response.PostResponse;
+import skillbox.javapro11.model.entity.Post;
+
+import java.util.List;
 
 public interface ProfileService {
 
@@ -34,4 +38,5 @@ public interface ProfileService {
 
     CommonResponseData blockUser(boolean isBlocked, long userId);
 
+    List<PostResponse> getPostResponseListFromPostList(List<Post> toList);
 }
