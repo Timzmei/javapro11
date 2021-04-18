@@ -17,6 +17,13 @@ public class CommonListResponse extends CommonResponse {
     private int perPage;
     private List<ResponseData> data;
 
+
+    public CommonListResponse(String error, LocalDateTime timestamp, List<ResponseData> data) {
+        this.setError(error);
+        this.setTimestamp(timestamp);
+        this.data = data;
+    }
+
     public CommonListResponse(String error, LocalDateTime timestamp, long total, long offset, int perPage,
                               List<ResponseData> data) {
         this.setError(error);
