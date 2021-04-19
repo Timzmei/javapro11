@@ -14,13 +14,13 @@ import java.util.List;
 
 public interface ProfileService {
 
-    PersonResponse getCurrentUser();
+    CommonResponseData getCurrentUser();
 
-    PersonResponse editCurrentUser(@NotNull ProfileEditRequest profileEditRequest);
+    CommonResponseData editCurrentUser(@NotNull ProfileEditRequest profileEditRequest);
 
     CommonResponseData deleteCurrentUser();
 
-    PersonResponse findUserById(long id);
+    CommonResponseData findUserById(long id);
 
     CommonListResponse getUserWall(long userId, long offset, int itemPerPage);
 

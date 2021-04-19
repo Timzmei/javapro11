@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
@@ -205,8 +206,6 @@ public class ProfileServiceImpl implements ProfileService {
         return responseData;
     }
 
-    //serve methods ===========================================================================
-
     public LocalDateTime getLocalDateTimeFromLong(long timestamp) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
     }
@@ -223,16 +222,12 @@ public class ProfileServiceImpl implements ProfileService {
         return publishLocalDateTime.isBefore(LocalDateTime.now()) ? LocalDateTime.now() : publishLocalDateTime;
     }
 
-    //Mapping methods ==============================================================================
-
-    @Override
     public List<PersonResponse> getPersonResponseListFromPersonList(List<Person> personList) {
         List<PersonResponse> personResponseList = new ArrayList<>();
         personList.forEach(person -> personResponseList.add(getPersonResponseFromPerson(person)));
         return personResponseList;
     }
 
-    @Override
     public PersonResponse getPersonResponseFromPerson(Person person) {
         return new PersonResponse(
                 person.getId(),
