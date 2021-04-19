@@ -10,7 +10,7 @@ import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.service.ProfileService;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/users")
 public class ProfileController {
 
     private final ProfileService profileService;
@@ -23,12 +23,12 @@ public class ProfileController {
     }
 
     @GetMapping("/me")
-    public PersonResponse getCurrentUser() {
+    public CommonResponseData getCurrentUser() {
         return profileService.getCurrentUser();
     }
 
     @PutMapping("/me")
-    public PersonResponse editCurrentUser(@RequestBody ProfileEditRequest profileEditRequest) {
+    public CommonResponseData editCurrentUser(@RequestBody ProfileEditRequest profileEditRequest) {
         return profileService.editCurrentUser(profileEditRequest);
     }
 
@@ -38,7 +38,7 @@ public class ProfileController {
     }
 
     @GetMapping("/{id}")
-    public PersonResponse getUserById(@PathVariable("id") long id) {
+    public CommonResponseData getUserById(@PathVariable("id") long id) {
         return profileService.findUserById(id);
     }
 
