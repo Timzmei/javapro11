@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,6 +12,8 @@ import java.time.LocalDateTime;
 public class CommonResponseData extends CommonResponse {
     private ResponseData data;
 
-    public CommonResponseData(String error, LocalDateTime now, UploadImageResponse uploadImageResponse) {
+    public CommonResponseData(ResponseData data, String errorMassage){
+        super(errorMassage);
+        this.data = data;
     }
 }

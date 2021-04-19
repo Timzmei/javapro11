@@ -19,6 +19,7 @@ import skillbox.javapro11.model.entity.Post;
 import skillbox.javapro11.repository.PersonRepository;
 import skillbox.javapro11.repository.PostRepository;
 import skillbox.javapro11.repository.util.PersonSpecificationsBuilder;
+import skillbox.javapro11.service.AccountService;
 import skillbox.javapro11.service.ProfileService;
 
 import java.time.Instant;
@@ -26,41 +27,31 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
-    //private final AccountService accountService;
+    private final AccountService accountService;
     private final PersonRepository personRepository;
     private final PostRepository postRepository;
 
     @Autowired
     public ProfileServiceImpl(
-            //    AccountService accountService,
+            AccountService accountService,
             PersonRepository personRepository,
             PostRepository postRepository
     ) {
-        //    this.accountService = accountService;
+        this.accountService = accountService;
         this.personRepository = personRepository;
         this.postRepository = postRepository;
     }
 
-    @Override
-    public PersonResponse getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        return getPersonResponseFromPerson(personRepository.findByEmail(user.getUsername()));
-        //return getPersonResponseFromPerson(accountService.getCurrentUser());
-        // ToDo: Change after AccountService will be complete. Get current user from it.
+    public CommonResponseData getCurrentUser() {
+        return new CommonResponseData(PersonResponse.fromPerson(accountService.getCurrentPerson()), "string");
     }
 
-    @Override
-    public PersonResponse editCurrentUser(@NotNull ProfileEditRequest profileEditRequest) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        Person currentPerson = personRepository.findByEmail(user.getUsername());
-        // ToDo: Change after AccountService will be complete. Get current user from it.
+    public CommonResponseData editCurrentUser(@NotNull ProfileEditRequest profileEditRequest) {
+        Person currentPerson = accountService.getCurrentPerson();
 
         if (profileEditRequest.getFirstName() != null) {
             currentPerson.setFirstName(profileEditRequest.getFirstName());
@@ -96,16 +87,12 @@ public class ProfileServiceImpl implements ProfileService {
 
         personRepository.save(currentPerson);
 
-        return getPersonResponseFromPerson(currentPerson);
+        return new CommonResponseData(PersonResponse.fromPerson(currentPerson), "string");
     }
 
     @Override
     public CommonResponseData deleteCurrentUser() {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        Person currentPerson = personRepository.findByEmail(user.getUsername());
-        // ToDo: change when AccountService will be merged. Get current user from it.
+        Person currentPerson = accountService.getCurrentPerson();
 
         personRepository.delete(currentPerson);
 
@@ -116,12 +103,11 @@ public class ProfileServiceImpl implements ProfileService {
         return responseData;
     }
 
-    @Override
-    public PersonResponse findUserById(long id) {
-        return getPersonResponseFromPerson(personRepository.getOne(id));
+    public CommonResponseData findUserById(long id) {
+        PersonResponse personResponse = PersonResponse.fromPerson(personRepository.getOne(id));
+        return new CommonResponseData(personResponse, "string");
     }
 
-    @Override
     public CommonListResponse getUserWall(long userId, long offset, int itemPerPage) {
         Person person = personRepository.findById(userId);
         Pageable pageable = getPageable(offset, itemPerPage);
@@ -134,11 +120,10 @@ public class ProfileServiceImpl implements ProfileService {
                 postPage.getTotalElements(),
                 offset,
                 itemPerPage,
-                new ArrayList<>(getPostResponseListFromPostList(postPage.getContent()))
+                new ArrayList<>(PostResponse.fromPostList(postPage.getContent()))
         );
     }
 
-    @Override
     public CommonResponseData postOnUserWall(long userId, long publishDate, PostRequest postBody) {
         Person author = personRepository.findById(userId);
 
@@ -151,20 +136,17 @@ public class ProfileServiceImpl implements ProfileService {
         post.setTitle(postBody.getTitle());
         post.setText(postBody.getText());
         post.setBlocked(false);
-        //do I need to initial fields 'comments' and 'postLikesList' if object was created by @NoArgsConstructor Lombok
-        //Below I use this fields in mapping method - getPostResponseFromPost(Post p)
 
         postRepository.save(post);
 
         CommonResponseData response = new CommonResponseData();
         response.setError("string");
         response.setTimestamp(LocalDateTime.now());
-        response.setData(getPostResponseFromPost(post));
+        response.setData(PostResponse.fromPost(post));
 
         return response;
     }
 
-    @Override
     public CommonListResponse searchUser(
             String firstName,
             String lastName,
@@ -207,11 +189,10 @@ public class ProfileServiceImpl implements ProfileService {
                 personPage.getTotalElements(),
                 offset,
                 itemPerPage,
-                new ArrayList<>(getPersonResponseListFromPersonList(personPage.getContent()))
+                new ArrayList<>(PersonResponse.fromPersonList(personPage.getContent()))
         );
     }
 
-    @Override
     public CommonResponseData blockUser(boolean isBlocked, long userId) {
         Person person = personRepository.findById(userId);
         person.setBlocked(isBlocked);
@@ -226,12 +207,10 @@ public class ProfileServiceImpl implements ProfileService {
 
     //serve methods ===========================================================================
 
-    @Override
     public LocalDateTime getLocalDateTimeFromLong(long timestamp) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
     }
 
-    @Override
     public Pageable getPageable(long offset, int itemPerPage) {
         //itemPerPage can't be equal 0, cause we'll use it like divisor
         //I don't know why it may be equals 0, but anyway we are ready for this!
@@ -240,7 +219,6 @@ public class ProfileServiceImpl implements ProfileService {
         return PageRequest.of(page, itemPerPage);
     }
 
-    @Override
     public LocalDateTime getCorrectPublishLocalDateTime(LocalDateTime publishLocalDateTime) {
         return publishLocalDateTime.isBefore(LocalDateTime.now()) ? LocalDateTime.now() : publishLocalDateTime;
     }
