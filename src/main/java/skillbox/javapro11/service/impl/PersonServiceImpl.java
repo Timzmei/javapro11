@@ -56,13 +56,12 @@ public class PersonServiceImpl implements PersonService {
     }
 
     public PersonResponse createPersonResponse(Person person, String token) {
-
         PersonResponse personResponse = new PersonResponse();
         personResponse.setId(person.getId());
         personResponse.setFirstName(person.getFirstName());
         personResponse.setLastName(person.getLastName());
         personResponse.setRegistrationDate(person.getRegistrationDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-        personResponse.setBirthDate(person.getBirthday().atStartOfDay(ZoneId.systemDefault()).toEpochSecond());
+        personResponse.setBirthDate(person.getBirthday().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
         personResponse.setEmail(person.getEmail());
         personResponse.setPhone(person.getPhone());
         personResponse.setPhoto(person.getPhoto());

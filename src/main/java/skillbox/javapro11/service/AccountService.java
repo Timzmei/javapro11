@@ -4,6 +4,7 @@ import skillbox.javapro11.api.request.RegisterRequest;
 import skillbox.javapro11.enums.NotificationTypeCode;
 import skillbox.javapro11.model.entity.Person;
 
+
 public interface AccountService {
 
     String saveNotificationSetting(NotificationTypeCode notificationTypeCode, Boolean enable);
