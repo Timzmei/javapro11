@@ -2,6 +2,7 @@ package skillbox.javapro11.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,8 +13,11 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import skillbox.javapro11.api.request.AuthRequest;
+import skillbox.javapro11.model.entity.Person;
+import skillbox.javapro11.repository.PersonRepository;
 import skillbox.javapro11.security.userdetails.UserDetailsServiceImpl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +42,9 @@ public class AuthenticationTest {
     @MockBean
     UserDetailsServiceImpl userDetailsServiceImpl;
 
+    @MockBean
+    PersonRepository personRepository;
+
     @Autowired
     PasswordEncoder passwordEncoder;
 
@@ -55,6 +62,14 @@ public class AuthenticationTest {
         User user = new User(USER_EMAIL, passwordEncoder.encode(USER_PASS), authorities);
 
         given(userDetailsServiceImpl.loadUserByUsername(USER_EMAIL)).willReturn(user);
+
+        Person person = new Person();
+        LocalDateTime now = LocalDateTime.now();
+        person.setBirthday(now.toLocalDate());
+        person.setLastTimeOnline(now);
+        person.setRegistrationDate(now);
+        Mockito.when(personRepository.findByEmail(USER_EMAIL)).thenReturn(person);
+
         mockMvc
                 .perform(post("/auth/login")
                         .contentType(APPLICATION_JSON)

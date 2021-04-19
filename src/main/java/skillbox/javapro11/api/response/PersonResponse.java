@@ -1,16 +1,17 @@
 package skillbox.javapro11.api.response;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import skillbox.javapro11.enums.PermissionMessage;
+import skillbox.javapro11.model.entity.Person;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -55,4 +56,30 @@ public class PersonResponse extends ResponseData {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String token;
+
+    public static PersonResponse fromPerson(Person person) {
+        return new PersonResponse(
+                person.getId(),
+                person.getFirstName(),
+                person.getLastName(),
+                person.getRegistrationDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                person.getBirthday().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                person.getEmail(),
+                person.getPhone(),
+                person.getPhoto(),
+                person.getAbout(),
+                person.getCity(),
+                person.getCountry(),
+                person.getPermissionMessage(),
+                person.getLastTimeOnline().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                person.isBlocked(),
+                null
+        );
+    }
+
+    public static List<PersonResponse> fromPersonList(List<Person> personList) {
+        List<PersonResponse> personResponseList = new ArrayList<>();
+        personList.forEach(person -> personResponseList.add(fromPerson(person)));
+        return personResponseList;
+    }
 }

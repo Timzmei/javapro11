@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import skillbox.javapro11.model.entity.Comment;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -30,4 +32,23 @@ public class CommentResponse extends ResponseData {
 
     @JsonProperty(value="is_blocked")
     private boolean isBlocked;
+
+
+    public static List<CommentResponse> fromCommentList(List<Comment> commentList) {
+        List<CommentResponse> commentDTOList = new ArrayList<>();
+        commentList.forEach(comment -> commentDTOList.add(fromComment(comment)));
+        return commentDTOList;
+    }
+
+    public static CommentResponse fromComment(Comment comment) {
+        return new CommentResponse(
+                comment.getParentId(),
+                comment.getCommentText(),
+                comment.getId(),
+                comment.getPost().getId(),
+                comment.getTime(),
+                comment.getAuthorId(),
+                comment.isBlocked()
+        );
+    }
 }
