@@ -1,4 +1,4 @@
-package skillbox.javapro11.service.post;
+package skillbox.javapro11.service;
 
 import skillbox.javapro11.api.request.PostRequest;
 import skillbox.javapro11.api.response.CommentResponse;

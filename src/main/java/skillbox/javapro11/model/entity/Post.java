@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -42,10 +43,10 @@ public class Post {
     private boolean isDeleted;
 
     @OneToMany(mappedBy="post")
-    private List<PostLike> postLikeList;
+    private List<PostLike> postLikeList = new ArrayList<>();
 
     @OneToMany(mappedBy="post")
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
 
 }

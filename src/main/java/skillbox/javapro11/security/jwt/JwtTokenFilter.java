@@ -1,4 +1,4 @@
-package skillbox.javapro11.security;
+package skillbox.javapro11.security.jwt;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,5 +37,4 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
-
 }

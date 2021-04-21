@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import skillbox.javapro11.api.request.PostRequest;
 import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.api.response.PostResponse;
-import skillbox.javapro11.service.post.PostService;
+import skillbox.javapro11.service.PostService;
 
 /**
  * Created by Artem on 03.04.2021.

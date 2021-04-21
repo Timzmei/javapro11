@@ -7,11 +7,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import skillbox.javapro11.enums.PermissionMessage;
+import skillbox.javapro11.model.entity.Person;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PersonResponse extends ResponseData {
@@ -25,10 +28,10 @@ public class PersonResponse extends ResponseData {
     private String lastName;
 
     @JsonProperty(value = "reg_date")
-    private LocalDateTime registrationDate;
+    private Long registrationDate;
 
     @JsonProperty(value = "birth_date")
-    private LocalDate birthDate;
+    private Long birthDate;
 
     private String email;
 
@@ -46,11 +49,37 @@ public class PersonResponse extends ResponseData {
     private PermissionMessage messagesPermission;
 
     @JsonProperty(value = "last_online_time")
-    private LocalDateTime lastOnlineTime;
+    private Long lastOnlineTime;
 
     @JsonProperty(value = "is_blocked")
     private boolean isBlocked;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String token;
+
+    public static PersonResponse fromPerson(Person person) {
+        return new PersonResponse(
+                person.getId(),
+                person.getFirstName(),
+                person.getLastName(),
+                person.getRegistrationDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                person.getBirthday().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                person.getEmail(),
+                person.getPhone(),
+                person.getPhoto(),
+                person.getAbout(),
+                person.getCity(),
+                person.getCountry(),
+                person.getPermissionMessage(),
+                person.getLastTimeOnline().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                person.isBlocked(),
+                null
+        );
+    }
+
+    public static List<PersonResponse> fromPersonList(List<Person> personList) {
+        List<PersonResponse> personResponseList = new ArrayList<>();
+        personList.forEach(person -> personResponseList.add(fromPerson(person)));
+        return personResponseList;
+    }
 }

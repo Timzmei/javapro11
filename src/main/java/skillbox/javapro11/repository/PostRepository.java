@@ -13,6 +13,5 @@ import skillbox.javapro11.model.entity.Post;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-
 	Page<Post> findAllByPerson(Person person, Pageable pageable);
 }
