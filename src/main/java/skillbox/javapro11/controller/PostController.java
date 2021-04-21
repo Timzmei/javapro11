@@ -1,7 +1,11 @@
 package skillbox.javapro11.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import skillbox.javapro11.api.request.PostRequest;
+import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.api.response.PostResponse;
 import skillbox.javapro11.service.post.PostService;
 
@@ -16,23 +20,32 @@ public class PostController {
     private PostService postService;
 
     @GetMapping("")
-    public PostResponse getPostSearch (){
+    public ResponseEntity<?>  getPostSearch (){
         return null;
     }
 
     @GetMapping("/{id}")
-    public PostResponse getPostById(){
-        return null;
+    public ResponseEntity<?> getPostById(@PathVariable("id") long postId){
+        return new ResponseEntity<>(postService.getPostByID(postId), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public void editPostById(){}
+    public ResponseEntity<?> editPostById(@PathVariable("id") long postId,
+                             @PathVariable("publish_data") long publishData,
+                             @RequestBody PostRequest post){
+        CommonResponseData commonResponseData = postService.editPostById(postId, publishData, post);
+        return new ResponseEntity<>(commonResponseData, HttpStatus.OK);
+    }
 
     @DeleteMapping("/{id}")
-    public void deletePostById(){}
+    public ResponseEntity<?> deletePostById(@PathVariable("id") long postId){
+        return new ResponseEntity<>(postService.deletePostById(postId), HttpStatus.OK);
+    }
 
     @PutMapping("/{id}/recover")
-    public void recoverPostById(){}
+    public ResponseEntity<?> recoverPostById(@PathVariable("id") long postId){
+        return new ResponseEntity<>(postService.recoverPostById(postId), HttpStatus.OK);
+    }
 
     @GetMapping("/{id}/comments")
     public void getCommentsOnPost(){}
@@ -50,7 +63,9 @@ public class PostController {
     public void recoverComment(){}
 
     @PostMapping("/{id}/report")
-    public void reportPost(){}
+    public ResponseEntity<?> reportPost(@PathVariable("id") long postId){
+        return new ResponseEntity<>(postService.reportPost(postId), HttpStatus.OK);
+    }
 
     @PostMapping("/{id}/comments/{comment_id}/report")
     public void reportCommentOnPost(){}
