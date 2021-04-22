@@ -36,11 +36,11 @@ public class CommentResponse extends ResponseData {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty(value="author_id")
-    private long authorId;
+    private Long authorId;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty(value="is_blocked")
-    private boolean isBlocked;
+    private Boolean isBlocked;
 
 
     public static List<CommentResponse> fromCommentList(List<Comment> commentList) {

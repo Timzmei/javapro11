@@ -44,14 +44,12 @@ public class PostsController {
     @PutMapping("/{id}/comments/{comment_id}")
     public ResponseEntity<?> editComment(@PathVariable(name = "id") long idPost,
                                          @PathVariable(name = "comment_id") long idComment, @RequestBody CommentRequest comment){
-        CommonResponseData commonResponseData = postService.editedComment(idPost, idComment, comment);
-        return new ResponseEntity<>(commonResponseData, HttpStatus.OK);
+        return new ResponseEntity<>(postService.editedComment(idPost, idComment, comment), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}/comments/{comment_id}")
     public ResponseEntity<?> deleteComment(@PathVariable(name = "id") long idPost,@PathVariable(name = "comment_id") long idComment){
-        CommonResponseData commonResponseData = postService.deleteComment(idPost, idComment);
-        return new ResponseEntity<>(commonResponseData, HttpStatus.OK);
+        return new ResponseEntity<>(postService.deleteComment(idPost, idComment), HttpStatus.OK);
     }
 
     @PutMapping("/{id}/comments/{comment_id}/recover")

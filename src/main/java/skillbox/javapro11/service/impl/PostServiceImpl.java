@@ -22,6 +22,7 @@ import skillbox.javapro11.service.AccountService;
 import skillbox.javapro11.service.PostService;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,11 +32,6 @@ public class PostServiceImpl implements PostService {
   private final CommentRepository commentRepository;
   private final AccountService accountService;
   private final ModelMapper modelMapper;
-
-  @Override
-  public CommentResponse getComments(long postId, int limit, int offset) {
-    return null;
-  }
 
   @Override
   public CommentResponse getPostSearch(String text, String author, long dateFrom, long dateTo, String tagsRequest,
@@ -61,56 +57,6 @@ public class PostServiceImpl implements PostService {
     return response;
   }
 
-  public CommonResponseData editedComment(long postId, long idComment, CommentRequest comment) {
-//    Person person = accountService.getCurrentPerson();
-    CommonResponseData response = new CommonResponseData();
-    Optional<Post> postOptional = postRepository.findById(postId);
-    if (!postOptional.isPresent()) {
-      response.setError("Пост не найден");
-      response.setTimestamp(LocalDateTime.now());
-      return response;
-    }
-    Post post = postOptional.get();
-    Comment newComment;
-    if (idComment != 0) {
-      Optional<Comment> commentOptional = commentRepository.findById(idComment);
-      if (!commentOptional.isPresent()) {
-        response.setError("Комментарий не найден");
-        response.setTimestamp(LocalDateTime.now());
-        return response;
-      }
-      newComment = commentOptional.get();
-//      if (newComment.getAuthorId() != person.getId()) {
-      if (newComment.getAuthorId() != 1) {
-        response.setError("У вас нет прав");
-        response.setTimestamp(LocalDateTime.now());
-        return response;
-      }
-    } else {
-      newComment = new Comment();
-      newComment.setPost(post);
-      newComment.setTime(LocalDateTime.now());
-//      newComment.setAuthorId(person.getId());
-      newComment.setAuthorId(1);
-      if (comment.getParentId() != 0) {
-        if (!commentRepository.findById(comment.getParentId()).isPresent()) {
-          response.setError("Комментарий не найден");
-          response.setTimestamp(LocalDateTime.now());
-          return response;
-        }
-        newComment.setParentId(comment.getParentId());
-      }
-    }
-
-    newComment.setCommentText(comment.getCommentText());
-
-    commentRepository.save(newComment);
-
-    CommentResponse commentResponse = modelMapper.map(newComment, CommentResponse.class);
-    response.setData(commentResponse);
-    return response;
-  }
-
   @Override
   public CommonResponseData editPostById(long postId, long publishData, PostRequest postRequest) {
     Person person = accountService.getCurrentPerson();
@@ -130,6 +76,38 @@ public class PostServiceImpl implements PostService {
     return null;
   }
 
+
+  public CommonResponseData recoverPostById ( long postId){
+    CommonResponseData response = new CommonResponseData();
+    Optional<Post> postOptional = postRepository.findById(postId);
+    if (postOptional.isEmpty()) {
+      response.setError("Post not found");
+      response.setTimestamp(LocalDateTime.now());
+      return response;
+    }
+    Post post = postOptional.get();
+    post.setDeleted(false);
+    postRepository.save(post);
+//    response.setData( );
+    return response;
+  }
+
+  @Override
+  public CommonResponseData reportPost ( long postId){
+    CommonResponseData response = new CommonResponseData();
+    Optional<Post> postOptional = postRepository.findById(postId);
+    if (postOptional.isEmpty()) {
+      response.setError("Post not found");
+      response.setTimestamp(LocalDateTime.now());
+      return response;
+    }
+    Post post = postOptional.get();
+    post.setBlocked(true);
+    postRepository.save(post);
+    response.setData(new StatusMessageResponse("OK"));
+    return response;
+  }
+
   @Override
   public CommonResponseData deletePostById(long postId) {
     Person person = accountService.getCurrentPerson();
@@ -147,72 +125,83 @@ public class PostServiceImpl implements PostService {
     return response;
   }
 
+  @Override
+  public CommentResponse getComments(long postId, int limit, int offset) {
+//    List<Comment> comments = commentRepository.getComments(postId, limit, offset);
+
+    return null;
+  }
+
+  public CommonResponseData editedComment(long postId, long idComment, CommentRequest comment) {
+    Person person = accountService.getCurrentPerson();
+    Optional<Post> postOptional = postRepository.findById(postId);
+    if (!postOptional.isPresent()) {
+      return new CommonResponseData(null, "Пост не найден");
+    }
+    Post post = postOptional.get();
+    Comment newComment;
+    if (idComment != 0) {
+      newComment = commentRepository.getByIdAndPostId(idComment, postId);
+      if (comment == null) {
+        return new CommonResponseData(null, "Комментарий не найден");
+      }
+      if (newComment.getAuthorId() != person.getId()) {
+        return new CommonResponseData(null, "У вас нет прав");
+      }
+    } else {
+      newComment = new Comment();
+      newComment.setPost(post);
+      newComment.setTime(LocalDateTime.now());
+      newComment.setAuthorId(person.getId());
+      if (comment.getParentId() != 0) {
+        if (!commentRepository.findById(comment.getParentId()).isPresent()) {
+          return new CommonResponseData(null, "Комментарий не найден");
+        }
+        newComment.setParentId(comment.getParentId());
+      }
+    }
+
+    newComment.setCommentText(comment.getCommentText());
+
+    commentRepository.save(newComment);
+
+//    CommentResponse commentResponse = modelMapper.map(newComment, CommentResponse.class);
+    return new CommonResponseData(CommentResponse.fromComment(newComment), "");
+  }
+
   public CommonResponseData deleteComment(long postId, long idComment) {
     Person person = accountService.getCurrentPerson();
-    CommonResponseData response = new CommonResponseData();
-    Optional<Comment> commentOptional = commentRepository.findById(idComment);
-    if (!commentOptional.isPresent()) {
-      response.setError("Комментарий не найден");
-      response.setTimestamp(LocalDateTime.now());
-      return response;
+    Comment comment = commentRepository.getByIdAndPostId(idComment, postId);
+    if (comment == null) {
+      return new CommonResponseData(null, "Комментарий не найден");
     }
-    Comment comment = commentOptional.get();
     if (comment.getAuthorId() != person.getId()) {
-      response.setError("У вас нет прав");
-      response.setTimestamp(LocalDateTime.now());
-      return response;
+      return new CommonResponseData(null, "У вас нет прав");
     }
-//    Optional<Post> postOptional = postRepository.findById(postId);
-//    if (!postOptional.isPresent()) {
-//      response.setError("Пост не найден");
-//      response.setTimestamp(LocalDateTime.now());
-//      return response;
-//    }
 
     comment.setDeleted(true);
     commentRepository.save(comment);
 
-    response.setData(CommentResponse.builder().id(comment.getId()).build());
-    return response;
+    return new CommonResponseData(CommentResponse.builder().id(comment.getId()).build(), "");
   }
 
   @Override
   public CommonResponseData reportComment(long postId, long idComment) {
-    CommonResponseData response = new CommonResponseData();
-    Optional<Comment> commentOptional = commentRepository.findById(idComment);
-    if (!commentOptional.isPresent()) {
-      response.setError("Комментарий не найден");
-      response.setTimestamp(LocalDateTime.now());
-      return response;
-    }
-    Comment comment = commentOptional.get();
-    Optional<Post> postOptional = postRepository.findById(postId);
-    if (!postOptional.isPresent()) {
-      response.setError("Пост не найден");
-      response.setTimestamp(LocalDateTime.now());
-      return response;
+    Comment comment = commentRepository.getByIdAndPostId(idComment, postId);
+    if (comment == null) {
+      return new CommonResponseData(null, "Комментарий не найден");
     }
     comment.setBlocked(true);
     commentRepository.save(comment);
-    response.setData(new StatusMessageResponse("ok"));
-    return response;
+    return new CommonResponseData(new StatusMessageResponse("ok"), "");
   }
 
   @Override
   public CommonResponseData recoverComment(long postId, long idComment) {
     CommonResponseData response = new CommonResponseData();
-    Optional<Comment> commentOptional = commentRepository.findById(idComment);
-    if (!commentOptional.isPresent()) {
-      response.setError("Комментарий не найден");
-      response.setTimestamp(LocalDateTime.now());
-      return response;
-    }
-    Comment comment = commentOptional.get();
-    Optional<Post> postOptional = postRepository.findById(postId);
-    if (!postOptional.isPresent()) {
-      response.setError("Пост не найден");
-      response.setTimestamp(LocalDateTime.now());
-      return response;
+    Comment comment = commentRepository.getByIdAndPostId(idComment, postId);
+    if (comment == null) {
+      return new CommonResponseData(null, "Комментарий не найден");
     }
     comment.setDeleted(false);
     commentRepository.save(comment);
@@ -220,34 +209,4 @@ public class PostServiceImpl implements PostService {
     return response;
   }
 
-    public CommonResponseData recoverPostById ( long postId){
-      CommonResponseData response = new CommonResponseData();
-      Optional<Post> postOptional = postRepository.findById(postId);
-      if (postOptional.isEmpty()) {
-        response.setError("Post not found");
-        response.setTimestamp(LocalDateTime.now());
-        return response;
-      }
-      Post post = postOptional.get();
-      post.setDeleted(false);
-      postRepository.save(post);
-//    response.setData( );
-      return response;
-    }
-
-    @Override
-    public CommonResponseData reportPost ( long postId){
-      CommonResponseData response = new CommonResponseData();
-      Optional<Post> postOptional = postRepository.findById(postId);
-      if (postOptional.isEmpty()) {
-        response.setError("Post not found");
-        response.setTimestamp(LocalDateTime.now());
-        return response;
-      }
-      Post post = postOptional.get();
-      post.setBlocked(true);
-      postRepository.save(post);
-      response.setData(new StatusMessageResponse("OK"));
-      return response;
-    }
-  }
+}
