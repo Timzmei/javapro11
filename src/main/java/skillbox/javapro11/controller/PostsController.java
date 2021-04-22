@@ -38,8 +38,7 @@ public class PostsController {
 
     @PostMapping("/{id}/comments")
     public ResponseEntity<?> createComment(@PathVariable(name = "id") long idPost, @RequestBody CommentRequest comment){
-        CommonResponseData commonResponseData = postService.editedComment(idPost, 0, comment);
-        return new ResponseEntity<>(commonResponseData, HttpStatus.OK);
+        return new ResponseEntity<>(postService.editedComment(idPost, 0, comment), HttpStatus.OK);
     }
 
     @PutMapping("/{id}/comments/{comment_id}")

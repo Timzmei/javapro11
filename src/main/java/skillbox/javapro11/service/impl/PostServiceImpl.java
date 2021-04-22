@@ -58,8 +58,11 @@ public class PostServiceImpl implements PostService {
     Post post = optionalPost.get();
     postRepository.save(post);
     response.setData(PostResponse.builder().id(post.getId()).build());
+    return response;
+  }
+
   public CommonResponseData editedComment(long postId, long idComment, CommentRequest comment) {
-    Person person = accountService.getCurrentPerson();
+//    Person person = accountService.getCurrentPerson();
     CommonResponseData response = new CommonResponseData();
     Optional<Post> postOptional = postRepository.findById(postId);
     if (!postOptional.isPresent()) {
@@ -77,7 +80,8 @@ public class PostServiceImpl implements PostService {
         return response;
       }
       newComment = commentOptional.get();
-      if (newComment.getAuthorId() != person.getId()) {
+//      if (newComment.getAuthorId() != person.getId()) {
+      if (newComment.getAuthorId() != 1) {
         response.setError("У вас нет прав");
         response.setTimestamp(LocalDateTime.now());
         return response;
@@ -86,7 +90,8 @@ public class PostServiceImpl implements PostService {
       newComment = new Comment();
       newComment.setPost(post);
       newComment.setTime(LocalDateTime.now());
-      newComment.setAuthorId(person.getId());
+//      newComment.setAuthorId(person.getId());
+      newComment.setAuthorId(1);
       if (comment.getParentId() != 0) {
         if (!commentRepository.findById(comment.getParentId()).isPresent()) {
           response.setError("Комментарий не найден");
@@ -139,6 +144,9 @@ public class PostServiceImpl implements PostService {
     post.setDeleted(true);
     postRepository.save(post);
     response.setData(PostResponse.builder().id(post.getId()).build());
+    return response;
+  }
+
   public CommonResponseData deleteComment(long postId, long idComment) {
     Person person = accountService.getCurrentPerson();
     CommonResponseData response = new CommonResponseData();
@@ -209,34 +217,37 @@ public class PostServiceImpl implements PostService {
     comment.setDeleted(false);
     commentRepository.save(comment);
     response.setData(modelMapper.map(comment, CommentResponse.class));
-  public CommonResponseData recoverPostById(long postId) {
-    CommonResponseData response = new CommonResponseData();
-    Optional<Post> postOptional = postRepository.findById(postId);
-    if (postOptional.isEmpty()) {
-      response.setError("Post not found");
-      response.setTimestamp(LocalDateTime.now());
-      return response;
-    }
-    Post post = postOptional.get();
-    post.setDeleted(false);
-    postRepository.save(post);
-//    response.setData( );
     return response;
   }
 
-  @Override
-  public CommonResponseData reportPost(long postId) {
-    CommonResponseData response = new CommonResponseData();
-    Optional<Post> postOptional = postRepository.findById(postId);
-    if (postOptional.isEmpty()) {
-      response.setError("Post not found");
-      response.setTimestamp(LocalDateTime.now());
+    public CommonResponseData recoverPostById ( long postId){
+      CommonResponseData response = new CommonResponseData();
+      Optional<Post> postOptional = postRepository.findById(postId);
+      if (postOptional.isEmpty()) {
+        response.setError("Post not found");
+        response.setTimestamp(LocalDateTime.now());
+        return response;
+      }
+      Post post = postOptional.get();
+      post.setDeleted(false);
+      postRepository.save(post);
+//    response.setData( );
       return response;
     }
-    Post post = postOptional.get();
-    post.setBlocked(true);
-    postRepository.save(post);
-    response.setData(new StatusMessageResponse("OK"));
-    return response;
+
+    @Override
+    public CommonResponseData reportPost ( long postId){
+      CommonResponseData response = new CommonResponseData();
+      Optional<Post> postOptional = postRepository.findById(postId);
+      if (postOptional.isEmpty()) {
+        response.setError("Post not found");
+        response.setTimestamp(LocalDateTime.now());
+        return response;
+      }
+      Post post = postOptional.get();
+      post.setBlocked(true);
+      postRepository.save(post);
+      response.setData(new StatusMessageResponse("OK"));
+      return response;
+    }
   }
-}
