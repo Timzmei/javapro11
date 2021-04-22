@@ -4,11 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-<<<<<<< HEAD
-
-import java.time.LocalDateTime;
-=======
->>>>>>> faa7197e94e2dba033117579396503fd06d68190
 
 @Getter
 @Setter

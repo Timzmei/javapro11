@@ -8,7 +8,7 @@ spring:
     platform: postgres
     url: jdbc:postgresql://localhost:5432/test?createDatabaseIfNotExist=true
     username: postgres
-    password: 1321
+    password: password
     driverClassName: org.postgresql.Driver
   mail:
     host: smtp.gmail.com
