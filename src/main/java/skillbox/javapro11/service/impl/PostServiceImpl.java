@@ -1,6 +1,12 @@
 package skillbox.javapro11.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import skillbox.javapro11.api.request.PostRequest;
+import skillbox.javapro11.api.response.CommentResponse;
+import skillbox.javapro11.api.response.CommonResponseData;
+import skillbox.javapro11.api.response.PostResponse;
+import skillbox.javapro11.api.response.StatusMessageResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.CommentRequest;
@@ -32,6 +38,26 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
+  public CommentResponse getPostSearch(String text, String author, long dateFrom, long dateTo, String tagsRequest,
+                                       long offset, int limit, long personId) {
+    CommonResponseData response = new CommonResponseData();
+//    Optional<Post> postOptional = postRepository.
+    return null;
+  }
+
+  @Override
+  public CommonResponseData getPostByID(long postId) {
+    Person person = accountService.getCurrentPerson();
+    CommonResponseData response = new CommonResponseData();
+    Optional<Post> optionalPost = postRepository.findById(postId);
+    if (optionalPost.isEmpty()) {
+      response.setError(person + "\nPost id = " + postId + " not found.");
+      response.setTimestamp(LocalDateTime.now());
+      return response;
+    }
+    Post post = optionalPost.get();
+    postRepository.save(post);
+    response.setData(PostResponse.builder().id(post.getId()).build());
   public CommonResponseData editedComment(long postId, long idComment, CommentRequest comment) {
     Person person = accountService.getCurrentPerson();
     CommonResponseData response = new CommonResponseData();
@@ -81,6 +107,38 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
+  public CommonResponseData editPostById(long postId, long publishData, PostRequest postRequest) {
+    Person person = accountService.getCurrentPerson();
+    CommonResponseData response = new CommonResponseData();
+    Optional<Post> optionalPost = postRepository.findById(postId);
+    if (optionalPost.isEmpty()) {
+      response.setError(person + "\nPost id = " + postId + " not found.");
+      response.setTimestamp(LocalDateTime.now());
+      return response;
+    }
+
+    Post post = optionalPost.get();
+    post.setText(postRequest.getText());
+    post.setTitle(postRequest.getTitle());
+    post.setTime(LocalDateTime.now());
+
+    return null;
+  }
+
+  @Override
+  public CommonResponseData deletePostById(long postId) {
+    Person person = accountService.getCurrentPerson();
+    CommonResponseData response = new CommonResponseData();
+    Optional<Post> optionalPost = postRepository.findById(postId);
+    if (optionalPost.isEmpty()) {
+      response.setError(person + "\nPost id = " + postId + " not found.");
+      response.setTimestamp(LocalDateTime.now());
+      return response;
+    }
+    Post post = optionalPost.get();
+    post.setDeleted(true);
+    postRepository.save(post);
+    response.setData(PostResponse.builder().id(post.getId()).build());
   public CommonResponseData deleteComment(long postId, long idComment) {
     Person person = accountService.getCurrentPerson();
     CommonResponseData response = new CommonResponseData();
@@ -151,6 +209,34 @@ public class PostServiceImpl implements PostService {
     comment.setDeleted(false);
     commentRepository.save(comment);
     response.setData(modelMapper.map(comment, CommentResponse.class));
+  public CommonResponseData recoverPostById(long postId) {
+    CommonResponseData response = new CommonResponseData();
+    Optional<Post> postOptional = postRepository.findById(postId);
+    if (postOptional.isEmpty()) {
+      response.setError("Post not found");
+      response.setTimestamp(LocalDateTime.now());
+      return response;
+    }
+    Post post = postOptional.get();
+    post.setDeleted(false);
+    postRepository.save(post);
+//    response.setData( );
+    return response;
+  }
+
+  @Override
+  public CommonResponseData reportPost(long postId) {
+    CommonResponseData response = new CommonResponseData();
+    Optional<Post> postOptional = postRepository.findById(postId);
+    if (postOptional.isEmpty()) {
+      response.setError("Post not found");
+      response.setTimestamp(LocalDateTime.now());
+      return response;
+    }
+    Post post = postOptional.get();
+    post.setBlocked(true);
+    postRepository.save(post);
+    response.setData(new StatusMessageResponse("OK"));
     return response;
   }
 }

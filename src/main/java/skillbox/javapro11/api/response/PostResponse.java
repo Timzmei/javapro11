@@ -2,6 +2,7 @@ package skillbox.javapro11.api.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Builder
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
