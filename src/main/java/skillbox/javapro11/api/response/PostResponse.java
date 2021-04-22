@@ -34,6 +34,9 @@ public class PostResponse extends ResponseData {
     @JsonProperty(value = "is_blocked")
     private boolean isBlocked;
 
+    @JsonProperty (value = "is_deleted")
+    private boolean isDeleted;
+
     private int likes;
 
     private List<CommentResponse> comments;
@@ -55,6 +58,7 @@ public class PostResponse extends ResponseData {
                 post.getTitle(),
                 post.getText(),
                 post.isBlocked(),
+                post.isDeleted(),
                 post.getPostLikeList().size(),
                 CommentResponse.fromCommentList(post.getComments()),
                 post.getTime().isBefore(LocalDateTime.now()) ? PostType.POSTED : PostType.QUEUED

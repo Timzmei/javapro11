@@ -7,7 +7,7 @@ import skillbox.javapro11.api.response.CommonResponseData;
 
 public interface PostService {
   CommentResponse getPostSearch(String text, String author, long dateFrom, long dateTo, String tagsRequest,
-                                long offset, int limit, long personId);
+                                long offset, int limit);
   CommonResponseData getPostByID(long postId);
   CommonResponseData editPostById(long postId, long publishData, PostRequest postRequest);
   CommonResponseData deletePostById(long postId);
