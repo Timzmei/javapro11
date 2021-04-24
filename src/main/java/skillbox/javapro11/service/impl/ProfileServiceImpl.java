@@ -6,19 +6,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.PostRequest;
 import skillbox.javapro11.api.request.ProfileEditRequest;
 import skillbox.javapro11.api.response.*;
-import skillbox.javapro11.model.entity.Comment;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.model.entity.Post;
 import skillbox.javapro11.repository.PersonRepository;
 import skillbox.javapro11.repository.PostRepository;
 import skillbox.javapro11.repository.util.PersonSpecificationsBuilder;
+import skillbox.javapro11.service.AccountService;
 import skillbox.javapro11.service.ProfileService;
 
 import java.time.Instant;
@@ -26,41 +23,31 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
-    //private final AccountService accountService;
+    private final AccountService accountService;
     private final PersonRepository personRepository;
     private final PostRepository postRepository;
 
     @Autowired
     public ProfileServiceImpl(
-            //    AccountService accountService,
+            AccountService accountService,
             PersonRepository personRepository,
             PostRepository postRepository
     ) {
-        //    this.accountService = accountService;
+        this.accountService = accountService;
         this.personRepository = personRepository;
         this.postRepository = postRepository;
     }
 
-    @Override
-    public PersonResponse getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        return getPersonResponseFromPerson(personRepository.findByEmail(user.getUsername()));
-        //return getPersonResponseFromPerson(accountService.getCurrentUser());
-        // ToDo: Change after AccountService will be complete. Get current user from it.
+    public CommonResponseData getCurrentUser() {
+        return new CommonResponseData(PersonResponse.fromPerson(accountService.getCurrentPerson()), "string");
     }
 
-    @Override
-    public PersonResponse editCurrentUser(@NotNull ProfileEditRequest profileEditRequest) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        Person currentPerson = personRepository.findByEmail(user.getUsername());
-        // ToDo: Change after AccountService will be complete. Get current user from it.
+    public CommonResponseData editCurrentUser(@NotNull ProfileEditRequest profileEditRequest) {
+        Person currentPerson = accountService.getCurrentPerson();
 
         if (profileEditRequest.getFirstName() != null) {
             currentPerson.setFirstName(profileEditRequest.getFirstName());
@@ -96,16 +83,12 @@ public class ProfileServiceImpl implements ProfileService {
 
         personRepository.save(currentPerson);
 
-        return getPersonResponseFromPerson(currentPerson);
+        return new CommonResponseData(PersonResponse.fromPerson(currentPerson), "string");
     }
 
     @Override
     public CommonResponseData deleteCurrentUser() {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        Person currentPerson = personRepository.findByEmail(user.getUsername());
-        // ToDo: change when AccountService will be merged. Get current user from it.
+        Person currentPerson = accountService.getCurrentPerson();
 
         personRepository.delete(currentPerson);
 
@@ -116,12 +99,11 @@ public class ProfileServiceImpl implements ProfileService {
         return responseData;
     }
 
-    @Override
-    public PersonResponse findUserById(long id) {
-        return getPersonResponseFromPerson(personRepository.getOne(id));
+    public CommonResponseData findUserById(long id) {
+        PersonResponse personResponse = PersonResponse.fromPerson(personRepository.getOne(id));
+        return new CommonResponseData(personResponse, "string");
     }
 
-    @Override
     public CommonListResponse getUserWall(long userId, long offset, int itemPerPage) {
         Person person = personRepository.findById(userId);
         Pageable pageable = getPageable(offset, itemPerPage);
@@ -134,11 +116,10 @@ public class ProfileServiceImpl implements ProfileService {
                 postPage.getTotalElements(),
                 offset,
                 itemPerPage,
-                new ArrayList<>(getPostResponseListFromPostList(postPage.getContent()))
+                new ArrayList<>(PostResponse.fromPostList(postPage.getContent()))
         );
     }
 
-    @Override
     public CommonResponseData postOnUserWall(long userId, long publishDate, PostRequest postBody) {
         Person author = personRepository.findById(userId);
 
@@ -151,20 +132,17 @@ public class ProfileServiceImpl implements ProfileService {
         post.setTitle(postBody.getTitle());
         post.setText(postBody.getText());
         post.setBlocked(false);
-        //do I need to initial fields 'comments' and 'postLikesList' if object was created by @NoArgsConstructor Lombok
-        //Below I use this fields in mapping method - getPostResponseFromPost(Post p)
 
         postRepository.save(post);
 
         CommonResponseData response = new CommonResponseData();
         response.setError("string");
         response.setTimestamp(LocalDateTime.now());
-        response.setData(getPostResponseFromPost(post));
+        response.setData(PostResponse.fromPost(post));
 
         return response;
     }
 
-    @Override
     public CommonListResponse searchUser(
             String firstName,
             String lastName,
@@ -207,11 +185,10 @@ public class ProfileServiceImpl implements ProfileService {
                 personPage.getTotalElements(),
                 offset,
                 itemPerPage,
-                new ArrayList<>(getPersonResponseListFromPersonList(personPage.getContent()))
+                new ArrayList<>(PersonResponse.fromPersonList(personPage.getContent()))
         );
     }
 
-    @Override
     public CommonResponseData blockUser(boolean isBlocked, long userId) {
         Person person = personRepository.findById(userId);
         person.setBlocked(isBlocked);
@@ -240,71 +217,5 @@ public class ProfileServiceImpl implements ProfileService {
 
     public LocalDateTime getCorrectPublishLocalDateTime(LocalDateTime publishLocalDateTime) {
         return publishLocalDateTime.isBefore(LocalDateTime.now()) ? LocalDateTime.now() : publishLocalDateTime;
-    }
-
-    //Mapping methods ==============================================================================
-
-    public List<PersonResponse> getPersonResponseListFromPersonList(List<Person> personList) {
-        List<PersonResponse> personResponseList = new ArrayList<>();
-        personList.forEach(person -> personResponseList.add(getPersonResponseFromPerson(person)));
-        return personResponseList;
-    }
-
-    public PersonResponse getPersonResponseFromPerson(Person person) {
-        return new PersonResponse(
-                person.getId(),
-                person.getFirstName(),
-                person.getLastName(),
-                person.getRegistrationDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
-                person.getBirthday().atStartOfDay(ZoneId.systemDefault()).toEpochSecond(),
-                person.getEmail(),
-                person.getPhone(),
-                person.getPhoto(),
-                person.getAbout(),
-                person.getCity(),
-                person.getCountry(),
-                person.getPermissionMessage(),
-                person.getLastTimeOnline().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
-                person.isBlocked(),
-                null
-        );
-    }
-
-    public List<PostResponse> getPostResponseListFromPostList(List<Post> postList) {
-        List<PostResponse> postResponseList = new ArrayList<>();
-        postList.forEach(post -> postResponseList.add(getPostResponseFromPost(post)));
-        return postResponseList;
-    }
-
-    public PostResponse getPostResponseFromPost(Post post) {
-        PostResponse postResponse = new PostResponse();
-        postResponse.setId(post.getId());
-        postResponse.setTime(post.getTime());
-        postResponse.setAuthor(getPersonResponseFromPerson(post.getPerson()));
-        postResponse.setTitle(post.getTitle());
-        postResponse.setPostText(post.getText());
-        postResponse.setBlocked(post.isBlocked());
-        postResponse.setLikes(post.getPostLikeList().size());
-        postResponse.setComments(getCommentResponseListFromCommentList(post.getComments()));
-        postResponse.setType(post.getTime().isBefore(LocalDateTime.now()) ? PostType.POSTED : PostType.QUEUED);
-        return postResponse;
-    }
-
-    public List<CommentResponse> getCommentResponseListFromCommentList(List<Comment> commentList) {
-        List<CommentResponse> commentDTOList = new ArrayList<>();
-        commentList.forEach(comment -> commentDTOList.add(getCommentResponseFromComment(comment)));
-        return commentDTOList;
-    }
-
-    public CommentResponse getCommentResponseFromComment(Comment comment) {
-        return new CommentResponse(
-                comment.getParentId(),
-                comment.getCommentText(),
-                comment.getId(),
-                comment.getPost().getId(),
-                comment.getTime(),
-                comment.getAuthorId(),
-                comment.isBlocked()
-        );
     }
 }

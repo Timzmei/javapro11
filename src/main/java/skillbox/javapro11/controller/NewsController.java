@@ -26,13 +26,11 @@ public class NewsController {
 
     private AccountService accountService;
     private PostRepository postService; //temporary implementation, in the future must be replaced by PostService
-    private ProfileService profileService;
 
     @Autowired
     public NewsController(AccountService accountService, PostRepository postService, ProfileService profileService) {
         this.accountService = accountService;
         this.postService = postService;
-        this.profileService = profileService;
     }
 
     @GetMapping("/feeds")
@@ -41,7 +39,7 @@ public class NewsController {
 
         Person person = accountService.getCurrentPerson();
         Page<Post> posts = postService.findAllByPerson(person, pageable);
-        List<PostResponse> postResponseList = profileService.getPostResponseListFromPostList(posts.toList());
+        List<PostResponse> postResponseList = PostResponse.fromPostList(posts.toList());
         return new CommonListResponse("", LocalDateTime.now(), new ArrayList<>(postResponseList));
     }
 }

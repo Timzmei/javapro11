@@ -5,21 +5,16 @@ import skillbox.javapro11.api.request.PostRequest;
 import skillbox.javapro11.api.request.ProfileEditRequest;
 import skillbox.javapro11.api.response.CommonListResponse;
 import skillbox.javapro11.api.response.CommonResponseData;
-import skillbox.javapro11.api.response.PersonResponse;
-import skillbox.javapro11.api.response.PostResponse;
-import skillbox.javapro11.model.entity.Post;
-
-import java.util.List;
 
 public interface ProfileService {
 
-    PersonResponse getCurrentUser();
+    CommonResponseData getCurrentUser();
 
-    PersonResponse editCurrentUser(@NotNull ProfileEditRequest profileEditRequest);
+    CommonResponseData editCurrentUser(@NotNull ProfileEditRequest profileEditRequest);
 
     CommonResponseData deleteCurrentUser();
 
-    PersonResponse findUserById(long id);
+    CommonResponseData findUserById(long id);
 
     CommonListResponse getUserWall(long userId, long offset, int itemPerPage);
 
@@ -38,5 +33,4 @@ public interface ProfileService {
 
     CommonResponseData blockUser(boolean isBlocked, long userId);
 
-    List<PostResponse> getPostResponseListFromPostList(List<Post> toList);
 }

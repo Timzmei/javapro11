@@ -51,13 +51,16 @@ public class AccountServiceImplTest {
 
     @Test
     public void testFindPersonByEmail(){
+        RegisterRequest registerRequest = new RegisterRequest("mymail@mail.ru",
+                "password", "password", "Petr", "Petrov", "123456");
+        Person newPerson = new Person(registerRequest);
+
         Person savedPerson = new Person("Petr", "password", "mymail@mail.ru");
 
-//        Mockito.when(personServiceImpl.add(registerRequest)).thenReturn(newPerson);
-        Person foundPerson = personRepository.findByEmail(savedPerson.getEmail());
+        Mockito.when(personRepository.findByEmail(savedPerson.getEmail())).thenReturn(newPerson);
 
-        Assert.assertNotNull(foundPerson);
-        assertThat(foundPerson.getEmail()).isEqualTo(savedPerson.getEmail());
+        Assert.assertNotNull(savedPerson);
+        assertThat(savedPerson.getEmail()).isEqualTo(newPerson.getEmail());
     }
 
     @Test
