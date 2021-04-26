@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import skillbox.javapro11.api.request.CommentRequest;
 import skillbox.javapro11.api.request.PostRequest;
 import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.service.PostService;
@@ -13,12 +14,12 @@ import skillbox.javapro11.service.PostService;
  */
 
 @RestController
-@RequestMapping("/api/v1/post")
+@RequestMapping("/post")
 public class PostController {
     @Autowired
     private PostService postService;
 
-    @GetMapping("")
+    @GetMapping("/")
     public ResponseEntity<?>  getPostSearch (@RequestParam("text") String text,
                                              @RequestParam ("author_id") String author,
                                              @RequestParam ("date_from") long dateFrom,
@@ -54,26 +55,39 @@ public class PostController {
         return new ResponseEntity<>(postService.recoverPostById(postId), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}/comments")
-    public void getCommentsOnPost(){}
-
-    @PostMapping("/{id}/comments")
-    public void creationCommentForPost(){}
-
-    @PutMapping("/{id}/comments/{comment_id}")
-    public void editCommentForPost(){}
-
-    @DeleteMapping("/{id}/comments/{comment_id}")
-    public void deleteCommentForPost(){}
-
-    @PutMapping("/{id}/comments/{comment_id}/recover")
-    public void recoverComment(){}
-
     @PostMapping("/{id}/report")
     public ResponseEntity<?> reportPost(@PathVariable("id") long postId){
         return new ResponseEntity<>(postService.reportPost(postId), HttpStatus.OK);
     }
 
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<?> getComments(@PathVariable(name = "id") long postId, @RequestParam int offset, @RequestParam int itemPerPage){
+        return new ResponseEntity<>(postService.getComments(postId, itemPerPage, offset), HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/comments")
+    public ResponseEntity<?> createComment(@PathVariable(name = "id") long postId, @RequestBody CommentRequest comment){
+        return new ResponseEntity<>(postService.editedComment(postId, 0, comment), HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/comments/{comment_id}")
+    public ResponseEntity<?> editComment(@PathVariable(name = "id") long postId,
+                                         @PathVariable(name = "comment_id") long idComment, @RequestBody CommentRequest comment){
+        return new ResponseEntity<>(postService.editedComment(postId, idComment, comment), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}/comments/{comment_id}")
+    public ResponseEntity<?> deleteComment(@PathVariable(name = "id") long postId,@PathVariable(name = "comment_id") long idComment){
+        return new ResponseEntity<>(postService.deleteComment(postId, idComment), HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/comments/{comment_id}/recover")
+    public ResponseEntity<?> recoverComment(@PathVariable(name = "id") long postId,@PathVariable(name = "comment_id") long idComment){
+        return new ResponseEntity<>(postService.recoverComment(postId, idComment), HttpStatus.OK);
+    }
+
     @PostMapping("/{id}/comments/{comment_id}/report")
-    public void reportCommentOnPost(){}
+    public ResponseEntity<?> reportComment(@PathVariable(name = "id") long postId,@PathVariable(name = "comment_id") long idComment){
+        return new ResponseEntity<>(postService.reportComment(postId, idComment) ,HttpStatus.OK);
+    }
 }

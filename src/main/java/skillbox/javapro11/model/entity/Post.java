@@ -45,7 +45,7 @@ public class Post {
     @OneToMany(mappedBy="post")
     private List<PostLike> postLikeList = new ArrayList<>();
 
-    @OneToMany(mappedBy="post")
+    @OneToMany(mappedBy="post", fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
 
