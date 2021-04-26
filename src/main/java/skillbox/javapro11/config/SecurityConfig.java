@@ -62,7 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 //authorizeRequests() - все запросы через spring security
                 .authorizeRequests()
-                .antMatchers("/api/v1/account/register", "/api/v1/account/password/recovery").permitAll()
+                .antMatchers("/account/register", "/account/password/recovery").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
