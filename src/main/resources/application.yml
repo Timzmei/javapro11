@@ -22,6 +22,7 @@ spring:
       starttls.enable: true
       ssl.trust: smtp.gmail.com
 server:
+  port: 8086
   servlet:
     contextPath: /api/v1
 
