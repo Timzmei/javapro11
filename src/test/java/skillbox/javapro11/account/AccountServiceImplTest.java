@@ -1,15 +1,10 @@
 package skillbox.javapro11.account;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
 import skillbox.javapro11.api.request.RegisterRequest;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.repository.PersonRepository;
@@ -17,8 +12,6 @@ import skillbox.javapro11.security.jwt.JwtTokenProvider;
 import skillbox.javapro11.security.userdetails.UserDetailsServiceImpl;
 import skillbox.javapro11.service.AccountService;
 import skillbox.javapro11.service.EmailSenderService;
-import skillbox.javapro11.service.EmailService;
-import skillbox.javapro11.service.PersonService;
 import skillbox.javapro11.service.impl.AccountServiceImpl;
 import skillbox.javapro11.service.impl.EmailServiceImpl;
 import skillbox.javapro11.service.impl.PersonServiceImpl;
@@ -59,7 +52,7 @@ public class AccountServiceImplTest {
 
         Mockito.when(personRepository.findByEmail(savedPerson.getEmail())).thenReturn(newPerson);
 
-        Assert.assertNotNull(savedPerson);
+        assertThat(savedPerson).isNotNull();
         assertThat(savedPerson.getEmail()).isEqualTo(newPerson.getEmail());
     }
 
@@ -72,8 +65,8 @@ public class AccountServiceImplTest {
 
         Mockito.when(personServiceImpl.add(registerRequest)).thenReturn(newPerson);
 
-        Assert.assertNotNull(savedPerson);
-        Assert.assertEquals(savedPerson.getEmail(), "mymail@mail.ru");
+        assertThat(savedPerson).isNotNull();
+        assertThat(savedPerson.getEmail()).isEqualTo(newPerson.getEmail());
     }
 
     @Test

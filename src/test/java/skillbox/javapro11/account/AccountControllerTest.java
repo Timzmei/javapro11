@@ -1,7 +1,6 @@
 package skillbox.javapro11.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import skillbox.javapro11.api.request.NotificationsRequest;
 import skillbox.javapro11.api.request.RegisterRequest;
 import skillbox.javapro11.api.request.SetPasswordRequest;
@@ -67,7 +67,6 @@ public class AccountControllerTest {
         savedPerson.setLastName("Petrov");
 
         CommonResponse response = new CommonResponse("");
-//        Long timestamp = response.getTimestamp();
 
         Mockito.when(accountService.addNewPerson(newPersonRegisterRequest))
                 .thenReturn(savedPerson);
@@ -76,8 +75,8 @@ public class AccountControllerTest {
                 post("/account/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newPerson))
-        ).andExpect(status().isOk());
-//                .andExpect(content().json(new Gson().toJson(response)));
+        ).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json"));
     }
 
     @Test
@@ -99,8 +98,8 @@ public class AccountControllerTest {
                 post("/account/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newPerson))
-        ).andExpect(status().isOk());
-//                .andExpect(content().json(new Gson().toJson(response)));
+        ).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json"));
     }
 
     @Test
@@ -111,7 +110,8 @@ public class AccountControllerTest {
                 put("/account/password/recovery")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(email))
-        ).andExpect(status().isOk());
+        ).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json"));;
     }
 
     @Test
@@ -123,7 +123,8 @@ public class AccountControllerTest {
                 put("/account/password/set")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(passwordRequest))
-        ).andExpect(status().isOk());
+        ).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json"));;
     }
 
     @Test
@@ -134,7 +135,8 @@ public class AccountControllerTest {
                 put("/account/email")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(email))
-        ).andExpect(status().isOk());
+        ).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json"));;
     }
 
     @Test
@@ -146,6 +148,7 @@ public class AccountControllerTest {
                 put("/account/notifications")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(notificationsRequest))
-        ).andExpect(status().isOk());
+        ).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json"));;
     }
 }
