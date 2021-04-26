@@ -9,12 +9,17 @@ import skillbox.javapro11.api.response.PostResponse;
 import skillbox.javapro11.api.response.StatusMessageResponse;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.model.entity.Post;
+import skillbox.javapro11.model.entity.Tag;
 import skillbox.javapro11.repository.CommentRepository;
 import skillbox.javapro11.repository.PostRepository;
+import skillbox.javapro11.repository.TagRepository;
 import skillbox.javapro11.service.AccountService;
 import skillbox.javapro11.service.PostService;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,11 +35,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public CommentResponse getPostSearch(String text, String author, long dateFrom, long dateTo, String tagsRequest,
+    public CommonResponseData getPostSearch(String text, String author, long dateFrom, long dateTo, String tagsRequest,
                                          long offset, int limit) {
         CommonResponseData response = new CommonResponseData();
-/// Optional<Post> postOptional = postRepository.
-        return null;
+        List<String> tags = Arrays.asList(tagsRequest.split(","));
+        List<Post> result = tagsRequest.length()>0 && tags.size()!=0
+                ? postRepository.searchPostTag(text, new Date(dateFrom), new Date(dateTo), author, tags)
+                : postRepository.searchPost(text, new Date(dateFrom), new Date(dateTo), author);
+        PostResponse.fromPostList(result);
+        return response;
     }
 
     @Override
