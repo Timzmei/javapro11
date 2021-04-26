@@ -3,8 +3,12 @@ package skillbox.javapro11.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import skillbox.javapro11.api.request.DialogRequest;
 import skillbox.javapro11.service.DialogsService;
 
+/**
+ * Created by timur_guliev on 27.04.2021.
+ */
 @RestController
 @RequestMapping("/dialogs")
 public class DialogsController {
@@ -22,7 +26,7 @@ public class DialogsController {
     }
 
     @PostMapping("")
-    public ResponseEntity createDialog(){
+    public ResponseEntity createDialog(@RequestBody DialogRequest dialogRequest){
         return null;
     }
 
