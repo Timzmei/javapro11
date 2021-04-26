@@ -6,10 +6,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.PostRequest;
 import skillbox.javapro11.api.request.ProfileEditRequest;
 import skillbox.javapro11.api.response.*;
+import skillbox.javapro11.model.entity.Comment;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.model.entity.Post;
 import skillbox.javapro11.repository.PersonRepository;
@@ -23,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
@@ -201,8 +206,6 @@ public class ProfileServiceImpl implements ProfileService {
         return responseData;
     }
 
-    //serve methods ===========================================================================
-
     public LocalDateTime getLocalDateTimeFromLong(long timestamp) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
     }
@@ -217,5 +220,72 @@ public class ProfileServiceImpl implements ProfileService {
 
     public LocalDateTime getCorrectPublishLocalDateTime(LocalDateTime publishLocalDateTime) {
         return publishLocalDateTime.isBefore(LocalDateTime.now()) ? LocalDateTime.now() : publishLocalDateTime;
+    }
+
+    public List<PersonResponse> getPersonResponseListFromPersonList(List<Person> personList) {
+        List<PersonResponse> personResponseList = new ArrayList<>();
+        personList.forEach(person -> personResponseList.add(getPersonResponseFromPerson(person)));
+        return personResponseList;
+    }
+
+    public PersonResponse getPersonResponseFromPerson(Person person) {
+        return new PersonResponse(
+                person.getId(),
+                person.getFirstName(),
+                person.getLastName(),
+                person.getRegistrationDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                person.getBirthday().atStartOfDay(ZoneId.systemDefault()).toEpochSecond(),
+                person.getEmail(),
+                person.getPhone(),
+                person.getPhoto(),
+                person.getAbout(),
+                person.getCity(),
+                person.getCountry(),
+                person.getPermissionMessage(),
+                person.getLastTimeOnline().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                person.isBlocked(),
+                null
+        );
+    }
+
+    public List<PostResponse> getPostResponseListFromPostList(List<Post> postList) {
+        List<PostResponse> postResponseList = new ArrayList<>();
+        postList.forEach(post -> postResponseList.add(getPostResponseFromPost(post)));
+        return postResponseList;
+    }
+
+    @Override
+    public PostResponse getPostResponseFromPost(Post post) {
+        PostResponse postResponse = new PostResponse();
+        postResponse.setId(post.getId());
+        postResponse.setTime(post.getTime());
+        postResponse.setAuthor(getPersonResponseFromPerson(post.getPerson()));
+        postResponse.setTitle(post.getTitle());
+        postResponse.setPostText(post.getText());
+        postResponse.setBlocked(post.isBlocked());
+        postResponse.setLikes(post.getPostLikeList().size());
+        postResponse.setComments(getCommentResponseListFromCommentList(post.getComments()));
+        postResponse.setType(post.getTime().isBefore(LocalDateTime.now()) ? PostType.POSTED : PostType.QUEUED);
+        return postResponse;
+    }
+
+    @Override
+    public List<CommentResponse> getCommentResponseListFromCommentList(List<Comment> commentList) {
+        List<CommentResponse> commentDTOList = new ArrayList<>();
+        commentList.forEach(comment -> commentDTOList.add(getCommentResponseFromComment(comment)));
+        return commentDTOList;
+    }
+
+    @Override
+    public CommentResponse getCommentResponseFromComment(Comment comment) {
+        return new CommentResponse(
+                comment.getParentId(),
+                comment.getCommentText(),
+                comment.getId(),
+                comment.getPost().getId(),
+                comment.getTime(),
+                comment.getAuthorId(),
+                comment.isBlocked()
+        );
     }
 }
