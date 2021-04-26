@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import skillbox.javapro11.api.request.PostRequest;
 import skillbox.javapro11.api.response.CommonResponseData;
-import skillbox.javapro11.api.response.PostResponse;
 import skillbox.javapro11.service.PostService;
 
 /**
@@ -20,8 +19,16 @@ public class PostController {
     private PostService postService;
 
     @GetMapping("")
-    public ResponseEntity<?>  getPostSearch (){
-        return null;
+    public ResponseEntity<?>  getPostSearch (@RequestParam("text") String text,
+                                             @RequestParam ("author_id") String author,
+                                             @RequestParam ("date_from") long dateFrom,
+                                             @RequestParam ("date_to") long dateTo,
+                                             @RequestParam ("tags") String tags,
+                                             @RequestParam (required = false, defaultValue = "0") long offset,
+                                             @RequestParam (required = false, defaultValue = "20") Integer itemPerPage
+                                             ){
+        return new ResponseEntity<>(postService.getPostSearch(text, author, dateFrom, dateTo, tags, offset,
+                                                                itemPerPage), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
