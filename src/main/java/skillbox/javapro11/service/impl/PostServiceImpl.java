@@ -8,18 +8,12 @@ import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.api.response.PostResponse;
 import skillbox.javapro11.api.response.StatusMessageResponse;
 import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.CommentRequest;
-import skillbox.javapro11.api.response.CommentResponse;
-import skillbox.javapro11.api.response.CommonResponseData;
-import skillbox.javapro11.api.response.StatusMessageResponse;
 import skillbox.javapro11.model.entity.Comment;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.model.entity.Post;
-import skillbox.javapro11.model.entity.Tag;
 import skillbox.javapro11.repository.CommentRepository;
 import skillbox.javapro11.repository.PostRepository;
-import skillbox.javapro11.repository.TagRepository;
 import skillbox.javapro11.service.AccountService;
 import skillbox.javapro11.service.PostService;
 
