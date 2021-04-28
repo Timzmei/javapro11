@@ -26,7 +26,7 @@ public class AccountServiceImpl implements AccountService {
     public String saveNotificationSetting(NotificationTypeCode notificationTypeCode, Boolean enable) {
         String message = "";
         Person curPerson = getCurrentPerson();
-        // пока нет данных о notifications
+        // пока нет данных о notificationSettings
 //        notificationSettingService.save(new NotificationSetting(notificationTypeCode, enable, curPerson));
         return message;
     }
