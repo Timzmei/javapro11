@@ -17,6 +17,7 @@ import skillbox.javapro11.repository.PostRepository;
 import skillbox.javapro11.service.AccountService;
 import skillbox.javapro11.service.PostService;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -28,15 +29,19 @@ public class PostServiceImpl implements PostService {
   private final AccountService accountService;
 
   @Override
-  public CommonResponseData getPostSearch(String text, String author, long dateFrom, long dateTo, String tagsRequest,
+  public CommonListResponse getPostSearch(String text, String author,long dateFrom, long dateTo,
                                           long offset, int limit) {
-    CommonResponseData response = new CommonResponseData();
-    List<String> tags = Arrays.asList(tagsRequest.split(","));
-    List<Post> result = tagsRequest.length() > 0 && tags.size() != 0
-        ? postRepository.searchPostTag(text, new Date(dateFrom), new Date(dateTo), author, tags)
-        : postRepository.searchPost(text, new Date(dateFrom), new Date(dateTo), author);
-    PostResponse.fromPostList(result);
-    return response;
+
+    Pageable page = getPageable(offset,limit, Sort.by(Sort.Direction.DESC, "time"));
+    LocalDateTime dateFromTime =
+            LocalDateTime.ofInstant(Instant.ofEpochMilli(dateFrom),
+                    TimeZone.getDefault().toZoneId());
+    LocalDateTime dateToTime =
+            LocalDateTime.ofInstant(Instant.ofEpochMilli(dateTo),
+                    TimeZone.getDefault().toZoneId());
+    Page<Post> posts = postRepository.findAllPostsBySearch(page, text, author, dateFromTime, dateToTime);
+    return new CommonListResponse ("", LocalDateTime.now(), posts.getTotalElements(),
+            offset, limit, new ArrayList<>(PostResponse.fromPostList(posts.getContent())));
   }
 
   @Override
@@ -51,7 +56,7 @@ public class PostServiceImpl implements PostService {
     }
     Post post = optionalPost.get();
     postRepository.save(post);
-    response.setData(PostResponse.builder().id(post.getId()).build());
+    response.setData(PostResponse.fromPost(post));
     return response;
   }
 

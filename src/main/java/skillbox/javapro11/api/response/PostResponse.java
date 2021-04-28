@@ -43,7 +43,6 @@ public class PostResponse extends ResponseData {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private PostType type;
-
     public static List<PostResponse> fromPostList(List<Post> postList) {
         List<PostResponse> postResponseList = new ArrayList<>();
         postList.forEach(post -> postResponseList.add(fromPost(post)));

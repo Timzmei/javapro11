@@ -1,0 +1,1 @@
+ALTER TABLE post ADD is_deleted boolean default false;

@@ -6,7 +6,7 @@ import skillbox.javapro11.api.response.CommonListResponse;
 import skillbox.javapro11.api.response.CommonResponseData;
 
 public interface PostService {
-  CommonResponseData getPostSearch(String text, String author, long dateFrom, long dateTo, String tags,
+  CommonListResponse getPostSearch(String text, String author,long dateFrom, long dateTo,
                                 long offset, int limit);
   CommonResponseData getPostByID(long postId);
   CommonResponseData editPostById(long postId, long publishData, PostRequest postRequest);

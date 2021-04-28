@@ -39,6 +39,7 @@ public class TagServiceImpl implements TagService {
             return response;
         }
         Tag tag = optionalTag.get();
+        tagRepository.delete(tag);
 
         return null;
     }
