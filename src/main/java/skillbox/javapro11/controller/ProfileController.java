@@ -6,7 +6,6 @@ import skillbox.javapro11.api.request.PostRequest;
 import skillbox.javapro11.api.request.ProfileEditRequest;
 import skillbox.javapro11.api.response.CommonListResponse;
 import skillbox.javapro11.api.response.CommonResponseData;
-import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.service.ProfileService;
 
 @RestController
