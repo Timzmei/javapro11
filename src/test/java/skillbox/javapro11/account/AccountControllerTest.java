@@ -25,7 +25,6 @@ import skillbox.javapro11.security.jwt.JwtTokenProvider;
 import skillbox.javapro11.security.userdetails.UserDetailsServiceImpl;
 import skillbox.javapro11.service.AccountService;
 import skillbox.javapro11.service.PersonService;
-import skillbox.javapro11.service.impl.AccountServiceImpl;
 
 
 @WebMvcTest(AccountController.class)

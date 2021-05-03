@@ -67,7 +67,7 @@ public class Person {
 
     public Person(RegisterRequest registerRequest) {
         this.email = registerRequest.getEmail();
-        this.password = new BCryptPasswordEncoder().encode(registerRequest.getPasswd1());
+        this.password = registerRequest.getPasswd1();
         this.firstName = registerRequest.getFirstName();
         this.lastName = registerRequest.getLastName();
         this.registrationDate = LocalDateTime.now();
@@ -79,7 +79,7 @@ public class Person {
 
     // only mandatory fields
     public Person(String firstName, String password) {
-        this.password = new BCryptPasswordEncoder().encode(password);
+        this.password = password;
         this.firstName = firstName;
         this.registrationDate = LocalDateTime.now();
         this.lastTimeOnline = LocalDateTime.now();
