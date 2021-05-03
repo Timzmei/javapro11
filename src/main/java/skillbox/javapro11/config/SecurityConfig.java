@@ -1,10 +1,9 @@
 package skillbox.javapro11.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,9 +13,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import skillbox.javapro11.repository.PersonRepository;
 import skillbox.javapro11.security.handler.LogoutSuccessHandlerImpl;
 import skillbox.javapro11.security.jwt.JwtAuthenticationFilter;
@@ -25,13 +24,11 @@ import skillbox.javapro11.security.jwt.JwtTokenProvider;
 import skillbox.javapro11.security.userdetails.UserDetailsServiceImpl;
 import skillbox.javapro11.service.PersonService;
 
-import javax.servlet.http.HttpServletResponse;
-
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
     @Autowired
     private JwtTokenFilter jwtTokenFilter;
@@ -48,17 +45,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private PersonService personService;
 
+    @Value("${front.host}")
+    private String frontHost;
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .httpBasic().disable()
                 .csrf().disable()
+                .cors()
+                .and()
                 //SessionCreationPolicy.STATELESS сессию хранить не нужно, так как по токену
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .exceptionHandling()
-                .authenticationEntryPoint((req, rsp, e) -> rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED))
+                /**Включить после отладки авторизации
+                 .authenticationEntryPoint((req, rsp, e) -> rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED))*/
                 .and()
                 //authorizeRequests() - все запросы через spring security
                 .authorizeRequests()
@@ -97,6 +100,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins(frontHost)
+                .allowedOriginPatterns("/**")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("Authorization", "Cache-Control", "Content-Type", "Access-Control-Allow-Origin")
+                .allowCredentials(true);
     }
 
 }

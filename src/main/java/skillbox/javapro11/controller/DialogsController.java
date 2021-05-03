@@ -1,9 +1,13 @@
 package skillbox.javapro11.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import skillbox.javapro11.api.request.DialogRequest;
+import skillbox.javapro11.api.response.DialogResponse;
+import skillbox.javapro11.model.entity.Dialog;
 import skillbox.javapro11.service.DialogsService;
 
 /**
@@ -21,8 +25,12 @@ public class DialogsController {
     }
 
     @GetMapping("") //Сергей
-    public ResponseEntity getDialogsList(){
-        return null;
+    public ResponseEntity getDialogsList(@RequestParam(value = "query") String query,
+                                         @RequestParam(value = "offset") Integer offset,
+                                         @RequestParam(value = "itemPerPage") Integer itemPerPage){
+
+        DialogResponse dialogResponse = dialogsService.getDialogs(offset, itemPerPage, query);
+        return new ResponseEntity<>(dialogResponse, HttpStatus.OK);
     }
 
     @PostMapping("")

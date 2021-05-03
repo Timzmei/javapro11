@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import skillbox.javapro11.api.request.AuthRequest;
 import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.model.entity.Person;
