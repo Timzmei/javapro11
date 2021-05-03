@@ -1,7 +1,10 @@
 package skillbox.javapro11.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import skillbox.javapro11.api.response.TagResponse;
 import skillbox.javapro11.service.TagService;
 
 /**
@@ -9,18 +12,25 @@ import skillbox.javapro11.service.TagService;
  */
 
 @RestController
-@RequestMapping("/api/v1/tags")
+@RequestMapping("/tags")
 public class TagController {
 
     @Autowired
     TagService tagService;
 
-    @GetMapping("")
-    public void getTag (){}
+    @GetMapping("/")
+    public ResponseEntity<?> getTag (@RequestParam String tag, @RequestParam int offset,
+                                     @RequestParam(required = false, defaultValue = "20")int itemPerPage){
+        return new ResponseEntity<>(tagService.getTags(tag, offset, itemPerPage), HttpStatus.OK);
+    }
 
-    @PutMapping("")
-    public void createTag (){}
+    @PutMapping("/")
+    public ResponseEntity<?> createTag (@RequestBody TagResponse tag){
+        return new ResponseEntity<>(tagService.createTag(tag), HttpStatus.OK);
+    }
 
-    @DeleteMapping("")
-    public void deleteTag (){}
+    @DeleteMapping("/")
+    public ResponseEntity<?> deleteTag (@RequestParam long tagId){
+        return new ResponseEntity<>(tagService.deleteTag(tagId), HttpStatus.OK);
+    }
 }

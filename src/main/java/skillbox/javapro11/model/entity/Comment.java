@@ -41,5 +41,5 @@ public class Comment {
     private boolean isBlocked;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private boolean deleted;
 }

@@ -24,6 +24,7 @@ import skillbox.javapro11.model.entity.Post;
 import skillbox.javapro11.repository.PersonRepository;
 import skillbox.javapro11.repository.PostRepository;
 import skillbox.javapro11.repository.util.PersonSpecificationsBuilder;
+import skillbox.javapro11.repository.util.Utils;
 import skillbox.javapro11.service.impl.AccountServiceImpl;
 import skillbox.javapro11.service.impl.ProfileServiceImpl;
 
@@ -177,7 +178,7 @@ public class ProfileServiceTest {
         long offset = 0L;
         int itemPerPage = 2;
         Page<Post> postPage = Page.empty();
-        Mockito.when(postRepository.findAllByPerson(person, profileService.getPageable(offset, itemPerPage)))
+        Mockito.when(postRepository.findAllByPerson(person, Utils.getPageable(offset, itemPerPage)))
                 .thenReturn(postPage);
         Mockito.when(personRepository.findById(person.getId())).thenReturn(person);
 
@@ -219,7 +220,7 @@ public class ProfileServiceTest {
         PersonSpecificationsBuilder builder = new PersonSpecificationsBuilder();
         Specification<Person> spec = builder.build();
         Page<Person> personPage = Page.empty();
-        Mockito.when(personRepository.findAll(spec, profileService.getPageable(offset, itemPerPage)))
+        Mockito.when(personRepository.findAll(spec, Utils.getPageable(offset, itemPerPage)))
                 .thenReturn(personPage);
 
         CommonListResponse response = profileService.searchUser(

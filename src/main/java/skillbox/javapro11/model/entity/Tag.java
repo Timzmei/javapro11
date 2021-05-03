@@ -2,6 +2,7 @@ package skillbox.javapro11.model.entity;
 
 import com.sun.istack.NotNull;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -11,6 +12,7 @@ import javax.persistence.*;
 
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "tags")
 public class Tag {
     @Id
@@ -18,4 +20,9 @@ public class Tag {
     @NotNull
     private Long id;
     private String tag;
+
+    public Tag(String tag) {
+        this.tag = tag;
+    }
+
 }

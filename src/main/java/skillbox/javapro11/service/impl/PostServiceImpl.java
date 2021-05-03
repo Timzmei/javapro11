@@ -1,5 +1,6 @@
 package skillbox.javapro11.service.impl;
 
+import jdk.jshell.execution.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,10 +15,10 @@ import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.model.entity.Post;
 import skillbox.javapro11.repository.CommentRepository;
 import skillbox.javapro11.repository.PostRepository;
+import skillbox.javapro11.repository.util.Utils;
 import skillbox.javapro11.service.AccountService;
 import skillbox.javapro11.service.PostService;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -32,13 +33,9 @@ public class PostServiceImpl implements PostService {
   public CommonListResponse getPostSearch(String text, String author,long dateFrom, long dateTo,
                                           long offset, int limit) {
 
-    Pageable page = getPageable(offset,limit, Sort.by(Sort.Direction.DESC, "time"));
-    LocalDateTime dateFromTime =
-            LocalDateTime.ofInstant(Instant.ofEpochMilli(dateFrom),
-                    TimeZone.getDefault().toZoneId());
-    LocalDateTime dateToTime =
-            LocalDateTime.ofInstant(Instant.ofEpochMilli(dateTo),
-                    TimeZone.getDefault().toZoneId());
+    Pageable page = Utils.getPageable(offset,limit, Sort.by(Sort.Direction.DESC, "time"));
+    LocalDateTime dateFromTime = Utils.getLocalDateTimeFromLong(dateFrom);
+    LocalDateTime dateToTime = Utils.getLocalDateTimeFromLong(dateTo);
     Page<Post> posts = postRepository.findAllPostsBySearch(page, text, author, dateFromTime, dateToTime);
     return new CommonListResponse ("", LocalDateTime.now(), posts.getTotalElements(),
             offset, limit, new ArrayList<>(PostResponse.fromPostList(posts.getContent())));
@@ -132,18 +129,17 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public CommonListResponse getComments(long postId, int limit, int offset) {
-//    List<Comment> comments = commentRepository.getComments(postId, limit, offset);
     if (!postRepository.findById(postId).isPresent()) {
       return new CommonListResponse("Пост не найден", LocalDateTime.now(), null);
     }
-    Pageable pageable = getPageable(offset, limit, Sort.by(Sort.DEFAULT_DIRECTION, "time"));
-    Page<Comment> commentPage = commentRepository.findAllByPostId(postId, pageable);
-
+    Pageable pageable = Utils.getPageable(offset, limit, Sort.by(Sort.DEFAULT_DIRECTION, "time"));
+    Page<Comment> commentPage = commentRepository.findAllByPostIdAndDeletedFalse(postId, pageable);
 
     return new CommonListResponse("", LocalDateTime.now(), commentPage.getTotalElements(),
         offset, limit, new ArrayList<>(CommentResponse.fromCommentList(commentPage.getContent())));
   }
 
+  @Override
   public CommonResponseData editedComment(long postId, long idComment, CommentRequest comment) {
     Person person = accountService.getCurrentPerson();
     Optional<Post> postOptional = postRepository.findById(postId);
@@ -154,7 +150,7 @@ public class PostServiceImpl implements PostService {
     Comment newComment;
     if (idComment != 0) {
       newComment = commentRepository.getByIdAndPostId(idComment, postId);
-      if (comment == null) {
+      if (newComment == null) {
         return new CommonResponseData(null, "Комментарий не найден");
       }
       if (newComment.getAuthorId() != person.getId()) {
@@ -181,6 +177,7 @@ public class PostServiceImpl implements PostService {
     return new CommonResponseData(CommentResponse.fromComment(newComment), "");
   }
 
+  @Override
   public CommonResponseData deleteComment(long postId, long idComment) {
     Person person = accountService.getCurrentPerson();
     Comment comment = commentRepository.getByIdAndPostId(idComment, postId);
@@ -220,12 +217,5 @@ public class PostServiceImpl implements PostService {
 //    response.setData(modelMapper.map(comment, CommentResponse.class));
     response.setData(CommentResponse.fromComment(comment));
     return response;
-  }
-
-  public Pageable getPageable(long offset, int itemPerPage, Sort sort) {
-    //TODO можте сделать общий utils
-    itemPerPage = itemPerPage == 0 ? 1 : itemPerPage;
-    int page = (int) (offset / itemPerPage);
-    return PageRequest.of(page, itemPerPage, sort);
   }
 }
