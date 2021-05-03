@@ -1,7 +1,6 @@
 package skillbox.javapro11.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +34,7 @@ public class DialogsController {
 
     @PostMapping("")
     public ResponseEntity createDialog(@RequestBody DialogRequest dialogRequest){
-        return null;
+        return new ResponseEntity<>(dialogsService.createDialog(dialogRequest), HttpStatus.OK);
     }
 
     @GetMapping("/unreaded") //Сергей
@@ -44,8 +43,8 @@ public class DialogsController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteDialog(){
-        return null;
+    public ResponseEntity deleteDialog(@PathVariable("id") long id){
+        return new ResponseEntity<>(dialogsService.deleteDialog(id), HttpStatus.OK);
     }
 
     @PutMapping("/{id}/users") //Сергей
@@ -54,8 +53,9 @@ public class DialogsController {
     }
 
     @DeleteMapping("/{id}/users")
-    public ResponseEntity deleteUserFromDialog(){
-        return null;
+    public ResponseEntity deleteUserFromDialog(@PathVariable("id") long idDialog,
+                                               @PathVariable("users_ids") String[] usersIds){
+        return new ResponseEntity<>(dialogsService.deleteUsersInDialog(idDialog, usersIds), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/users/invite") //Сергей
