@@ -22,10 +22,10 @@ public class Person2Dialog {
     private long id;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id", nullable = false)
+    @JoinColumn(name = "person_id", nullable = false, referencedColumnName = "id")
     private Person person;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "dialog_id", nullable = false)
+    @JoinColumn(name = "dialog_id", nullable = false, referencedColumnName = "id")
     private Dialog dialog;
 }

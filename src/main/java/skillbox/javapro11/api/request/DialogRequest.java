@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DialogRequest {
 
-    @JsonProperty("user_ids")
-    private int[] userIds;
+    @JsonProperty("users_ids") // во фронте имя параметра "users_ids" (файл: dialog.js, 97 строка)
+    private int[] usersIds;
     private String link;
 
     @JsonProperty("message_text")
