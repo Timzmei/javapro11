@@ -7,15 +7,19 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import skillbox.javapro11.api.request.AuthRequest;
+import skillbox.javapro11.api.response.CommonResponse;
+import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.repository.PersonRepository;
+import skillbox.javapro11.service.ConvertTimeService;
 import skillbox.javapro11.service.PersonService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -23,19 +27,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final JwtTokenProvider jwtTokenProvider;
     private final PersonRepository personRepository;
     private final PersonService personService;
-    private final String jwtHeader;
-
 
     public JwtAuthenticationFilter(AuthenticationManager authManager,
                                    JwtTokenProvider jwtTokenProvider,
                                    PersonRepository personRepository,
-                                   PersonService personService,
-                                   String jwtHeader) {
+                                   PersonService personService) {
         this.authManager = authManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.personRepository = personRepository;
         this.personService = personService;
-        this.jwtHeader = jwtHeader;
+
     }
 
     @Override
@@ -68,11 +69,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             Person person = personRepository.findByEmail(auth.getName());
             String token = jwtTokenProvider.createToken(person);
-            //response.addHeader(jwtHeader, token);
+            response.addHeader(JwtParam.AUTHORIZATION_HEADER_STRING, token);
+
             PersonResponse personResponse = personService.createPersonResponse(person, token);
+            CommonResponseData commonResponseData = new CommonResponseData();
+            commonResponseData.setError("string");
+            commonResponseData.setTimestamp(ConvertTimeService.convertLocalDateTimeToLong(LocalDateTime.now()));
+            commonResponseData.setData(personResponse);
 
             ObjectMapper objectMapper = new ObjectMapper();
-            response.getWriter().print(objectMapper.writeValueAsString(personResponse));
+            response.getWriter().print(objectMapper.writeValueAsString(commonResponseData));
             response.getWriter().flush();
         } catch (Exception e) {
             throw new RuntimeException(e);

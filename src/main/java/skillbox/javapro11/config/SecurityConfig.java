@@ -82,7 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     public JwtAuthenticationFilter customUsernamePasswordAuthenticationFilter()
             throws Exception {
         JwtAuthenticationFilter customUsernamePasswordAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager(),
-                jwtTokenProvider, personRepository, personService, "");
+                jwtTokenProvider, personRepository, personService);
         customUsernamePasswordAuthenticationFilter
                 .setAuthenticationManager(authenticationManagerBean());
         customUsernamePasswordAuthenticationFilter
