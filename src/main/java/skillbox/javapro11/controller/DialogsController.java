@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import skillbox.javapro11.api.request.DialogRequest;
 import skillbox.javapro11.service.DialogsService;
 
+import java.util.List;
+
 /**
  * Created by timur_guliev on 27.04.2021.
  */
@@ -48,7 +50,7 @@ public class DialogsController {
 
     @DeleteMapping("/{id}/users")
     public ResponseEntity deleteUserFromDialog(@PathVariable("id") long idDialog,
-                                               @PathVariable("users_ids") String[] usersIds){
+                                               @PathVariable("users_ids") List<String> usersIds){
         return new ResponseEntity<>(dialogsService.deleteUsersInDialog(idDialog, usersIds), HttpStatus.OK);
     }
 
@@ -58,8 +60,9 @@ public class DialogsController {
     }
 
     @PutMapping("/{id}/users/join")
-    public ResponseEntity joinToDialog(){
-        return null;
+    public ResponseEntity joinToDialog(@PathVariable("id") long idDialog,
+                                       @RequestBody DialogRequest dialogRequest){
+        return new ResponseEntity<>(dialogsService.joinToDialog(idDialog, dialogRequest.getLink()), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/messages") //Сергей
@@ -68,8 +71,9 @@ public class DialogsController {
     }
 
     @PostMapping("/{id}/messages")
-    public ResponseEntity sendMessages(){
-        return null;
+    public ResponseEntity sendMessages(@PathVariable("id") long idDialog,
+                                       @RequestBody DialogRequest dialogRequest){
+        return new ResponseEntity<>(dialogsService.sendMessage(idDialog, dialogRequest.getMessageText()), HttpStatus.OK);
     }
 
     @DeleteMapping("/{dialog_id}/messages/{message_id}") //Сергей
