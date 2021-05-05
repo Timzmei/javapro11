@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import skillbox.javapro11.service.ConvertTimeService;
 
 import java.time.LocalDateTime;
 
@@ -14,10 +15,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CommonResponse {
     protected String error;
-    protected LocalDateTime timestamp;
+    protected Long timestamp;
 
     public CommonResponse(String errorMessage) {
         this.error = errorMessage;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = ConvertTimeService.convertLocalDateTimeToLong(LocalDateTime.now());
     }
 }

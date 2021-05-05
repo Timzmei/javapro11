@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import skillbox.javapro11.enums.PermissionMessage;
 import skillbox.javapro11.model.entity.Person;
+import skillbox.javapro11.service.ConvertTimeService;
 
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -62,8 +63,8 @@ public class PersonResponse extends ResponseData {
                 person.getId(),
                 person.getFirstName(),
                 person.getLastName(),
-                person.getRegistrationDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
-                person.getBirthday().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                ConvertTimeService.convertLocalDateTimeToLong(person.getRegistrationDate()),
+                ConvertTimeService.convertLocalDateToLong(person.getBirthday()),
                 person.getEmail(),
                 person.getPhone(),
                 person.getPhoto(),
@@ -71,7 +72,7 @@ public class PersonResponse extends ResponseData {
                 person.getCity(),
                 person.getCountry(),
                 person.getPermissionMessage(),
-                person.getLastTimeOnline().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                ConvertTimeService.convertLocalDateTimeToLong(person.getLastTimeOnline()),
                 person.isBlocked(),
                 null
         );

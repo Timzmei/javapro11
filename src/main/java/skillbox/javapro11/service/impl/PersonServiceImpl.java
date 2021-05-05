@@ -8,6 +8,7 @@ import skillbox.javapro11.api.request.RegisterRequest;
 import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.repository.PersonRepository;
+import skillbox.javapro11.service.ConvertTimeService;
 import skillbox.javapro11.service.PersonService;
 
 import java.time.ZoneId;
@@ -60,8 +61,8 @@ public class PersonServiceImpl implements PersonService {
         personResponse.setId(person.getId());
         personResponse.setFirstName(person.getFirstName());
         personResponse.setLastName(person.getLastName());
-        personResponse.setRegistrationDate(person.getRegistrationDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-        personResponse.setBirthDate(person.getBirthday().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        personResponse.setRegistrationDate(ConvertTimeService.convertLocalDateTimeToLong(person.getRegistrationDate()));
+        personResponse.setBirthDate(ConvertTimeService.convertLocalDateToLong(person.getBirthday()));
         personResponse.setEmail(person.getEmail());
         personResponse.setPhone(person.getPhone());
         personResponse.setPhoto(person.getPhoto());
@@ -69,7 +70,7 @@ public class PersonServiceImpl implements PersonService {
         personResponse.setCity(person.getCity());
         personResponse.setCountry(person.getCountry());
         personResponse.setMessagesPermission(person.getPermissionMessage());
-        personResponse.setLastOnlineTime(person.getLastTimeOnline().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        personResponse.setLastOnlineTime(ConvertTimeService.convertLocalDateTimeToLong(person.getLastTimeOnline()));
         personResponse.setBlocked(person.isBlocked());
         personResponse.setToken(token);
 

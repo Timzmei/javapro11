@@ -1,5 +1,7 @@
 package skillbox.javapro11.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -8,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import skillbox.javapro11.model.entity.Dialog;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * Created by timurg on 28.04.2021.
@@ -18,7 +20,7 @@ public interface DialogRepository extends JpaRepository<Dialog, Long> {
 
     Dialog findById(long id);
 
-//    @Modifying
+    //    @Modifying
     @Transactional
     @Query(
             value = "INSERT INTO dialog (owner_id, is_deleted) VALUES (:owner_id, true) RETURNING id",
@@ -32,4 +34,24 @@ public interface DialogRepository extends JpaRepository<Dialog, Long> {
             nativeQuery = true)
     void deleteDialog(@Param("id") long id);
 
+    @Query("SELECT m.dialog, m.dialog.id " +
+            "FROM Message m " +
+            "WHERE m.text LIKE %:query% " +
+            "GROUP BY m.dialog, m.dialog.id")
+    Page<Dialog> getDialogsByQuery(Pageable pageable, String query);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

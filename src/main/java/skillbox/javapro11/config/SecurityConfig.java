@@ -65,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .and()
                 //authorizeRequests() - все запросы через spring security
                 .authorizeRequests()
-                .antMatchers("/account/register", "/account/password/recovery").permitAll()
+                .antMatchers("/account/register", "/account/password/recovery", "/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -81,7 +81,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     @Bean
     public JwtAuthenticationFilter customUsernamePasswordAuthenticationFilter()
             throws Exception {
-        JwtAuthenticationFilter customUsernamePasswordAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider, personRepository, personService);
+        JwtAuthenticationFilter customUsernamePasswordAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager(),
+                jwtTokenProvider, personRepository, personService, "");
         customUsernamePasswordAuthenticationFilter
                 .setAuthenticationManager(authenticationManagerBean());
         customUsernamePasswordAuthenticationFilter

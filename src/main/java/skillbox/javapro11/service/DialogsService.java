@@ -1,6 +1,7 @@
 package skillbox.javapro11.service;
 
 import skillbox.javapro11.api.request.DialogRequest;
+import skillbox.javapro11.api.response.CommonListResponse;
 import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.model.entity.Dialog;
 import skillbox.javapro11.model.entity.Person;
@@ -19,5 +20,5 @@ public interface DialogsService {
 
     CommonResponseData deleteUsersInDialog(long idDialog, String[] usersIds);
 
-    DialogResponse getDialogs(Integer offset, Integer itemPerPage, String query);
+    CommonListResponse getDialogs(Integer offset, Integer itemPerPage, String query);
 }

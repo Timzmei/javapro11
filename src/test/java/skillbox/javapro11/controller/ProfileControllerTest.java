@@ -19,6 +19,7 @@ import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.api.response.StatusMessageResponse;
 import skillbox.javapro11.enums.PermissionMessage;
+import skillbox.javapro11.service.ConvertTimeService;
 import skillbox.javapro11.service.ProfileService;
 
 import java.time.LocalDate;
@@ -119,7 +120,7 @@ public class ProfileControllerTest {
 
         CommonResponseData responseData = new CommonResponseData();
         responseData.setError("string");
-        responseData.setTimestamp(LocalDateTime.now());
+        responseData.setTimestamp(ConvertTimeService.convertLocalDateTimeToLong(LocalDateTime.now()));
         responseData.setData(new StatusMessageResponse("ok"));
 
         Mockito.when(profileService.deleteCurrentUser()).thenReturn(responseData);

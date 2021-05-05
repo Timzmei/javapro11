@@ -20,6 +20,7 @@ import skillbox.javapro11.repository.PersonRepository;
 import skillbox.javapro11.repository.PostRepository;
 import skillbox.javapro11.repository.util.PersonSpecificationsBuilder;
 import skillbox.javapro11.service.AccountService;
+import skillbox.javapro11.service.ConvertTimeService;
 import skillbox.javapro11.service.ProfileService;
 
 import java.time.Instant;
@@ -99,7 +100,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         CommonResponseData responseData = new CommonResponseData();
         responseData.setError("string");
-        responseData.setTimestamp(LocalDateTime.now());
+        responseData.setTimestamp(ConvertTimeService.convertLocalDateTimeToLong(LocalDateTime.now()));
         responseData.setData(new StatusMessageResponse("ok"));
         return responseData;
     }
@@ -142,7 +143,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         CommonResponseData response = new CommonResponseData();
         response.setError("string");
-        response.setTimestamp(LocalDateTime.now());
+        response.setTimestamp(ConvertTimeService.convertLocalDateTimeToLong(LocalDateTime.now()));
         response.setData(PostResponse.fromPost(post));
 
         return response;
@@ -201,7 +202,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         CommonResponseData responseData = new CommonResponseData();
         responseData.setError("string");
-        responseData.setTimestamp(LocalDateTime.now());
+        responseData.setTimestamp(ConvertTimeService.convertLocalDateTimeToLong(LocalDateTime.now()));
         responseData.setData(new StatusMessageResponse("ok"));
         return responseData;
     }
@@ -233,8 +234,8 @@ public class ProfileServiceImpl implements ProfileService {
                 person.getId(),
                 person.getFirstName(),
                 person.getLastName(),
-                person.getRegistrationDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
-                person.getBirthday().atStartOfDay(ZoneId.systemDefault()).toEpochSecond(),
+                ConvertTimeService.convertLocalDateTimeToLong(person.getRegistrationDate()),
+                ConvertTimeService.convertLocalDateToLong(person.getBirthday()),
                 person.getEmail(),
                 person.getPhone(),
                 person.getPhoto(),

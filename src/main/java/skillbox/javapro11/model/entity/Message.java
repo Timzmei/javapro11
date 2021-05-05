@@ -37,6 +37,10 @@ public class Message {
     @Column(name = "message_text", nullable = false)
     private String text;
 
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "dialog_id", nullable = false)
+    private Dialog dialog;
+
     @Column(name = "read_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private ReadStatus readStatus;

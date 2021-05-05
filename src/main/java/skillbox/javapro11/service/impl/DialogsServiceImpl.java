@@ -6,15 +6,22 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.DialogRequest;
+import skillbox.javapro11.api.response.CommonListResponse;
 import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.api.response.DialogResponse;
+import skillbox.javapro11.api.response.ResponseData;
 import skillbox.javapro11.model.entity.Dialog;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.model.entity.Person2Dialog;
 import skillbox.javapro11.repository.DialogRepository;
 import skillbox.javapro11.repository.Person2DialogRepository;
 import skillbox.javapro11.repository.PersonRepository;
+import skillbox.javapro11.service.ConvertTimeService;
 import skillbox.javapro11.service.DialogsService;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by timur_guliev on 27.04.2021.
@@ -23,6 +30,7 @@ import skillbox.javapro11.service.DialogsService;
 public class DialogsServiceImpl implements DialogsService {
 
     private final AccountServiceImpl accountServiceImpl;
+    @Autowired
     private final DialogRepository dialogRepository;
     private final Person2DialogRepository person2DialogRepository;
     private final PersonRepository personRepository;
@@ -86,14 +94,51 @@ public class DialogsServiceImpl implements DialogsService {
         person2DialogRepository.save(person2Dialog);
     }
     @Override
-    public DialogResponse getDialogs(Integer offset, Integer itemPerPage, String query) {
+    public CommonListResponse getDialogs(Integer offset, Integer itemPerPage, String query) {
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
 
-        Page<Dialog> dialogPage;
+        Page<Dialog> dialogPage=  dialogRepository.getDialogsByQuery(pageable, query);
 
-        //dialogPage = dialogRepository.getDialogsByQuery(pageable, query);
+        CommonListResponse cListResponse = new CommonListResponse();
+        cListResponse.setError("string");
+        cListResponse.setTimestamp(ConvertTimeService.convertLocalDateTimeToLong(LocalDateTime.now()));
+        cListResponse.setTotal(dialogPage.getTotalElements());
+        cListResponse.setOffset(offset);
+        cListResponse.setPerPage(itemPerPage);
+
+        List<ResponseData> dialogResponses = new ArrayList<>();
+        for (Dialog dialog : dialogPage)
+        {
+            DialogResponse dialogResponse = new DialogResponse();
+            dialogResponse.setId(dialog.getId());
+            dialogResponse.setUnreadCount(1);
 
 
-        return null;
+            dialogResponses.add(dialogResponse);
+        }
+        cListResponse.setData(dialogResponses);
+
+        return cListResponse;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

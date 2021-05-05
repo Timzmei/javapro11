@@ -5,9 +5,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import skillbox.javapro11.api.request.AuthRequest;
 import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.model.entity.Person;
@@ -21,20 +19,23 @@ import java.io.IOException;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private AuthenticationManager authManager;
-    private JwtTokenProvider jwtTokenProvider;
-    private PersonRepository personRepository;
-    private PersonService personService;
+    private final AuthenticationManager authManager;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final PersonRepository personRepository;
+    private final PersonService personService;
+    private final String jwtHeader;
 
 
     public JwtAuthenticationFilter(AuthenticationManager authManager,
                                    JwtTokenProvider jwtTokenProvider,
                                    PersonRepository personRepository,
-                                   PersonService personService) {
+                                   PersonService personService,
+                                   String jwtHeader) {
         this.authManager = authManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.personRepository = personRepository;
         this.personService = personService;
+        this.jwtHeader = jwtHeader;
     }
 
     @Override
@@ -67,6 +68,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             Person person = personRepository.findByEmail(auth.getName());
             String token = jwtTokenProvider.createToken(person);
+            //response.addHeader(jwtHeader, token);
             PersonResponse personResponse = personService.createPersonResponse(person, token);
 
             ObjectMapper objectMapper = new ObjectMapper();
