@@ -5,9 +5,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import skillbox.javapro11.api.request.AuthRequest;
+import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.repository.PersonRepository;
@@ -17,14 +17,14 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private AuthenticationManager authManager;
-    private JwtTokenProvider jwtTokenProvider;
-    private PersonRepository personRepository;
-    private PersonService personService;
-
+    private final AuthenticationManager authManager;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final PersonRepository personRepository;
+    private final PersonService personService;
 
     public JwtAuthenticationFilter(AuthenticationManager authManager,
                                    JwtTokenProvider jwtTokenProvider,
@@ -34,6 +34,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         this.jwtTokenProvider = jwtTokenProvider;
         this.personRepository = personRepository;
         this.personService = personService;
+
     }
 
     @Override
@@ -66,10 +67,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             Person person = personRepository.findByEmail(auth.getName());
             String token = jwtTokenProvider.createToken(person);
+            response.addHeader(JwtParam.AUTHORIZATION_HEADER_STRING, token);
+
             PersonResponse personResponse = personService.createPersonResponse(person, token);
+            CommonResponseData commonResponseData = new CommonResponseData();
+            commonResponseData.setError("string");
+            commonResponseData.setTimestamp(LocalDateTime.now());
+            commonResponseData.setData(personResponse);
 
             ObjectMapper objectMapper = new ObjectMapper();
-            response.getWriter().print(objectMapper.writeValueAsString(personResponse));
+            response.getWriter().print(objectMapper.writeValueAsString(commonResponseData));
             response.getWriter().flush();
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.RegisterRequest;
 import skillbox.javapro11.enums.NotificationTypeCode;
 import skillbox.javapro11.model.entity.Person;
+import skillbox.javapro11.security.jwt.JwtTokenProvider;
 import skillbox.javapro11.service.AccountService;
 
 @Service
@@ -25,7 +26,7 @@ public class AccountServiceImpl implements AccountService {
     public String saveNotificationSetting(NotificationTypeCode notificationTypeCode, Boolean enable) {
         String message = "";
         Person curPerson = getCurrentPerson();
-        // пока нет данных о notifications
+        // пока нет данных о notificationSettings
 //        notificationSettingService.save(new NotificationSetting(notificationTypeCode, enable, curPerson));
         return message;
     }
@@ -40,8 +41,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public String getMailByToken(String token) { // пока не знаю, как прописать. Есть метод в JwtTokenProvider
-        return null;
+    public String getMailByToken(String token) {
+        return new JwtTokenProvider().getUserEmailFromToken(token);
     }
 
     @Override
