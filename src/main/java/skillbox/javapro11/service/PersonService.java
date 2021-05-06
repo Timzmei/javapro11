@@ -6,15 +6,13 @@ import skillbox.javapro11.model.entity.Person;
 
 public interface PersonService {
 
-    Person findPersonByEmail(String email);//
+    Person findPersonByEmail(String email);
 
     Person save(Person person);
 
-    Person add(RegisterRequest registerRequest);//
+    Person add(RegisterRequest registerRequest);
 
-    String changePassword(String email, String password); //
+    String changePassword(String email, String password);
 
-    String changeEmail(String email);//
-
-    PersonResponse createPersonResponse(Person person, String token);
+    String changeEmail(String email);
 }

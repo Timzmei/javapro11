@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import skillbox.javapro11.enums.PermissionMessage;
 import skillbox.javapro11.model.entity.Person;
+import skillbox.javapro11.repository.util.Utils;
 
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,13 +57,17 @@ public class PersonResponse extends ResponseData {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String token;
 
-    public static PersonResponse fromPerson(Person person) {
+    public static PersonResponse fromPerson(Person person){
+        return fromPerson(person, null);
+    }
+
+    public static PersonResponse fromPerson(Person person, String token) {
         return new PersonResponse(
                 person.getId(),
                 person.getFirstName(),
                 person.getLastName(),
-                person.getRegistrationDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
-                person.getBirthday().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                Utils.getLongFromLocalDateTime(person.getRegistrationDate()),
+                Utils.getLongFromLocalDate(person.getBirthday()),
                 person.getEmail(),
                 person.getPhone(),
                 person.getPhoto(),
@@ -71,15 +75,15 @@ public class PersonResponse extends ResponseData {
                 person.getCity(),
                 person.getCountry(),
                 person.getPermissionMessage(),
-                person.getLastTimeOnline().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                Utils.getLongFromLocalDateTime(person.getLastTimeOnline()),
                 person.isBlocked(),
-                null
+                token == null || token.isEmpty() ? null : token
         );
     }
 
     public static List<PersonResponse> fromPersonList(List<Person> personList) {
         List<PersonResponse> personResponseList = new ArrayList<>();
-        personList.forEach(person -> personResponseList.add(fromPerson(person)));
+        personList.forEach(person -> personResponseList.add(fromPerson(person, null)));
         return personResponseList;
     }
 }

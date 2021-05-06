@@ -15,5 +15,5 @@ public class UserStatusResponse extends ResponseData {
     private boolean online;
 
     @JsonProperty(value = "last_activity")
-    private LocalDateTime lastActivity;
+    private long lastActivity;
 }

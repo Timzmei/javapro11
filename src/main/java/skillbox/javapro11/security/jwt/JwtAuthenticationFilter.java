@@ -11,7 +11,6 @@ import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.repository.PersonRepository;
-import skillbox.javapro11.service.PersonService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
@@ -24,16 +23,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final AuthenticationManager authManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final PersonRepository personRepository;
-    private final PersonService personService;
 
     public JwtAuthenticationFilter(AuthenticationManager authManager,
                                    JwtTokenProvider jwtTokenProvider,
-                                   PersonRepository personRepository,
-                                   PersonService personService) {
+                                   PersonRepository personRepository) {
         this.authManager = authManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.personRepository = personRepository;
-        this.personService = personService;
 
     }
 
@@ -69,11 +65,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             String token = jwtTokenProvider.createToken(person);
             response.addHeader(JwtParam.AUTHORIZATION_HEADER_STRING, token);
 
-            PersonResponse personResponse = personService.createPersonResponse(person, token);
             CommonResponseData commonResponseData = new CommonResponseData();
             commonResponseData.setError("string");
             commonResponseData.setTimestamp(LocalDateTime.now());
-            commonResponseData.setData(personResponse);
+            commonResponseData.setData(PersonResponse.fromPerson(person, token));
 
             ObjectMapper objectMapper = new ObjectMapper();
             response.getWriter().print(objectMapper.writeValueAsString(commonResponseData));

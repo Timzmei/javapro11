@@ -14,7 +14,7 @@ public class MessageResponse extends ResponseData{
 
     private long id;
 
-    private LocalDateTime time;
+    private Long time;
 
     @JsonProperty(value = "author_id")
     private long authorId;
