@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -30,4 +31,19 @@ public class CommentLike {
 	@JoinColumn(name = "comment_id", nullable = false)
 	private Comment comment;
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		CommentLike that = (CommentLike) o;
+		return id == that.id &&
+				Objects.equals(time, that.time) &&
+				Objects.equals(person, that.person) &&
+				Objects.equals(comment, that.comment);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, time, person, comment);
+	}
 }
