@@ -38,7 +38,7 @@ public class CommentResponse extends ResponseData {
 
   @JsonInclude(JsonInclude.Include.NON_NULL)
   @JsonProperty(value = "is_blocked")
-  private Boolean isBlocked;
+  private Boolean blocked;
 
 
   public static List<CommentResponse> fromCommentList(List<Comment> commentList) {
