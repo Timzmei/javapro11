@@ -220,7 +220,7 @@ public class ProfileServiceImpl implements ProfileService {
     public PostResponse getPostResponseFromPost(Post post) {
         PostResponse postResponse = new PostResponse();
         postResponse.setId(post.getId());
-        postResponse.setTime(post.getTime());
+        postResponse.setTime(Utils.getLongFromLocalDateTime(post.getTime()));
         postResponse.setAuthor(PersonResponse.fromPerson(post.getPerson(), null));
         postResponse.setTitle(post.getTitle());
         postResponse.setPostText(post.getText());
@@ -245,7 +245,7 @@ public class ProfileServiceImpl implements ProfileService {
                 comment.getCommentText(),
                 comment.getId(),
                 comment.getPost().getId(),
-                comment.getTime(),
+                Utils.getLongFromLocalDateTime(comment.getTime()),
                 comment.getAuthorId(),
                 comment.isBlocked()
         );

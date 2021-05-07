@@ -15,7 +15,7 @@ import skillbox.javapro11.repository.DialogRepository;
 import skillbox.javapro11.repository.MessageRepository;
 import skillbox.javapro11.repository.Person2DialogRepository;
 import skillbox.javapro11.repository.PersonRepository;
-import skillbox.javapro11.service.ConvertLocalDateService;
+import skillbox.javapro11.repository.util.Utils;
 import skillbox.javapro11.service.DialogsService;
 
 import java.time.LocalDateTime;
@@ -108,7 +108,7 @@ public class DialogsServiceImpl implements DialogsService {
 
         CommonListResponse cListResponse = new CommonListResponse();
         cListResponse.setError("string");
-        cListResponse.setTimestamp(ConvertLocalDateService.convertLocalDateTimeToLong(LocalDateTime.now()));
+        cListResponse.setTimestamp(LocalDateTime.now());
         //All items with query filter
         cListResponse.setTotal(dialogPage.getTotalElements());
         cListResponse.setOffset(offset);
@@ -124,7 +124,7 @@ public class DialogsServiceImpl implements DialogsService {
             Message lastMessage = messageRepository.getLastMessageOfDialog(dialog);
             MessageResponse messageResponse = new MessageResponse();
             messageResponse.setId(lastMessage.getId());
-            messageResponse.setTime(ConvertLocalDateService.convertLocalDateTimeToLong(lastMessage.getTime()));
+            messageResponse.setTime(Utils.getLongFromLocalDateTime(lastMessage.getTime()));
             messageResponse.setAuthorId(lastMessage.getAuthor().getId());
             messageResponse.setRecipientId(lastMessage.getRecipient().getId());
             messageResponse.setMessageText(lastMessage.getText());
@@ -146,7 +146,7 @@ public class DialogsServiceImpl implements DialogsService {
 
         CommonResponseData commonResponseData = new CommonResponseData();
         commonResponseData.setError("string");
-        commonResponseData.setTimestamp(ConvertLocalDateService.convertLocalDateTimeToLong(LocalDateTime.now()));
+        commonResponseData.setTimestamp(LocalDateTime.now());
 
         CountMessageResponse countMessageResponse = new CountMessageResponse(quantityUnreadMessage);
         commonResponseData.setData(countMessageResponse);
@@ -180,7 +180,7 @@ public class DialogsServiceImpl implements DialogsService {
         }
         ResponseArrayUserIds responseArrayUserIds = new ResponseArrayUserIds();
         responseArrayUserIds.setError("string");
-        responseArrayUserIds.setTimestamp(ConvertLocalDateService.convertLocalDateTimeToLong(LocalDateTime.now()));
+        responseArrayUserIds.setTimestamp(LocalDateTime.now());
         responseArrayUserIds.setUsersIds(idForResponse);
 
         return responseArrayUserIds;
@@ -192,7 +192,7 @@ public class DialogsServiceImpl implements DialogsService {
 
         CommonResponseData commonResponseData = new CommonResponseData();
         commonResponseData.setError("string");
-        commonResponseData.setTimestamp(ConvertLocalDateService.convertLocalDateTimeToLong(LocalDateTime.now()));
+        commonResponseData.setTimestamp(LocalDateTime.now());
         LinkResponse linkResponse = new LinkResponse(invite);
         commonResponseData.setData(linkResponse);
 
@@ -206,7 +206,7 @@ public class DialogsServiceImpl implements DialogsService {
 
         CommonListResponse cListResponse = new CommonListResponse();
         cListResponse.setError("string");
-        cListResponse.setTimestamp(ConvertLocalDateService.convertLocalDateTimeToLong(LocalDateTime.now()));
+        cListResponse.setTimestamp(LocalDateTime.now());
 
         cListResponse.setTotal(listMessage.getTotalElements());
         cListResponse.setOffset(offset);
@@ -216,7 +216,7 @@ public class DialogsServiceImpl implements DialogsService {
         for (Message message : listMessage) {
             MessageResponse messageResponse = new MessageResponse();
             messageResponse.setId(message.getId());
-            messageResponse.setTime(ConvertLocalDateService.convertLocalDateTimeToLong(message.getTime()));
+            messageResponse.setTime(Utils.getLongFromLocalDateTime(message.getTime()));
             messageResponse.setAuthorId(message.getAuthor().getId());
             messageResponse.setRecipientId(message.getRecipient().getId());
             messageResponse.setMessageText(message.getText());
@@ -243,7 +243,7 @@ public class DialogsServiceImpl implements DialogsService {
 
         CommonResponseData commonResponseData = new CommonResponseData();
         commonResponseData.setError("string");
-        commonResponseData.setTimestamp(ConvertLocalDateService.convertLocalDateTimeToLong(LocalDateTime.now()));
+        commonResponseData.setTimestamp(LocalDateTime.now());
         IdMessageResponse idMessageResponse = new IdMessageResponse(idMessage);
         commonResponseData.setData(idMessageResponse);
 
@@ -261,11 +261,11 @@ public class DialogsServiceImpl implements DialogsService {
 
         CommonResponseData commonResponseData = new CommonResponseData();
         commonResponseData.setError("string");
-        commonResponseData.setTimestamp(ConvertLocalDateService.convertLocalDateTimeToLong(LocalDateTime.now()));
+        commonResponseData.setTimestamp(LocalDateTime.now());
         //Message{
         MessageResponse messageResponse = new MessageResponse();
         messageResponse.setId(message.getId());
-        messageResponse.setTime(ConvertLocalDateService.convertLocalDateTimeToLong(message.getTime()));
+        messageResponse.setTime(Utils.getLongFromLocalDateTime(message.getTime()));
         messageResponse.setAuthorId(message.getAuthor().getId());
         messageResponse.setRecipientId(message.getRecipient().getId());
         messageResponse.setMessageText(message.getText());
@@ -281,9 +281,9 @@ public class DialogsServiceImpl implements DialogsService {
 
         CommonResponseData commonResponseData = new CommonResponseData();
         commonResponseData.setError("string");
-        commonResponseData.setTimestamp(ConvertLocalDateService.convertLocalDateTimeToLong(LocalDateTime.now()));
+        commonResponseData.setTimestamp(LocalDateTime.now());
         UserStatusResponse userStatusResponse = new UserStatusResponse();
-        //Сессия не храниться, статус неизвестен
+        /**Сессия не храниться, статус неизвестен*/
         boolean status = false;
         Dialog dialog = dialogRepository.findById(idDialog);
         Person person = personRepository.findById(idPerson);
@@ -291,7 +291,7 @@ public class DialogsServiceImpl implements DialogsService {
         if(dialog != null && person != null) {
             LocalDateTime lastActivityInTheDialogFromPerson = messageRepository.getTheTimeOfTheLastMessageOfTheDialogFromThePerson(dialog, person);
             userStatusResponse.setOnline(status);
-            userStatusResponse.setLastActivity(ConvertLocalDateService.convertLocalDateTimeToLong(lastActivityInTheDialogFromPerson));
+            userStatusResponse.setLastActivity(Utils.getLongFromLocalDateTime(lastActivityInTheDialogFromPerson));
         }
 
         commonResponseData.setData(userStatusResponse);

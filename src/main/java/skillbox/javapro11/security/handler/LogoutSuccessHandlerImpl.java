@@ -6,7 +6,6 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.stereotype.Component;
 import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.api.response.LogoutResponse;
-import skillbox.javapro11.service.ConvertLocalDateService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +21,7 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
 
         CommonResponseData responseData = new CommonResponseData();
         responseData.setError("string");
-        responseData.setTimestamp(ConvertLocalDateService.convertLocalDateTimeToLong(LocalDateTime.now()));
+        responseData.setTimestamp(LocalDateTime.now());
         responseData.setData(new LogoutResponse("ok"));
 
         ObjectMapper objectMapper = new ObjectMapper();

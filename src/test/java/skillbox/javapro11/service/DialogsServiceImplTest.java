@@ -32,6 +32,7 @@ import skillbox.javapro11.service.impl.ProfileServiceImpl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,11 +110,40 @@ public class DialogsServiceImplTest {
 
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
         Mockito.when(dialogRepository.getDialogsOfPerson(pageable, currentPerson)).thenReturn(dialogPage);
+
         //Message
         Message message = new Message(1, localDateTime, currentPerson, currentPerson, "text", dialog, ReadStatus.SENT, false);
         Mockito.when(messageRepository.getLastMessageOfDialog(dialog)).thenReturn(message);
 
+
         CommonListResponse cListResponse = dialogsService.getDialogs(offset, itemPerPage, "");
+        ResponseData dialogExpects = cListResponse.getData().get(0);
+        MessageResponse lastMessageExpects = ((DialogResponse) dialogExpects).getLastMessage();
+        String textExpect = lastMessageExpects.getMessageText();
+
+        assertEquals("result", textExpect, "text");
+    }
+
+    @Test
+    @DisplayName("Getting dialogs by query")
+    void getDialogsWithQueryTest() {
+
+        //Dialog
+        Dialog dialog = new Dialog(1, currentPerson, false, "invite");
+        List<Dialog> dialogList = new ArrayList<>();
+        dialogList.add(dialog);
+
+        PageImpl<Dialog> dialogPage = new PageImpl<>(dialogList);
+
+        Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
+        //Message
+        Message message = new Message(1, localDateTime, currentPerson, currentPerson, "text", dialog, ReadStatus.SENT, false);
+        Mockito.when(messageRepository.getLastMessageOfDialog(dialog)).thenReturn(message);
+
+        Mockito.when(dialogRepository.getDialogsOfPersonWithQuery(pageable, "tex", currentPerson)).thenReturn(dialogPage);
+
+
+        CommonListResponse cListResponse = dialogsService.getDialogs(offset, itemPerPage, "tex");
         ResponseData dialogExpects = cListResponse.getData().get(0);
         MessageResponse lastMessageExpects = ((DialogResponse) dialogExpects).getLastMessage();
         String textExpect = lastMessageExpects.getMessageText();
@@ -237,7 +267,7 @@ public class DialogsServiceImplTest {
         ResponseData responseData = commonResponseData.getData();
         Long expect = ((UserStatusResponse) responseData).getLastActivity();
 
-        assertEquals("result", expect, localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        assertEquals("result", expect, localDateTime.atZone(ZoneOffset.UTC).toInstant().toEpochMilli());
     }
 
 
