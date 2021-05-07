@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import skillbox.javapro11.enums.PermissionMessage;
 import skillbox.javapro11.model.entity.Person;
-import skillbox.javapro11.service.ConvertLocalDateService;
+import skillbox.javapro11.repository.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,8 +62,8 @@ public class PersonResponse extends ResponseData {
                 person.getId(),
                 person.getFirstName(),
                 person.getLastName(),
-                ConvertLocalDateService.convertLocalDateTimeToLong(person.getRegistrationDate()),
-                ConvertLocalDateService.convertLocalDateToLong(person.getBirthday()),
+                Utils.getLongFromLocalDateTime(person.getRegistrationDate()),
+                Utils.getLongFromLocalDate(person.getBirthday()),
                 person.getEmail(),
                 person.getPhone(),
                 person.getPhoto(),
@@ -71,7 +71,7 @@ public class PersonResponse extends ResponseData {
                 person.getCity(),
                 person.getCountry(),
                 person.getPermissionMessage(),
-                ConvertLocalDateService.convertLocalDateTimeToLong(person.getLastTimeOnline()),
+                Utils.getLongFromLocalDateTime(person.getLastTimeOnline()),
                 person.isBlocked(),
                 token
         );

@@ -3,7 +3,6 @@ package skillbox.javapro11.service.impl;
 import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -16,14 +15,12 @@ import skillbox.javapro11.model.entity.Post;
 import skillbox.javapro11.repository.PersonRepository;
 import skillbox.javapro11.repository.PostRepository;
 import skillbox.javapro11.repository.util.PersonSpecificationsBuilder;
+import skillbox.javapro11.repository.util.Utils;
 import skillbox.javapro11.service.AccountService;
-import skillbox.javapro11.service.ConvertLocalDateService;
 import skillbox.javapro11.service.ProfileService;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +56,7 @@ public class ProfileServiceImpl implements ProfileService {
             currentPerson.setLastName(profileEditRequest.getLastName());
         }
         if (profileEditRequest.getBirthDate() != null) {
-            currentPerson.setBirthday(profileEditRequest.getBirthDate());
+            currentPerson.setBirthday(Utils.getLocalDateFromLong(profileEditRequest.getBirthDate()));
         }
         if (profileEditRequest.getPhone() != null) {
             currentPerson.setPhone(profileEditRequest.getPhone());
@@ -97,7 +94,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         CommonResponseData responseData = new CommonResponseData();
         responseData.setError("string");
-        responseData.setTimestamp(ConvertLocalDateService.convertLocalDateTimeToLong(LocalDateTime.now()));
+        responseData.setTimestamp(LocalDateTime.now());
         responseData.setData(new StatusMessageResponse("ok"));
         return responseData;
     }
@@ -109,7 +106,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     public CommonListResponse getUserWall(long userId, long offset, int itemPerPage) {
         Person person = personRepository.findById(userId);
-        Pageable pageable = getPageable(offset, itemPerPage);
+        Pageable pageable = Utils.getPageable(offset, itemPerPage);
 
         Page<Post> postPage = postRepository.findAllByPerson(person, pageable);
         //build response
@@ -126,8 +123,7 @@ public class ProfileServiceImpl implements ProfileService {
     public CommonResponseData postOnUserWall(long userId, long publishDate, PostRequest postBody) {
         Person author = personRepository.findById(userId);
 
-        LocalDateTime publishLocalDateTime = getLocalDateTimeFromLong(publishDate);
-        publishLocalDateTime = getCorrectPublishLocalDateTime(publishLocalDateTime);
+        LocalDateTime publishLocalDateTime = getCorrectPublishLocalDateTime(Utils.getLocalDateTimeFromLong(publishDate));
 
         Post post = new Post();
         post.setPerson(author);
@@ -140,7 +136,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         CommonResponseData response = new CommonResponseData();
         response.setError("string");
-        response.setTimestamp(ConvertLocalDateService.convertLocalDateTimeToLong(LocalDateTime.now()));
+        response.setTimestamp(LocalDateTime.now());
         response.setData(PostResponse.fromPost(post));
 
         return response;
@@ -156,7 +152,7 @@ public class ProfileServiceImpl implements ProfileService {
             long offset,
             int itemPerPage
     ) {
-        Pageable pageable = getPageable(offset, itemPerPage);
+        Pageable pageable = Utils.getPageable(offset, itemPerPage);
 
         PersonSpecificationsBuilder builder = new PersonSpecificationsBuilder();
 
@@ -199,21 +195,9 @@ public class ProfileServiceImpl implements ProfileService {
 
         CommonResponseData responseData = new CommonResponseData();
         responseData.setError("string");
-        responseData.setTimestamp(ConvertLocalDateService.convertLocalDateTimeToLong(LocalDateTime.now()));
+        responseData.setTimestamp(LocalDateTime.now());
         responseData.setData(new StatusMessageResponse("ok"));
         return responseData;
-    }
-
-    public LocalDateTime getLocalDateTimeFromLong(long timestamp) {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
-    }
-
-    public Pageable getPageable(long offset, int itemPerPage) {
-        //itemPerPage can't be equal 0, cause we'll use it like divisor
-        //I don't know why it may be equals 0, but anyway we are ready for this!
-        itemPerPage = itemPerPage == 0 ? 1 : itemPerPage;
-        int page = (int) (offset / itemPerPage);
-        return PageRequest.of(page, itemPerPage);
     }
 
     public LocalDateTime getCorrectPublishLocalDateTime(LocalDateTime publishLocalDateTime) {

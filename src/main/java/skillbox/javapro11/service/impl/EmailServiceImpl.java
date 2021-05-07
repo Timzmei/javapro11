@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import skillbox.javapro11.controller.AccountController;
 import skillbox.javapro11.model.entity.Person;
+import skillbox.javapro11.service.EmailSenderService;
 import skillbox.javapro11.service.EmailService;
 
 @Service
@@ -14,6 +15,9 @@ public class EmailServiceImpl implements EmailService {
 
     @Autowired
     private PersonServiceImpl personServiceImpl;
+
+    @Autowired
+    private EmailSenderServiceImpl emailSenderService;
 
     @Override
     public boolean sendMessage(String email) {
@@ -27,7 +31,7 @@ public class EmailServiceImpl implements EmailService {
             return false;
         }
 
-        //sendMail();
+        emailSenderService.sendSimpleMessage(email, "text", "subject");
         return true;
     }
 }

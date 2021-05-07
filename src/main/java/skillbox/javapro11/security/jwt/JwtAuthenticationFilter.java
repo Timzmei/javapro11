@@ -35,7 +35,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         this.jwtTokenProvider = jwtTokenProvider;
         this.personRepository = personRepository;
         this.personService = personService;
-
     }
 
     @Override
@@ -70,19 +69,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             String token = jwtTokenProvider.createToken(person);
             response.addHeader(JwtParam.AUTHORIZATION_HEADER_STRING, token);
 
-            PersonResponse personResponse = PersonResponse.fromPerson(person, token);
             CommonResponseData commonResponseData = new CommonResponseData();
             commonResponseData.setError("string");
-            commonResponseData.setTimestamp(ConvertLocalDateService.convertLocalDateTimeToLong(LocalDateTime.now()));
-            commonResponseData.setData(personResponse);
+            commonResponseData.setTimestamp(LocalDateTime.now());
+            commonResponseData.setData(PersonResponse.fromPerson(person, token));
 
             ObjectMapper objectMapper = new ObjectMapper();
-            //objectMapper.registerModule(new JavaTimeModule());
-            //objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
             response.getWriter().print(objectMapper.writeValueAsString(commonResponseData));
             response.getWriter().flush();
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
