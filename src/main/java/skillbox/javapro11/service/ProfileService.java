@@ -39,15 +39,9 @@ public interface ProfileService {
 
     CommonResponseData blockUser(boolean isBlocked, long userId);
 
-    LocalDateTime getLocalDateTimeFromLong(long timestamp);
-
-    Pageable getPageable(long offset, int itemPerPage);
-
     LocalDateTime getCorrectPublishLocalDateTime(LocalDateTime publishLocalDateTime);
 
     List<PersonResponse> getPersonResponseListFromPersonList(List<Person> personList);
-
-    PersonResponse getPersonResponseFromPerson(Person person);
 
     List<PostResponse> getPostResponseListFromPostList(List<Post> postList);
 

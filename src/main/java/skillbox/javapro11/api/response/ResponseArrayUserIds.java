@@ -6,14 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserStatusResponse extends ResponseData {
-
-    private boolean online;
-
-    @JsonProperty(value = "last_activity")
-    private long lastActivity;
+public class ResponseArrayUserIds extends CommonResponse{
+    @JsonProperty(value = "users_ids")
+    private List<Long> usersIds;
 }

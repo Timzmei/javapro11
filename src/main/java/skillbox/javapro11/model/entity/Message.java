@@ -4,6 +4,7 @@ import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnTransformer;
 import skillbox.javapro11.enums.ReadStatus;
 
 import javax.persistence.*;
@@ -37,7 +38,15 @@ public class Message {
     @Column(name = "message_text", nullable = false)
     private String text;
 
-    @Column(name = "read_status", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "dialog_id", nullable = false)
+    private Dialog dialog;
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "read_status", columnDefinition = "rd_status", nullable = false)
+    @ColumnTransformer(read = "read_status::varchar", write = "?::rd_status")
     private ReadStatus readStatus;
+
+    @Column(name = "is_deleted", columnDefinition = "boolean default false")
+    private boolean isDeleted;
 }

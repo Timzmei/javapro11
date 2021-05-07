@@ -10,10 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserStatusResponse extends ResponseData {
-
-    private boolean online;
-
-    @JsonProperty(value = "last_activity")
-    private long lastActivity;
+public class IdMessageResponse extends ResponseData {
+    @JsonProperty(value = "message_id")
+    private long messageId;
 }

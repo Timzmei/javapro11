@@ -16,13 +16,13 @@ public class MessageResponse extends ResponseData{
 
     private long id;
 
-    private LocalDateTime time;
+    private Long time;
 
     @JsonProperty(value = "author_id")
     private long authorId;
 
     @JsonProperty(value = "recipient_id")
-    private int recipientId;
+    private long recipientId;
 
     @JsonProperty(value = "message_text")
     private String messageText;
