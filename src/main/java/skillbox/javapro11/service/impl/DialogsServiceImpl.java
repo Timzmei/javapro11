@@ -3,16 +3,14 @@ package skillbox.javapro11.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.DialogRequest;
-import skillbox.javapro11.api.response.CommonResponseData;
-import skillbox.javapro11.api.response.DialogResponse;
-import skillbox.javapro11.api.response.DialogUserShortListResponse;
-import skillbox.javapro11.api.response.MessageResponse;
+import skillbox.javapro11.api.response.*;
 import skillbox.javapro11.enums.ReadStatus;
 import skillbox.javapro11.model.entity.Dialog;
 import skillbox.javapro11.model.entity.Message;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.model.entity.Person2Dialog;
 import skillbox.javapro11.repository.DialogRepository;
+import skillbox.javapro11.repository.MessageRepository;
 import skillbox.javapro11.repository.Person2DialogRepository;
 import skillbox.javapro11.repository.PersonRepository;
 import skillbox.javapro11.service.DialogsService;
@@ -31,13 +29,15 @@ public class DialogsServiceImpl implements DialogsService {
     private final DialogRepository dialogRepository;
     private final Person2DialogRepository person2DialogRepository;
     private final PersonRepository personRepository;
+    private final MessageRepository messageRepository;
 
     @Autowired
-    public DialogsServiceImpl(AccountServiceImpl accountServiceImpl, DialogRepository dialogRepository, Person2DialogRepository person2DialogRepository, PersonRepository personRepository) {
+    public DialogsServiceImpl(AccountServiceImpl accountServiceImpl, DialogRepository dialogRepository, Person2DialogRepository person2DialogRepository, PersonRepository personRepository, MessageRepository messageRepository) {
         this.accountServiceImpl = accountServiceImpl;
         this.dialogRepository = dialogRepository;
         this.person2DialogRepository = person2DialogRepository;
         this.personRepository = personRepository;
+        this.messageRepository = messageRepository;
     }
 
 
@@ -93,20 +93,58 @@ public class DialogsServiceImpl implements DialogsService {
     @Override
     public CommonResponseData sendMessage(long idDialog, String messageText) {
         Person currentPerson = accountServiceImpl.getCurrentPerson();
-        Message newMessage = new Message();
-        newMessage.setAuthor(currentPerson);
-        newMessage.setText(messageText);
-        newMessage.setTime(LocalDateTime.now());
-        newMessage.setReadStatus(ReadStatus.SENT);
+        createMessage(messageText, currentPerson);
 
+        MessageResponse dialogData = getMessageResponse(messageText, currentPerson);
+        return new CommonResponseData(dialogData, "string");
+    }
+
+
+
+    @Override
+    public CommonResponseData editMessage(long idDialog, long idMessage, String messageText) {
+        Message message = messageRepository.findById(idMessage);
+        message.setText(messageText);
+        messageRepository.save(message);
+        Person currentPerson = accountServiceImpl.getCurrentPerson();
+        MessageResponse dialogData = getMessageResponse(messageText, currentPerson);
+        return new CommonResponseData(dialogData, "string");
+    }
+
+    @Override
+    public CommonResponseData readMessage(long idDialog, long idMessage) {
+        Message message = messageRepository.findById(idMessage);
+        message.setReadStatus(ReadStatus.READ);
+        messageRepository.save(message);
+        MessageResponse dialogData = new MessageResponse();
+        dialogData.setMessage("ok");
+        return new CommonResponseData(dialogData, "string");
+    }
+
+    @Override
+    public CommonResponseData changeStatusActivity(long idDialog, long idUser) {
+        StatusMessageResponse statusMessageResponse = new StatusMessageResponse();
+        statusMessageResponse.setMessage("ok");
+        return new CommonResponseData(statusMessageResponse, "string");
+    }
+
+    private MessageResponse getMessageResponse(String messageText, Person currentPerson) {
         MessageResponse dialogData = new MessageResponse();
         dialogData.setId(currentPerson.getId());
         dialogData.setTime(LocalDateTime.now());
         dialogData.setAuthorId(currentPerson.getId());
         dialogData.setMessageText(messageText);
         dialogData.setReadStatus("SENT");
+        return dialogData;
+    }
 
-        return new CommonResponseData(dialogData, "string");
+    private void createMessage(String messageText, Person currentPerson) {
+        Message newMessage = new Message();
+        newMessage.setAuthor(currentPerson);
+        newMessage.setText(messageText);
+        newMessage.setTime(LocalDateTime.now());
+        newMessage.setReadStatus(ReadStatus.SENT);
+        messageRepository.save(newMessage);
     }
 
     private void createPerson2Dialog(Person ownerDialog, Dialog dialog) {

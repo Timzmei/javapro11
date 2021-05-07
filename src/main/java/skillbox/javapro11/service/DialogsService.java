@@ -22,4 +22,10 @@ public interface DialogsService {
     CommonResponseData joinToDialog(long idDialog, String link);
 
     CommonResponseData sendMessage(long idDialog, String messageText);
+
+    CommonResponseData editMessage(long idDialog, long idMessage, String messageText);
+
+    CommonResponseData readMessage(long idDialog, long idMessage);
+
+    CommonResponseData changeStatusActivity(long idDialog, long idUser);
 }

@@ -29,4 +29,6 @@ public class MessageResponse extends ResponseData{
 
     @JsonProperty(value = "read_status")
     private String readStatus;
+
+    private String message;
 }

@@ -82,8 +82,10 @@ public class DialogsController {
     }
 
     @PutMapping("/{dialog_id}/messages/{message_id}")
-    public ResponseEntity editMessage(){
-        return null;
+    public ResponseEntity editMessage(@PathVariable("dialog_id") long idDialog,
+                                      @PathVariable("message_id") long idMessage,
+                                      @RequestBody DialogRequest dialogRequest){
+        return new ResponseEntity<>(dialogsService.editMessage(idDialog, idMessage, dialogRequest.getMessageText()), HttpStatus.OK);
     }
 
     @PutMapping("/{dialog_id}/messages/{message_id}/recover") //Сергей
@@ -92,8 +94,9 @@ public class DialogsController {
     }
 
     @PutMapping("/{dialog_id}/messages/{message_id}/read")
-    public ResponseEntity readMessage(){
-        return null;
+    public ResponseEntity readMessage(@PathVariable("dialog_id") long idDialog,
+                                      @PathVariable("message_id") long idMessage){
+        return new ResponseEntity<>(dialogsService.readMessage(idDialog, idMessage), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/activity/{user_id}") //Сергей
@@ -102,16 +105,17 @@ public class DialogsController {
     }
 
     @PostMapping("/{id}/activity/{user_id}")
-    public ResponseEntity changeStatus(){
-        return null;
+    public ResponseEntity changeStatus(@PathVariable("id") long idDialog,
+                                       @PathVariable("user_id") long idUser){
+        return new ResponseEntity<>(dialogsService.changeStatusActivity(idDialog, idUser), HttpStatus.OK);
     }
 
-    @GetMapping("/longpoll") //Сергей
+    @GetMapping("/longpoll") // не реализовано во фронте
     public ResponseEntity getLongpoll(){
         return null;
     }
 
-    @PostMapping("/longpoll/history")
+    @PostMapping("/longpoll/history") // не реализовано во фронте
     public ResponseEntity updateUserMessages(){
         return null;
     }
