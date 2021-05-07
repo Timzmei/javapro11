@@ -30,13 +30,12 @@ public class PostServiceImpl implements PostService {
   private final AccountService accountService;
 
   @Override
-  public CommonListResponse getPostSearch(String text, String author,long dateFrom, long dateTo,
-                                          long offset, int limit) {
+  public CommonListResponse getPostSearch(String text,long dateFrom, long dateTo, long offset, int limit) {
 
     Pageable page = Utils.getPageable(offset,limit, Sort.by(Sort.Direction.DESC, "time"));
     LocalDateTime dateFromTime = Utils.getLocalDateTimeFromLong(dateFrom);
     LocalDateTime dateToTime = Utils.getLocalDateTimeFromLong(dateTo);
-    Page<Post> posts = postRepository.findAllPostsBySearch(page, text, author, dateFromTime, dateToTime);
+    Page<Post> posts = postRepository.findAllPostsBySearch(page, text, dateFromTime, dateToTime);
     return new CommonListResponse ("", LocalDateTime.now(), posts.getTotalElements(),
             offset, limit, new ArrayList<>(PostResponse.fromPostList(posts.getContent())));
   }

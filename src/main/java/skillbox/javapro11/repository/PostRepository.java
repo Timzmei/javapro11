@@ -20,11 +20,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	@Query(value = "SELECT tp1.*\n" +
 			"FROM post tp1\n" +
-			"left JOIN (select p.id, (p.first_name || p.last_name) fio from person p) t1 on t1.id=tp1.author_id\n" +
+			"left JOIN (select p.id, (p.first_name || p.last_name) fio from person p) t1 \n" +
 			"WHERE lower(tp1.post_text) LIKE lower('%?2%') \n" +
 			" and tp1.time between ?4 and ?5\n" +
 			" and lower(t1.fio) like lower('%?3%')" +
 			" and is_deleted is null", nativeQuery = true)
-	Page<Post> findAllPostsBySearch(Pageable page, String text, String author, LocalDateTime dateFrom,
+	Page<Post> findAllPostsBySearch(Pageable page, String text, LocalDateTime dateFrom,
 									LocalDateTime dateTo);
 }

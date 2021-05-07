@@ -21,13 +21,12 @@ public class PostController {
 
     @GetMapping("/")
     public ResponseEntity<?>  getPostSearch (@RequestParam ("text") String text,
-                                             @RequestParam ("author_id") String author,
                                              @RequestParam ("date_from") long dateFrom,
                                              @RequestParam ("date_to") long dateTo,
                                              @RequestParam (required = false, defaultValue = "0") long offset,
                                              @RequestParam (required = false, defaultValue = "20") Integer itemPerPage
                                              ){
-        return new ResponseEntity<>(postService.getPostSearch(text, author, dateFrom, dateTo, offset,
+        return new ResponseEntity<>(postService.getPostSearch(text, dateFrom, dateTo, offset,
                                                                 itemPerPage), HttpStatus.OK);
     }
 
