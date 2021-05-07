@@ -56,7 +56,7 @@ public class JwtTokenProvider {
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
 
-        return token;
+        return JwtParam.TOKEN_BEARER_PREFIX + token;
     }
 
     public Authentication getAuthentication(String token) {
