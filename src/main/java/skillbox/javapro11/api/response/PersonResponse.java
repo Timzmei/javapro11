@@ -8,9 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import skillbox.javapro11.enums.PermissionMessage;
 import skillbox.javapro11.model.entity.Person;
-import skillbox.javapro11.service.ConvertTimeService;
+import skillbox.javapro11.service.ConvertLocalDateService;
 
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,13 +57,13 @@ public class PersonResponse extends ResponseData {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String token;
 
-    public static PersonResponse fromPerson(Person person) {
+    public static PersonResponse fromPerson(Person person, String token) {
         return new PersonResponse(
                 person.getId(),
                 person.getFirstName(),
                 person.getLastName(),
-                ConvertTimeService.convertLocalDateTimeToLong(person.getRegistrationDate()),
-                ConvertTimeService.convertLocalDateToLong(person.getBirthday()),
+                ConvertLocalDateService.convertLocalDateTimeToLong(person.getRegistrationDate()),
+                ConvertLocalDateService.convertLocalDateToLong(person.getBirthday()),
                 person.getEmail(),
                 person.getPhone(),
                 person.getPhoto(),
@@ -72,15 +71,15 @@ public class PersonResponse extends ResponseData {
                 person.getCity(),
                 person.getCountry(),
                 person.getPermissionMessage(),
-                ConvertTimeService.convertLocalDateTimeToLong(person.getLastTimeOnline()),
+                ConvertLocalDateService.convertLocalDateTimeToLong(person.getLastTimeOnline()),
                 person.isBlocked(),
-                null
+                token
         );
     }
 
     public static List<PersonResponse> fromPersonList(List<Person> personList) {
         List<PersonResponse> personResponseList = new ArrayList<>();
-        personList.forEach(person -> personResponseList.add(fromPerson(person)));
+        personList.forEach(person -> personResponseList.add(fromPerson(person, null)));
         return personResponseList;
     }
 }

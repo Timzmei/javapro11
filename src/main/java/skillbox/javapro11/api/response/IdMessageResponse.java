@@ -6,16 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserStatusResponse extends ResponseData {
-
-    private boolean online;
-
-    @JsonProperty(value = "last_activity")
-    private Long lastActivity;
+public class IdMessageResponse extends ResponseData {
+    @JsonProperty(value = "message_id")
+    private long messageId;
 }

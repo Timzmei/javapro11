@@ -10,7 +10,7 @@ import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.api.response.UploadImageResponse;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.repository.PersonRepository;
-import skillbox.javapro11.service.ConvertTimeService;
+import skillbox.javapro11.service.ConvertLocalDateService;
 import skillbox.javapro11.service.StorageService;
 
 import java.io.File;
@@ -60,7 +60,7 @@ public class StorageServiceImpl implements StorageService {
 
         CommonResponseData commonResponseData = new CommonResponseData();
         commonResponseData.setError(error);
-        commonResponseData.setTimestamp(ConvertTimeService.convertLocalDateTimeToLong(LocalDateTime.now()));
+        commonResponseData.setTimestamp(ConvertLocalDateService.convertLocalDateTimeToLong(LocalDateTime.now()));
         commonResponseData.setData(uploadImageResponse);
 
         return commonResponseData;

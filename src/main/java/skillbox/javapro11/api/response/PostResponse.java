@@ -49,7 +49,7 @@ public class PostResponse extends ResponseData {
         return new PostResponse(
                 post.getId(),
                 post.getTime(),
-                PersonResponse.fromPerson(post.getPerson()),
+                PersonResponse.fromPerson(post.getPerson(), null),
                 post.getTitle(),
                 post.getText(),
                 post.isBlocked(),

@@ -47,8 +47,6 @@ public interface ProfileService {
 
     List<PersonResponse> getPersonResponseListFromPersonList(List<Person> personList);
 
-    PersonResponse getPersonResponseFromPerson(Person person);
-
     List<PostResponse> getPostResponseListFromPostList(List<Post> postList);
 
     PostResponse getPostResponseFromPost(Post post);

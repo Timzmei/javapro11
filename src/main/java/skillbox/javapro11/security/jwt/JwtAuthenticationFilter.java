@@ -7,12 +7,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import skillbox.javapro11.api.request.AuthRequest;
-import skillbox.javapro11.api.response.CommonResponse;
 import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.repository.PersonRepository;
-import skillbox.javapro11.service.ConvertTimeService;
+import skillbox.javapro11.service.ConvertLocalDateService;
 import skillbox.javapro11.service.PersonService;
 
 import javax.servlet.FilterChain;
@@ -71,15 +70,19 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             String token = jwtTokenProvider.createToken(person);
             response.addHeader(JwtParam.AUTHORIZATION_HEADER_STRING, token);
 
-            PersonResponse personResponse = personService.createPersonResponse(person, token);
+            PersonResponse personResponse = PersonResponse.fromPerson(person, token);
             CommonResponseData commonResponseData = new CommonResponseData();
             commonResponseData.setError("string");
-            commonResponseData.setTimestamp(ConvertTimeService.convertLocalDateTimeToLong(LocalDateTime.now()));
+            commonResponseData.setTimestamp(ConvertLocalDateService.convertLocalDateTimeToLong(LocalDateTime.now()));
             commonResponseData.setData(personResponse);
 
             ObjectMapper objectMapper = new ObjectMapper();
+            //objectMapper.registerModule(new JavaTimeModule());
+            //objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
             response.getWriter().print(objectMapper.writeValueAsString(commonResponseData));
             response.getWriter().flush();
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

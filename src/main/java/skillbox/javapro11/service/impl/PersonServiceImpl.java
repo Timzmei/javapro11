@@ -5,13 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.RegisterRequest;
-import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.repository.PersonRepository;
-import skillbox.javapro11.service.ConvertTimeService;
 import skillbox.javapro11.service.PersonService;
-
-import java.time.ZoneId;
 
 @Service
 public class PersonServiceImpl implements PersonService {
@@ -56,24 +52,4 @@ public class PersonServiceImpl implements PersonService {
         return message;
     }
 
-    public PersonResponse createPersonResponse(Person person, String token) {
-        PersonResponse personResponse = new PersonResponse();
-        personResponse.setId(person.getId());
-        personResponse.setFirstName(person.getFirstName());
-        personResponse.setLastName(person.getLastName());
-        personResponse.setRegistrationDate(ConvertTimeService.convertLocalDateTimeToLong(person.getRegistrationDate()));
-        personResponse.setBirthDate(ConvertTimeService.convertLocalDateToLong(person.getBirthday()));
-        personResponse.setEmail(person.getEmail());
-        personResponse.setPhone(person.getPhone());
-        personResponse.setPhoto(person.getPhoto());
-        personResponse.setAbout(person.getAbout());
-        personResponse.setCity(person.getCity());
-        personResponse.setCountry(person.getCountry());
-        personResponse.setMessagesPermission(person.getPermissionMessage());
-        personResponse.setLastOnlineTime(ConvertTimeService.convertLocalDateTimeToLong(person.getLastTimeOnline()));
-        personResponse.setBlocked(person.isBlocked());
-        personResponse.setToken(token);
-
-        return personResponse;
-    }
 }

@@ -6,9 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.PostRequest;
 import skillbox.javapro11.api.request.ProfileEditRequest;
@@ -20,7 +17,7 @@ import skillbox.javapro11.repository.PersonRepository;
 import skillbox.javapro11.repository.PostRepository;
 import skillbox.javapro11.repository.util.PersonSpecificationsBuilder;
 import skillbox.javapro11.service.AccountService;
-import skillbox.javapro11.service.ConvertTimeService;
+import skillbox.javapro11.service.ConvertLocalDateService;
 import skillbox.javapro11.service.ProfileService;
 
 import java.time.Instant;
@@ -49,7 +46,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     public CommonResponseData getCurrentUser() {
-        return new CommonResponseData(PersonResponse.fromPerson(accountService.getCurrentPerson()), "string");
+        return new CommonResponseData(PersonResponse.fromPerson(accountService.getCurrentPerson(), null), "string");
     }
 
     public CommonResponseData editCurrentUser(@NotNull ProfileEditRequest profileEditRequest) {
@@ -89,7 +86,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         personRepository.save(currentPerson);
 
-        return new CommonResponseData(PersonResponse.fromPerson(currentPerson), "string");
+        return new CommonResponseData(PersonResponse.fromPerson(currentPerson, null), "string");
     }
 
     @Override
@@ -100,13 +97,13 @@ public class ProfileServiceImpl implements ProfileService {
 
         CommonResponseData responseData = new CommonResponseData();
         responseData.setError("string");
-        responseData.setTimestamp(ConvertTimeService.convertLocalDateTimeToLong(LocalDateTime.now()));
+        responseData.setTimestamp(ConvertLocalDateService.convertLocalDateTimeToLong(LocalDateTime.now()));
         responseData.setData(new StatusMessageResponse("ok"));
         return responseData;
     }
 
     public CommonResponseData findUserById(long id) {
-        PersonResponse personResponse = PersonResponse.fromPerson(personRepository.getOne(id));
+        PersonResponse personResponse = PersonResponse.fromPerson(personRepository.getOne(id), null);
         return new CommonResponseData(personResponse, "string");
     }
 
@@ -143,7 +140,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         CommonResponseData response = new CommonResponseData();
         response.setError("string");
-        response.setTimestamp(ConvertTimeService.convertLocalDateTimeToLong(LocalDateTime.now()));
+        response.setTimestamp(ConvertLocalDateService.convertLocalDateTimeToLong(LocalDateTime.now()));
         response.setData(PostResponse.fromPost(post));
 
         return response;
@@ -202,7 +199,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         CommonResponseData responseData = new CommonResponseData();
         responseData.setError("string");
-        responseData.setTimestamp(ConvertTimeService.convertLocalDateTimeToLong(LocalDateTime.now()));
+        responseData.setTimestamp(ConvertLocalDateService.convertLocalDateTimeToLong(LocalDateTime.now()));
         responseData.setData(new StatusMessageResponse("ok"));
         return responseData;
     }
@@ -225,28 +222,8 @@ public class ProfileServiceImpl implements ProfileService {
 
     public List<PersonResponse> getPersonResponseListFromPersonList(List<Person> personList) {
         List<PersonResponse> personResponseList = new ArrayList<>();
-        personList.forEach(person -> personResponseList.add(getPersonResponseFromPerson(person)));
+        personList.forEach(person -> personResponseList.add(PersonResponse.fromPerson(person, null)));
         return personResponseList;
-    }
-
-    public PersonResponse getPersonResponseFromPerson(Person person) {
-        return new PersonResponse(
-                person.getId(),
-                person.getFirstName(),
-                person.getLastName(),
-                ConvertTimeService.convertLocalDateTimeToLong(person.getRegistrationDate()),
-                ConvertTimeService.convertLocalDateToLong(person.getBirthday()),
-                person.getEmail(),
-                person.getPhone(),
-                person.getPhoto(),
-                person.getAbout(),
-                person.getCity(),
-                person.getCountry(),
-                person.getPermissionMessage(),
-                person.getLastTimeOnline().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
-                person.isBlocked(),
-                null
-        );
     }
 
     public List<PostResponse> getPostResponseListFromPostList(List<Post> postList) {
@@ -260,7 +237,7 @@ public class ProfileServiceImpl implements ProfileService {
         PostResponse postResponse = new PostResponse();
         postResponse.setId(post.getId());
         postResponse.setTime(post.getTime());
-        postResponse.setAuthor(getPersonResponseFromPerson(post.getPerson()));
+        postResponse.setAuthor(PersonResponse.fromPerson(post.getPerson(), null));
         postResponse.setTitle(post.getTitle());
         postResponse.setPostText(post.getText());
         postResponse.setBlocked(post.isBlocked());

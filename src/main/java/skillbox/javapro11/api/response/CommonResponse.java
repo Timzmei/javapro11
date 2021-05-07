@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import skillbox.javapro11.service.ConvertTimeService;
+import skillbox.javapro11.service.ConvertLocalDateService;
 
 import java.time.LocalDateTime;
 
@@ -19,6 +19,6 @@ public class CommonResponse {
 
     public CommonResponse(String errorMessage) {
         this.error = errorMessage;
-        this.timestamp = ConvertTimeService.convertLocalDateTimeToLong(LocalDateTime.now());
+        this.timestamp = ConvertLocalDateService.convertLocalDateTimeToLong(LocalDateTime.now());
     }
 }

@@ -9,8 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import skillbox.javapro11.model.entity.Dialog;
-
-import java.time.LocalDateTime;
+import skillbox.javapro11.model.entity.Person;
 
 /**
  * Created by timurg on 28.04.2021.
@@ -34,11 +33,30 @@ public interface DialogRepository extends JpaRepository<Dialog, Long> {
             nativeQuery = true)
     void deleteDialog(@Param("id") long id);
 
-    @Query("SELECT m.dialog, m.dialog.id " +
+    @Query("SELECT d " +
             "FROM Message m " +
+                "JOIN m.dialog d " +
             "WHERE m.text LIKE %:query% " +
-            "GROUP BY m.dialog, m.dialog.id")
-    Page<Dialog> getDialogsByQuery(Pageable pageable, String query);
+            "AND m.dialog IN(SELECT d " +
+                            "FROM Person2Dialog p2d " +
+                            "JOIN p2d.dialog d " +
+                            "WHERE p2d.person = :currentPerson " +
+                            "GROUP BY d) " +
+            "GROUP BY d")
+    Page<Dialog> getDialogsOfPersonWithQuery(Pageable pageable, String query, Person currentPerson);
+
+    @Query("SELECT d " +
+            "FROM Person2Dialog p2d " +
+                "JOIN p2d.dialog d " +
+            "WHERE p2d.person = :currentPerson " +
+            "GROUP BY d")
+    Page<Dialog> getDialogsOfPerson(Pageable pageable, Person currentPerson);
+
+    @Query( "SELECT inviteCode " +
+            "FROM Dialog d " +
+            "WHERE d.id = :idDialog ")
+    String getInviteByDialog(long idDialog);
+
 }
 
 
