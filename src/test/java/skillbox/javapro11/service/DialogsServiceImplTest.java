@@ -25,13 +25,11 @@ import skillbox.javapro11.repository.DialogRepository;
 import skillbox.javapro11.repository.MessageRepository;
 import skillbox.javapro11.repository.Person2DialogRepository;
 import skillbox.javapro11.repository.PersonRepository;
-import skillbox.javapro11.service.DialogsService;
 import skillbox.javapro11.service.impl.AccountServiceImpl;
 import skillbox.javapro11.service.impl.ProfileServiceImpl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
@@ -268,6 +266,129 @@ public class DialogsServiceImplTest {
         Long expect = ((UserStatusResponse) responseData).getLastActivity();
 
         assertEquals("result", expect, localDateTime.atZone(ZoneOffset.UTC).toInstant().toEpochMilli());
+    }
+
+    @Test
+    @DisplayName("create Dialog with Person (by Id)")
+    void createDialogTest() {
+        Dialog dialog = new Dialog(1, currentPerson, false, "invite");
+        Mockito.when(dialogsService.createNewDialog(currentPerson)).thenReturn(dialog);
+
+        DialogRequest dialogRequest = new DialogRequest();
+        int[] userIds = new int[1];
+        userIds[0] = 1;
+        dialogRequest.setUsersIds(userIds);
+
+        Mockito.when(personRepository.findById(1)).thenReturn(currentPerson);
+
+        CommonResponseData commonResponseData = dialogsService.createDialog(dialogRequest);
+        DialogResponse responseData = (DialogResponse) commonResponseData.getData();
+        int expect = (int) responseData.getId();
+
+        assertEquals("result", expect, 1);
+    }
+
+    @Test
+    @DisplayName("delete Dialog")
+    void deleteDialogTest() {
+
+        Dialog dialog = new Dialog(1, currentPerson, false, "invite");
+        Mockito.when(dialogRepository.findById(1)).thenReturn(dialog);
+
+        CommonResponseData commonResponseData = dialogsService.deleteDialog(1);
+        DialogResponse dialogResponse = (DialogResponse) commonResponseData.getData();
+        long expect = dialogResponse.getId();
+
+        assertEquals("result", expect, 1L);
+    }
+
+    @Test
+    @DisplayName("delete Users in Dialog")
+    void deleteUsersInDialogTest() {
+
+        String[] userIds = {"1", "2", "3"};
+
+        CommonResponseData commonResponseData = dialogsService.deleteUsersInDialog(1, userIds);
+        DialogUserShortListResponse expectData = (DialogUserShortListResponse) commonResponseData.getData();
+        List<Long> expect = expectData.getUserIds();
+
+        DialogUserShortListResponse dialogData = new DialogUserShortListResponse();
+        List<Long> actualUserIds = new ArrayList<>();
+        actualUserIds.add(1L);
+        actualUserIds.add(2L);
+        actualUserIds.add(3L);
+        dialogData.setUserIds(actualUserIds);
+        assertEquals("result", expect, actualUserIds);
+    }
+
+    @Test
+    @DisplayName("Join to Dialog using the invitation link")
+    void joinToDialogTest() {
+        List<Long> actualUserIds = new ArrayList<>();
+        actualUserIds.add(1L);
+
+        CommonResponseData commonResponseData = dialogsService.joinToDialog(1, "link");
+        DialogUserShortListResponse expectData = (DialogUserShortListResponse) commonResponseData.getData();
+        List<Long> expect = expectData.getUserIds();
+
+        assertEquals("result", expect, actualUserIds);
+    }
+
+    @Test
+    @DisplayName("Send Message")
+    void sendMessageTest() {
+
+        String message = "text";
+
+        CommonResponseData commonResponseData = dialogsService.sendMessage(1, "text");
+        MessageResponse expectData = (MessageResponse) commonResponseData.getData();
+        String expect = expectData.getMessageText();
+
+        assertEquals("result", expect, message);
+    }
+
+    @Test
+    @DisplayName("Edit Message")
+    void editMessageTest() {
+
+        String messageText = "newText";
+
+        Dialog dialog = new Dialog(1, currentPerson, false, "invite");
+        Message message = new Message(1, localDateTime, currentPerson, currentPerson, "text", dialog, ReadStatus.SENT, false);
+        Mockito.when(messageRepository.findById(1)).thenReturn(message);
+
+        CommonResponseData commonResponseData = dialogsService.editMessage(1, 1, messageText);
+        MessageResponse expectData = (MessageResponse) commonResponseData.getData();
+        String expect = expectData.getMessageText();
+
+        assertEquals("result", expect, messageText);
+    }
+
+    @Test
+    @DisplayName("Read Message")
+    void readMessageTest() {
+
+        Dialog dialog = new Dialog(1, currentPerson, false, "invite");
+        Message message = new Message(1, localDateTime, currentPerson, currentPerson, "text", dialog, ReadStatus.SENT, false);
+        Mockito.when(messageRepository.findById(1)).thenReturn(message);
+
+        CommonResponseData commonResponseData = dialogsService.readMessage(1, 1);
+        MessageResponse expectData = (MessageResponse) commonResponseData.getData();
+        String expectMessage = expectData.getMessage();
+
+        assertEquals("result", expectMessage, "ok");
+
+    }
+
+    @Test
+    @DisplayName("Change status activity")
+    void changeStatusActivityTest() {
+
+        CommonResponseData commonResponseData = dialogsService.changeStatusActivity(1, 1);
+        StatusMessageResponse expectData = (StatusMessageResponse) commonResponseData.getData();
+        String expectMessage = expectData.getMessage();
+
+        assertEquals("result", expectMessage, "ok");
     }
 
 

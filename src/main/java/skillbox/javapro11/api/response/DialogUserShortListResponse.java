@@ -17,5 +17,5 @@ import java.util.List;
 @AllArgsConstructor
 public class DialogUserShortListResponse extends ResponseData{
     @JsonProperty(value = "user_ids")
-    private List<String> userIds;
+    private List<Long> userIds;
 }

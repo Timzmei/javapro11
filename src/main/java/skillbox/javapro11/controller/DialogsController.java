@@ -7,9 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import skillbox.javapro11.api.request.DialogRequest;
 import skillbox.javapro11.api.response.CommonListResponse;
 import skillbox.javapro11.api.response.CommonResponseData;
-import skillbox.javapro11.api.response.DialogResponse;
 import skillbox.javapro11.api.response.ResponseArrayUserIds;
-import skillbox.javapro11.model.entity.Dialog;
 import skillbox.javapro11.service.DialogsService;
 
 /**
@@ -61,7 +59,7 @@ public class DialogsController {
 
     @DeleteMapping("/{id}/users")
     public ResponseEntity deleteUserFromDialog(@PathVariable("id") long idDialog,
-                                               @PathVariable("users_ids") String[] usersIds) {
+                                               @PathVariable("users_ids") String[] usersIds){
         return new ResponseEntity<>(dialogsService.deleteUsersInDialog(idDialog, usersIds), HttpStatus.OK);
     }
 

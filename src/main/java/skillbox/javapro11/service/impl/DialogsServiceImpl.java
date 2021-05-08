@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.DialogRequest;
 import skillbox.javapro11.api.response.*;
-import skillbox.javapro11.api.response.*;
 import skillbox.javapro11.enums.ReadStatus;
 import skillbox.javapro11.model.entity.Dialog;
 import skillbox.javapro11.model.entity.Message;
@@ -22,7 +21,9 @@ import skillbox.javapro11.service.DialogsService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by timur_guliev on 27.04.2021.
@@ -48,10 +49,10 @@ public class DialogsServiceImpl implements DialogsService {
 
     @Override
     public CommonResponseData createDialog(DialogRequest dialogRequest) {
-        Person ownerDialog = accountServiceImpl.getCurrentPerson();
+        Person currentPerson = accountServiceImpl.getCurrentPerson();
         DialogResponse dialogData = new DialogResponse();
-        Dialog newDialog = createNewDialog(ownerDialog);
-        createPerson2Dialog(ownerDialog, newDialog);
+        Dialog newDialog = createNewDialog(currentPerson);
+        createPerson2Dialog(currentPerson, newDialog);
         createPerson2Dialog(personRepository.findById(dialogRequest.getUsersIds()[0]), newDialog);
         dialogData.setId(newDialog.getId());
         return new CommonResponseData(dialogData, "string");
@@ -80,15 +81,15 @@ public class DialogsServiceImpl implements DialogsService {
             person2DialogRepository.deletePersInDialog(idDialog, Long.parseLong(usersIds[i]));
         }
         DialogUserShortListResponse dialogData = new DialogUserShortListResponse();
-        dialogData.setUserIds(usersIds);
+        dialogData.setUserIds(Arrays.stream(usersIds).map(Long::parseLong).collect(Collectors.toList()));
         return new CommonResponseData(dialogData, "string");
     }
 
     @Override
     public CommonResponseData joinToDialog(long idDialog, String link) {
         Person currentPerson = accountServiceImpl.getCurrentPerson();
-        List<String> usersIds = new ArrayList<>();
-        usersIds.add(String.valueOf(currentPerson.getId()));
+        List<Long> usersIds = new ArrayList<>();
+        usersIds.add(currentPerson.getId());
         createPerson2Dialog(currentPerson, dialogRepository.findById(idDialog));
         DialogUserShortListResponse dialogData = new DialogUserShortListResponse();
         dialogData.setUserIds(usersIds);
@@ -98,7 +99,7 @@ public class DialogsServiceImpl implements DialogsService {
     @Override
     public CommonResponseData sendMessage(long idDialog, String messageText) {
         Person currentPerson = accountServiceImpl.getCurrentPerson();
-        createMessage(messageText, currentPerson);
+        createMessage(messageText, currentPerson, idDialog);
 
         MessageResponse dialogData = getMessageResponse(messageText, currentPerson);
         return new CommonResponseData(dialogData, "string");
@@ -136,19 +137,21 @@ public class DialogsServiceImpl implements DialogsService {
     private MessageResponse getMessageResponse(String messageText, Person currentPerson) {
         MessageResponse dialogData = new MessageResponse();
         dialogData.setId(currentPerson.getId());
-        dialogData.setTime(LocalDateTime.now());
+        dialogData.setTime(Utils.getLongFromLocalDateTime(LocalDateTime.now()));
         dialogData.setAuthorId(currentPerson.getId());
         dialogData.setMessageText(messageText);
         dialogData.setReadStatus("SENT");
         return dialogData;
     }
 
-    private void createMessage(String messageText, Person currentPerson) {
+    private void createMessage(String messageText, Person currentPerson, long idDialog) {
+        Dialog dialog = dialogRepository.findById(idDialog);
         Message newMessage = new Message();
         newMessage.setAuthor(currentPerson);
         newMessage.setText(messageText);
         newMessage.setTime(LocalDateTime.now());
         newMessage.setReadStatus(ReadStatus.SENT);
+        newMessage.setDialog(dialog);
         messageRepository.save(newMessage);
     }
 
