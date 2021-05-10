@@ -25,15 +25,7 @@ public class AccountController {
     public ResponseEntity<CommonResponse> personRegister(@RequestBody RegisterRequest registerRequest){
         LOGGER.trace("/api/v1/account/register");
 
-        String email = registerRequest.getEmail();
-        String message = "";
-        Person curPerson =  accountService.findPersonByEmail(email);
-        if (curPerson != null) {
-            message = String.format("User with email %s already exists", email);
-        }
-        else{
-            accountService.addNewPerson(registerRequest);
-        }
+        String message = accountService.registerNewUser(registerRequest);
         return new ResponseEntity<>(new CommonResponse(message), HttpStatus.OK);
     }
 

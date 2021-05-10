@@ -33,7 +33,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public Person add(RegisterRequest registerRequest) {
         Person newPerson = new Person(registerRequest);
-        LOGGER.info("new Person in DB: " + registerRequest.toString());
+        LOGGER.info("new Person in DB: " + registerRequest.getEmail());
         return personRepository.save(newPerson);
     }
 
