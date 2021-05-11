@@ -1,9 +1,7 @@
 package skillbox.javapro11.service.impl;
 
-import jdk.jshell.execution.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -139,7 +137,7 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
-  public CommonResponseData editedComment(long postId, long idComment, CommentRequest comment) {
+  public CommonResponseData editedComment(long postId, Long idComment, CommentRequest comment) {
     Person person = accountService.getCurrentPerson();
     Optional<Post> postOptional = postRepository.findById(postId);
     if (!postOptional.isPresent()) {
@@ -147,7 +145,7 @@ public class PostServiceImpl implements PostService {
     }
     Post post = postOptional.get();
     Comment newComment;
-    if (idComment != 0) {
+    if (idComment != null) {
       newComment = commentRepository.getByIdAndPostId(idComment, postId);
       if (newComment == null) {
         return new CommonResponseData(null, "Комментарий не найден");
@@ -160,7 +158,7 @@ public class PostServiceImpl implements PostService {
       newComment.setPost(post);
       newComment.setTime(LocalDateTime.now());
       newComment.setAuthorId(person.getId());
-      if (comment.getParentId() != 0) {
+      if (comment.getParentId() != null) {
         if (!commentRepository.findById(comment.getParentId()).isPresent()) {
           return new CommonResponseData(null, "Комментарий не найден");
         }

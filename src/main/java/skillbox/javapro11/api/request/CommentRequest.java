@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CommentRequest {
   @JsonProperty(value="parent_id")
-  private long parentId;
+  private Long parentId;
   @JsonProperty(value="comment_text")
   private String commentText;
 }

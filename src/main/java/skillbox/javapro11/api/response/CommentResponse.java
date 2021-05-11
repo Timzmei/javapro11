@@ -49,7 +49,7 @@ public class CommentResponse extends ResponseData {
 
   public static CommentResponse fromComment(Comment comment) {
     return new CommentResponse(
-        comment.getParentId(),
+        comment.getParentId() == null ? 0 : comment.getParentId(),
         comment.getCommentText(),
         comment.getId(),
         comment.getPost().getId(),
