@@ -11,11 +11,7 @@ import org.springframework.data.domain.Page;
 import skillbox.javapro11.ServiceTestConfiguration;
 import skillbox.javapro11.api.request.CommentRequest;
 import skillbox.javapro11.api.request.PostRequest;
-import skillbox.javapro11.api.response.CommentResponse;
-import skillbox.javapro11.api.response.CommonListResponse;
-import skillbox.javapro11.api.response.CommonResponseData;
-import skillbox.javapro11.api.response.PostResponse;
-import skillbox.javapro11.api.response.StatusMessageResponse;
+import skillbox.javapro11.api.response.*;
 import skillbox.javapro11.enums.PermissionMessage;
 import skillbox.javapro11.model.entity.Comment;
 import skillbox.javapro11.model.entity.Person;
@@ -137,10 +133,9 @@ class PostServiceTest {
         CommonResponseData response = postService.editPostById(postId, publishData, newPost);
         PostResponse postResponse = (PostResponse) response.getData();
 
-        assertTrue(response.getError().isEmpty());
+        assertNull(response.getError());
         assertEquals("check text", text, postResponse.getPostText());
         assertEquals("check title", title, postResponse.getTitle());
-
     }
 
     @Test
@@ -244,18 +239,11 @@ class PostServiceTest {
         .time(Utils.getTimestampFromLocalDateTime(LocalDateTime.now()))
         .build();
 
-        CommonResponseData responseData = new CommonResponseData(defaultComment, "");
+    CommonResponseData responseData = new CommonResponseData(defaultComment, "");
 
-        CommentRequest newComment = new CommentRequest();
-        newComment.setParentId(0);
-        newComment.setCommentText("new comment 2");
-
-//        CommonResponseData response = postService.editedComment(postId, 0, newComment);
-//    assertEquals("check data", responseData.getData(),response.getData());
-//        System.out.println("data = " + response.getData());
-//    assertEquals("check error", responseData.getError(),response.getError());
-//    }
-
+    CommentRequest newComment = new CommentRequest();
+    newComment.setParentId(0);
+    newComment.setCommentText("new comment 2");
 
     CommonResponseData response = postService.editedComment(postId, 0, newComment);
     CommentResponse responseComment = (CommentResponse) response.getData();

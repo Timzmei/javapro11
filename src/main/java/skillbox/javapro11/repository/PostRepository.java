@@ -18,13 +18,10 @@ import java.time.LocalDateTime;
 public interface PostRepository extends JpaRepository<Post, Long> {
 	Page<Post> findAllByPerson(Person person, Pageable pageable);
 
-	@Query(value = "SELECT tp1.*\n" +
-			"FROM post tp1\n" +
-			"left JOIN (select p.id, (p.first_name || p.last_name) fio from person p) t1 \n" +
-			"WHERE lower(tp1.post_text) LIKE lower('%?2%') \n" +
-			" and tp1.time between ?4 and ?5\n" +
-			" and lower(t1.fio) like lower('%?3%')" +
-			" and is_deleted is null", nativeQuery = true)
-	Page<Post> findAllPostsBySearch(Pageable page, String text, LocalDateTime dateFrom,
-									LocalDateTime dateTo);
+	@Query(value = "SELECT * \n" +
+			"FROM post \n" +
+			"WHERE lower(post_text) LIKE lower('%'||?2||'%') \n" +
+			" and time between ?3 and ?4 \n" +
+			" and is_deleted = false", nativeQuery = true)
+	Page<Post> findAllPostsBySearch(Pageable page, String text, LocalDateTime dateFrom, LocalDateTime dateTo);
 }
