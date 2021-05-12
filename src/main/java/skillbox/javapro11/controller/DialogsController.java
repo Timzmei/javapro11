@@ -26,7 +26,7 @@ public class DialogsController {
 
     @GetMapping("") //Сергей
     public ResponseEntity getDialogsList(@RequestParam(value = "query", defaultValue = "") String query,
-                                         @RequestParam(value = "offset") Integer offset,
+                                         @RequestParam(value = "offset", defaultValue = "0") Integer offset,
                                          @RequestParam(value = "itemPerPage", defaultValue = "20") Integer itemPerPage) {
 
         CommonListResponse dialogsResponse = dialogsService.getDialogs(offset, itemPerPage, query);
@@ -78,7 +78,7 @@ public class DialogsController {
     @GetMapping("/{id}/messages") //Сергей
     public ResponseEntity getHistoryOfMessages(@PathVariable("id") long idDialog,
                                                @RequestParam(value = "query", defaultValue = "") String query,
-                                               @RequestParam(value = "offset") Integer offset,
+                                               @RequestParam(value = "offset", defaultValue = "0") Integer offset,
                                                @RequestParam(value = "itemPerPage", defaultValue = "20") Integer itemPerPage) {
 
         CommonListResponse messageOfDialog = dialogsService.getMessageOfDialog(idDialog, offset, itemPerPage, query);
