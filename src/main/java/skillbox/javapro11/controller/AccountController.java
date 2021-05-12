@@ -10,7 +10,6 @@ import skillbox.javapro11.api.request.NotificationsRequest;
 import skillbox.javapro11.api.request.RegisterRequest;
 import skillbox.javapro11.api.request.SetPasswordRequest;
 import skillbox.javapro11.api.response.CommonResponse;
-import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.service.AccountService;
 
 @RestController
@@ -51,7 +50,7 @@ public class AccountController {
 
     @PutMapping("/email")
     public ResponseEntity<CommonResponse> emailChange(@RequestBody String email){
-        LOGGER.trace("/api/v1/account/password/email");
+        LOGGER.trace("/api/v1/account/email");
 
         String message = accountService.changePersonEmail(email);
         return new ResponseEntity<>(new CommonResponse(message), HttpStatus.OK);
