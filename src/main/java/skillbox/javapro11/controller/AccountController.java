@@ -8,9 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import skillbox.javapro11.api.request.NotificationsRequest;
 import skillbox.javapro11.api.request.RegisterRequest;
+import skillbox.javapro11.api.request.SetEmailRequest;
 import skillbox.javapro11.api.request.SetPasswordRequest;
 import skillbox.javapro11.api.response.CommonResponse;
-import skillbox.javapro11.api.request.SetEmailRequest;
 import skillbox.javapro11.service.AccountService;
 
 @RestController
@@ -50,10 +50,10 @@ public class AccountController {
     }
 
     @PutMapping("/email")
-    public ResponseEntity<CommonResponse> emailChange(@RequestBody SetEmailRequest setEmailRequest){
+    public ResponseEntity<CommonResponse> emailChange(@RequestBody SetEmailRequest email){
         LOGGER.trace("/api/v1/account/email");
 
-        String message = accountService.changePersonEmail(setEmailRequest.getEmail());
+        String message = accountService.changePersonEmail(email.getEmail());
         return new ResponseEntity<>(new CommonResponse(message), HttpStatus.OK);
     }
 
