@@ -159,14 +159,41 @@ class PostServiceTest {
     @DisplayName("Recover post")
     public void recoverPostByIdTest() {
         long postId = 1L;
+        Person person = accountService.getCurrentPerson();
+        Post post = new Post(postId,
+                LocalDateTime.now(),
+                person,
+                "post 1", "post text 1",
+                false, true,
+                new ArrayList<>(), new ArrayList<>());
+
+        Mockito.when(postRepository.findById(postId)).thenReturn(Optional.of(post));
+        CommonResponseData responseData = postService.reportPost(postId);
+
+        assertTrue(post.isDeleted());
+        assertNotNull(responseData.getData());
+        assertNull(responseData.getError());
     }
 
     @Test
     @DisplayName("Report post")
     public void reportPostTest() {
        long postId = 1L;
+       Person person = accountService.getCurrentPerson();
+       Post post = new Post(postId,
+                LocalDateTime.now(),
+                person,
+                "post 1", "post text 1",
+                false, false,
+                new ArrayList<>(), new ArrayList<>());
 
+        Mockito.when(postRepository.findById(postId)).thenReturn(Optional.of(post));
+        CommonResponseData responseData = postService.reportPost(postId);
 
+        assertTrue(post.isBlocked());
+        assertNotNull(responseData.getData());
+        assertEquals("check response", "OK", ((StatusMessageResponse) responseData.getData()).getMessage());
+        assertTrue(responseData.getError().isEmpty());
     }
 
     @Test

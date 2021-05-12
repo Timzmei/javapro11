@@ -68,7 +68,7 @@ public class PostServiceImpl implements PostService {
     }
 
     Post post = optionalPost.get();
-    if (post.getId() != person.getId()) {
+    if (post.getPerson().getId() != person.getId()) {
       response.setError("You have no rights");
       response.setTimestamp(LocalDateTime.now());
     }
