@@ -193,7 +193,7 @@ class PostServiceTest {
         assertTrue(post.isBlocked());
         assertNotNull(responseData.getData());
         assertEquals("check response", "OK", ((StatusMessageResponse) responseData.getData()).getMessage());
-        assertTrue(responseData.getError().isEmpty());
+        assertNull(responseData.getError());
     }
 
     @Test
