@@ -65,7 +65,7 @@ public class PostController {
 
     @PostMapping("/{id}/comments")
     public ResponseEntity<?> createComment(@PathVariable(name = "id") long postId, @RequestBody CommentRequest comment){
-        return new ResponseEntity<>(postService.editedComment(postId, 0, comment), HttpStatus.OK);
+        return new ResponseEntity<>(postService.editedComment(postId, null, comment), HttpStatus.OK);
     }
 
     @PutMapping("/{id}/comments/{comment_id}")
