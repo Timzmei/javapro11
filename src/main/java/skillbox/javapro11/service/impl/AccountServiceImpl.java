@@ -66,8 +66,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public String changePersonEmail(String email) {
-        return personServiceImpl.changeEmail(email);
+    public String changePersonEmail(String newMail) {
+        Person curPerson = getCurrentPerson();
+        return personServiceImpl.changeEmail(curPerson, newMail);
     }
 
     @Override
