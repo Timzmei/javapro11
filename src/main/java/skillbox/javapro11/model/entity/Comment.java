@@ -19,8 +19,8 @@ public class Comment {
     @NotNull
     private long id;
 
-    @Column(name = "parent_id", columnDefinition = "int")
-    private long parentId;
+    @Column(name = "parent_id", columnDefinition = "bigint")
+    private Long parentId;
 
     @Column(name = "comment_text", columnDefinition = "text")
     @NotNull

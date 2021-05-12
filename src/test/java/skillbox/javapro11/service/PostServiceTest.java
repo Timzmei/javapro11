@@ -137,7 +137,7 @@ class PostServiceTest {
         CommonResponseData response = postService.editPostById(postId, publishData, newPost);
         PostResponse postResponse = (PostResponse) response.getData();
 
-        assertTrue(response.getError().isEmpty());
+        assertNull(response.getError());
         assertEquals("check text", text, postResponse.getPostText());
         assertEquals("check title", title, postResponse.getTitle());
 
@@ -208,10 +208,10 @@ class PostServiceTest {
         CommonResponseData responseData = new CommonResponseData(null, "Пост не найден");
         long postId = 123;
         CommentRequest newComment = new CommentRequest();
-        newComment.setParentId(0);
+        newComment.setParentId(null);
         newComment.setCommentText("new comment 1");
 
-        CommonResponseData response = postService.editedComment(postId, 0, newComment);
+        CommonResponseData response = postService.editedComment(postId, null, newComment);
         assertEquals("check data", responseData.getData(), response.getData());
         assertEquals("check error", responseData.getError(), response.getError());
     }
@@ -232,14 +232,14 @@ class PostServiceTest {
         new ArrayList<>(), new ArrayList<>()));
 
     Mockito.when(postRepository.findById(postId)).thenReturn(post);
-    Comment commentModel = new Comment(commentId, 0L,
+    Comment commentModel = new Comment(commentId, null,
         "comment text", new Post(),
         LocalDateTime.now(), 2L,
         false, false);
     Mockito.when(commentRepository.getByIdAndPostId(commentId, postId)).thenReturn(commentModel);
 
     CommentRequest newComment = new CommentRequest();
-    newComment.setParentId(0);
+    newComment.setParentId(null);
     newComment.setCommentText("new comment text");
 
     CommonResponseData response = postService.editedComment(postId, commentId, newComment);
@@ -271,20 +271,13 @@ class PostServiceTest {
         .time(Utils.getTimestampFromLocalDateTime(LocalDateTime.now()))
         .build();
 
-        CommonResponseData responseData = new CommonResponseData(defaultComment, "");
+    CommonResponseData responseData = new CommonResponseData(defaultComment, "");
 
         CommentRequest newComment = new CommentRequest();
-        newComment.setParentId(0);
+        newComment.setParentId(null);
         newComment.setCommentText("new comment 2");
 
-//        CommonResponseData response = postService.editedComment(postId, 0, newComment);
-//    assertEquals("check data", responseData.getData(),response.getData());
-//        System.out.println("data = " + response.getData());
-//    assertEquals("check error", responseData.getError(),response.getError());
-//    }
-
-
-    CommonResponseData response = postService.editedComment(postId, 0, newComment);
+    CommonResponseData response = postService.editedComment(postId, null, newComment);
     CommentResponse responseComment = (CommentResponse) response.getData();
 
     assertEquals("check parent comment", defaultComment.getParentId(), responseComment.getParentId());
@@ -309,7 +302,7 @@ class PostServiceTest {
   void deleteCommentOk() {
     long postId = 11;
     long commentId = 2;
-    Comment commentModel = new Comment(commentId, 0L,
+    Comment commentModel = new Comment(commentId, null,
         "comment text", new Post(),
         LocalDateTime.now(), 2L,
         false, false);
@@ -326,7 +319,7 @@ class PostServiceTest {
   void reportComment() {
     long postId = 11;
     long commentId = 2;
-    Comment commentModel = new Comment(commentId, 0L,
+    Comment commentModel = new Comment(commentId, null,
         "comment text", new Post(),
         LocalDateTime.now(), 2L,
         false, false);
@@ -344,7 +337,7 @@ class PostServiceTest {
   void recoverComment() {
     long postId = 11;
     long commentId = 2;
-    Comment commentModel = new Comment(commentId, 0L,
+    Comment commentModel = new Comment(commentId, null,
         "comment text", new Post(),
         LocalDateTime.now(), 2L,
         false, false);
