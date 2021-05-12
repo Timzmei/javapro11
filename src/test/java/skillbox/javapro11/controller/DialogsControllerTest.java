@@ -94,6 +94,23 @@ public class DialogsControllerTest {
     }
 
     @Test
+    @DisplayName("Create dialog")
+    @WithMockUser
+    void createDialogTest() throws Exception {
+
+        DialogRequest dialogRequest = new DialogRequest();
+        int[] userIds = new int[1];
+        userIds[0] = 1;
+        dialogRequest.setUsersIds(userIds);
+
+        mockMvc.perform(put("/dialogs")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dialogRequest)))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
     @DisplayName("unreaded")
     @WithMockUser
     void getCountUnreadMessagesTest() throws Exception {
