@@ -250,7 +250,7 @@ class PostServiceTest {
         newComment.setParentId(null);
         newComment.setCommentText("new comment 2");
 
-    CommonResponseData response = postService.editedComment(postId, 0, newComment);
+    CommonResponseData response = postService.editedComment(postId, null, newComment);
     CommentResponse responseComment = (CommentResponse) response.getData();
 
     assertEquals("check parent comment", defaultComment.getParentId(), responseComment.getParentId());
