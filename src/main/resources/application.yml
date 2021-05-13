@@ -6,7 +6,7 @@ spring:
       ddl-auto: none
   datasource:
     platform: postgres
-    url: jdbc:postgresql://localhost:5432/test?createDatabaseIfNotExist=true
+    url: jdbc:postgresql://localhost:5432/test?useUnicode=true&characterEncoding=utf8&createDatabaseIfNotExist=true
     username: postgres
     password: password
     driverClassName: org.postgresql.Driver
@@ -31,3 +31,8 @@ cloudinary:
 
 front:
   host: http://localhost:8080
+
+logging:
+  level:
+    root: INFO
+    skillbox: TRACE
