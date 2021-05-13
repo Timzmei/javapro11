@@ -22,4 +22,6 @@ public interface AccountService {
     String changePersonPassword(String token, String password);
 
     String changePersonEmail(String email);
+
+    String registerNewUser(RegisterRequest registerRequest);
 }
