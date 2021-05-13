@@ -1,5 +1,7 @@
 package skillbox.javapro11.security.userdetails;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,12 +13,14 @@ import skillbox.javapro11.repository.PersonRepository;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
     @Autowired
     private PersonRepository personRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        LOGGER.info("loadUserByUsername " + email);
         Person person = personRepository.findByEmail(email);
         if (person == null) {
             throw new UsernameNotFoundException("Unknown user: " + email);

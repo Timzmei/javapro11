@@ -3,6 +3,7 @@ package skillbox.javapro11.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.RegisterRequest;
 import skillbox.javapro11.model.entity.Person;
@@ -15,6 +16,9 @@ public class PersonServiceImpl implements PersonService {
 
     @Autowired
     private PersonRepository personRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Person findPersonByEmail(String email) {
@@ -30,7 +34,8 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public Person add(RegisterRequest registerRequest) {
         Person newPerson = new Person(registerRequest);
-        LOGGER.info("new Person in DB: " + registerRequest.toString());
+        newPerson.setPassword(passwordEncoder.encode(registerRequest.getPasswd1()));
+        LOGGER.info("new Person in DB: " + registerRequest.getEmail());
         return personRepository.save(newPerson);
     }
 
@@ -38,18 +43,46 @@ public class PersonServiceImpl implements PersonService {
     public String changePassword(String email, String password) {
         String message = ""; // for checking error if necessary
         Person curPerson = findPersonByEmail(email);
-        curPerson.setPassword(password);
+        LOGGER.info("curPerson in DB: " + curPerson);
+        LOGGER.info("new password: " + password);
+        curPerson.setPassword(passwordEncoder.encode(password));
         save(curPerson);
         return message;
     }
 
     @Override
-    public String changeEmail(String email) {
+    public String changeEmail(Person curPerson, String email) {
         String message = "";// for checking error if necessary
-        Person curPerson = findPersonByEmail(email);
         curPerson.setEmail(email);
         save(curPerson);
+        LOGGER.info("new email: " + email);
         return message;
     }
 
+    public PersonResponse createPersonResponse(Person person, String token) {
+        PersonResponse personResponse = new PersonResponse();
+        personResponse.setId(person.getId());
+        personResponse.setFirstName(person.getFirstName());
+        personResponse.setLastName(person.getLastName());
+        personResponse.setRegistrationDate(person.getRegistrationDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        try {
+            personResponse.setBirthDate(person.getBirthday().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        }
+        catch(NullPointerException e){
+            LOGGER.info(e.getMessage());
+            personResponse.setBirthDate(18269L); // для примера
+        }
+        personResponse.setEmail(person.getEmail());
+        personResponse.setPhone(person.getPhone());
+        personResponse.setPhoto(person.getPhoto());
+        personResponse.setAbout(person.getAbout());
+        personResponse.setCity(person.getCity());
+        personResponse.setCountry(person.getCountry());
+        personResponse.setMessagesPermission(person.getPermissionMessage());
+        personResponse.setLastOnlineTime(person.getLastTimeOnline().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        personResponse.setBlocked(person.isBlocked());
+        personResponse.setToken(token);
+
+        return personResponse;
+    }
 }
