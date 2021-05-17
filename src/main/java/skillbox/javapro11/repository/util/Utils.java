@@ -24,16 +24,20 @@ public class Utils {
     }
   }
 
-  public static LocalDateTime getLocalDateTimeFromLong(long timestamp) {
-    return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
+  public static LocalDateTime getLocalDateTimeFromLong(long date) {
+    return LocalDateTime.ofInstant(Instant.ofEpochMilli(date), ZoneOffset.UTC);
   }
 
-  public static Long getTimestampFromLocalDate(LocalDate date){
-    return date.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+  public static LocalDate getLocalDateFromLong(long date) {
+    return Instant.ofEpochMilli(date).atZone(ZoneOffset.UTC).toLocalDate();
   }
 
-  public static Long getTimestampFromLocalDateTime(LocalDateTime date) {
-    return date.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+  public static Long getLongFromLocalDate(LocalDate date){
+    return date.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli();
+  }
+
+  public static Long getLongFromLocalDateTime(LocalDateTime date) {
+    return date.atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
   }
 
 }

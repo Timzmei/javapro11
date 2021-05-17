@@ -109,7 +109,7 @@ public class ProfileServiceTest {
         ProfileEditRequest profileEditRequest = new ProfileEditRequest(
                 "Petr",
                 "Petrov",
-                localDate, // birth date
+                Utils.getLongFromLocalDate(localDate), // birth date
                 "+7(222)333-44-55",
                 "photoID",
                 null, // null mustn't change about value
@@ -209,7 +209,7 @@ public class ProfileServiceTest {
         assertEquals("Check author by email", person.getEmail(), postResponse.getAuthor().getEmail());
         assertEquals("Check title", title, postResponse.getTitle());
         assertEquals("Check text", text, postResponse.getPostText());
-        assertTrue("Correct post time", !postResponse.getTime().isBefore(nowLDT));
+        assertTrue("Correct post time", !Utils.getLocalDateTimeFromLong(postResponse.getTime()).isBefore(nowLDT));
     }
 
     @Test

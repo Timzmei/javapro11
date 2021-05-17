@@ -66,7 +66,25 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public String changePersonEmail(String email) {
-        return personServiceImpl.changeEmail(email);
+    public String changePersonEmail(String newMail) {
+        Person curPerson = getCurrentPerson();
+        return personServiceImpl.changeEmail(curPerson, newMail);
+    }
+
+    @Override
+    public String registerNewUser(RegisterRequest registerRequest) {
+        if (!registerRequest.getPasswd1().equals(registerRequest.getPasswd2())) {
+            return String.format("Passwords are not equals");
+        }
+
+        String email = registerRequest.getEmail();
+        Person curPerson =  findPersonByEmail(email);
+        if (curPerson != null) {
+            return String.format("User with email %s already exists", email);
+        }
+        else{
+            addNewPerson(registerRequest);
+            return String.format("New user in DB with email %s", email);
+        }
     }
 }

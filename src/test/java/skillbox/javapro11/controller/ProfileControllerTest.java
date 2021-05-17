@@ -19,6 +19,7 @@ import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.api.response.StatusMessageResponse;
 import skillbox.javapro11.enums.PermissionMessage;
+import skillbox.javapro11.repository.util.Utils;
 import skillbox.javapro11.service.ProfileService;
 
 import java.time.LocalDate;
@@ -96,7 +97,7 @@ public class ProfileControllerTest {
         ProfileEditRequest profileEditRequest = new ProfileEditRequest(
                 "Petr",
                 "Petrov",
-                localDate,
+                Utils.getLongFromLocalDate(localDate),
                 "phone",
                 "newPhoto",
                 "newAbout",

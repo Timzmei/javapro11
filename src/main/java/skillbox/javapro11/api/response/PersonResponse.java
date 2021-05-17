@@ -57,13 +57,13 @@ public class PersonResponse extends ResponseData {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String token;
 
-    public static PersonResponse fromPerson(Person person) {
+    public static PersonResponse fromPerson(Person person, String token) {
         return new PersonResponse(
                 person.getId(),
                 person.getFirstName(),
                 person.getLastName(),
-                Utils.getTimestampFromLocalDateTime(person.getRegistrationDate()),
-                Utils.getTimestampFromLocalDate(person.getBirthday()),
+                Utils.getLongFromLocalDateTime(person.getRegistrationDate()),
+                Utils.getLongFromLocalDate(person.getBirthday()),
                 person.getEmail(),
                 person.getPhone(),
                 person.getPhoto(),
@@ -71,15 +71,15 @@ public class PersonResponse extends ResponseData {
                 person.getCity(),
                 person.getCountry(),
                 person.getPermissionMessage(),
-                Utils.getTimestampFromLocalDateTime(person.getLastTimeOnline()),
+                Utils.getLongFromLocalDateTime(person.getLastTimeOnline()),
                 person.isBlocked(),
-                null
+                token
         );
     }
 
     public static List<PersonResponse> fromPersonList(List<Person> personList) {
         List<PersonResponse> personResponseList = new ArrayList<>();
-        personList.forEach(person -> personResponseList.add(fromPerson(person)));
+        personList.forEach(person -> personResponseList.add(fromPerson(person, null)));
         return personResponseList;
     }
 }

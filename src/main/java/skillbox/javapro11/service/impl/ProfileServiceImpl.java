@@ -43,7 +43,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     public CommonResponseData getCurrentUser() {
-        return new CommonResponseData(PersonResponse.fromPerson(accountService.getCurrentPerson()), "string");
+        return new CommonResponseData(PersonResponse.fromPerson(accountService.getCurrentPerson(), null), "string");
     }
 
     public CommonResponseData editCurrentUser(@NotNull ProfileEditRequest profileEditRequest) {
@@ -56,7 +56,7 @@ public class ProfileServiceImpl implements ProfileService {
             currentPerson.setLastName(profileEditRequest.getLastName());
         }
         if (profileEditRequest.getBirthDate() != null) {
-            currentPerson.setBirthday(profileEditRequest.getBirthDate());
+            currentPerson.setBirthday(Utils.getLocalDateFromLong(profileEditRequest.getBirthDate()));
         }
         if (profileEditRequest.getPhone() != null) {
             currentPerson.setPhone(profileEditRequest.getPhone());
@@ -123,8 +123,7 @@ public class ProfileServiceImpl implements ProfileService {
     public CommonResponseData postOnUserWall(long userId, long publishDate, PostRequest postBody) {
         Person author = personRepository.findById(userId);
 
-        LocalDateTime publishLocalDateTime = Utils.getLocalDateTimeFromLong(publishDate);
-        publishLocalDateTime = getCorrectPublishLocalDateTime(publishLocalDateTime);
+        LocalDateTime publishLocalDateTime = getCorrectPublishLocalDateTime(Utils.getLocalDateTimeFromLong(publishDate));
 
         Post post = new Post();
         post.setPerson(author);
@@ -211,26 +210,6 @@ public class ProfileServiceImpl implements ProfileService {
         return personResponseList;
     }
 
-    public PersonResponse getPersonResponseFromPerson(Person person) {
-        return new PersonResponse(
-                person.getId(),
-                person.getFirstName(),
-                person.getLastName(),
-                Utils.getTimestampFromLocalDateTime(person.getRegistrationDate()),
-                Utils.getTimestampFromLocalDate(person.getBirthday()),
-                person.getEmail(),
-                person.getPhone(),
-                person.getPhoto(),
-                person.getAbout(),
-                person.getCity(),
-                person.getCountry(),
-                person.getPermissionMessage(),
-                Utils.getTimestampFromLocalDateTime(person.getLastTimeOnline()),
-                person.isBlocked(),
-                null
-        );
-    }
-
     public List<PostResponse> getPostResponseListFromPostList(List<Post> postList) {
         List<PostResponse> postResponseList = new ArrayList<>();
         postList.forEach(post -> postResponseList.add(getPostResponseFromPost(post)));
@@ -241,8 +220,8 @@ public class ProfileServiceImpl implements ProfileService {
     public PostResponse getPostResponseFromPost(Post post) {
         PostResponse postResponse = new PostResponse();
         postResponse.setId(post.getId());
-        postResponse.setTime(post.getTime());
-        postResponse.setAuthor(getPersonResponseFromPerson(post.getPerson()));
+        postResponse.setTime(Utils.getLongFromLocalDateTime(post.getTime()));
+        postResponse.setAuthor(PersonResponse.fromPerson(post.getPerson(), null));
         postResponse.setTitle(post.getTitle());
         postResponse.setPostText(post.getText());
         postResponse.setBlocked(post.isBlocked());
@@ -266,7 +245,7 @@ public class ProfileServiceImpl implements ProfileService {
                 comment.getCommentText(),
                 comment.getId(),
                 comment.getPost().getId(),
-                Utils.getTimestampFromLocalDateTime(comment.getTime()),
+                Utils.getLongFromLocalDateTime(comment.getTime()),
                 comment.getAuthorId(),
                 comment.isBlocked()
         );

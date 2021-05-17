@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import skillbox.javapro11.repository.util.Utils;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -23,6 +24,6 @@ public class CommonResponse {
     }
 
     public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = Instant.now().toEpochMilli();
+        this.timestamp = Utils.getLongFromLocalDateTime(timestamp);
     }
 }

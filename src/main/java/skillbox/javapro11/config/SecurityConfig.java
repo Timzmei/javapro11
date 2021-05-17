@@ -65,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .and()
                 //authorizeRequests() - все запросы через spring security
                 .authorizeRequests()
-                .antMatchers("/account/register", "/account/password/recovery").permitAll()
+                .antMatchers("/platform/languages", "/account/register", "/account/password/recovery").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
