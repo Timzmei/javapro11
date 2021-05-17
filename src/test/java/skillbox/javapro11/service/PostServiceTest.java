@@ -237,7 +237,7 @@ class PostServiceTest {
       assertTrue(response.getError().isEmpty());
       assertEquals("check count data", 3, response.getData().size());
       CommentResponse data = (CommentResponse) response.getData().get(0);
-      assertEquals("check time first comment", Utils.getTimestampFromLocalDateTime(com1.getTime()), data.getTime());
+      assertEquals("check time first comment", Utils.getLongFromLocalDateTime(com1.getTime()), data.getTime());
   }
 
 
@@ -307,7 +307,7 @@ class PostServiceTest {
         .blocked(false)
         .postId(postId)
         .authorId(2L)
-        .time(Utils.getTimestampFromLocalDateTime(LocalDateTime.now()))
+        .time(Utils.getLongFromLocalDateTime(LocalDateTime.now()))
         .build();
 
     CommonResponseData responseData = new CommonResponseData(defaultComment, "");

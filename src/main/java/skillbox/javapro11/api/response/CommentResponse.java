@@ -53,7 +53,7 @@ public class CommentResponse extends ResponseData {
         comment.getCommentText(),
         comment.getId(),
         comment.getPost().getId(),
-        Utils.getTimestampFromLocalDateTime(comment.getTime()),
+        Utils.getLongFromLocalDateTime(comment.getTime()),
         comment.getAuthorId(),
         comment.isBlocked()
     );
