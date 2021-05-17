@@ -24,6 +24,7 @@ import skillbox.javapro11.model.entity.Post;
 import skillbox.javapro11.repository.PersonRepository;
 import skillbox.javapro11.repository.PostRepository;
 import skillbox.javapro11.repository.util.PersonSpecificationsBuilder;
+import skillbox.javapro11.repository.util.Utils;
 import skillbox.javapro11.service.impl.AccountServiceImpl;
 import skillbox.javapro11.service.impl.ProfileServiceImpl;
 
@@ -108,7 +109,7 @@ public class ProfileServiceTest {
         ProfileEditRequest profileEditRequest = new ProfileEditRequest(
                 "Petr",
                 "Petrov",
-                localDate, // birth date
+                Utils.getLongFromLocalDate(localDate), // birth date
                 "+7(222)333-44-55",
                 "photoID",
                 null, // null mustn't change about value
@@ -177,7 +178,7 @@ public class ProfileServiceTest {
         long offset = 0L;
         int itemPerPage = 2;
         Page<Post> postPage = Page.empty();
-        Mockito.when(postRepository.findAllByPerson(person, profileService.getPageable(offset, itemPerPage)))
+        Mockito.when(postRepository.findAllByPerson(person, Utils.getPageable(offset, itemPerPage)))
                 .thenReturn(postPage);
         Mockito.when(personRepository.findById(person.getId())).thenReturn(person);
 
@@ -208,7 +209,7 @@ public class ProfileServiceTest {
         assertEquals("Check author by email", person.getEmail(), postResponse.getAuthor().getEmail());
         assertEquals("Check title", title, postResponse.getTitle());
         assertEquals("Check text", text, postResponse.getPostText());
-        assertTrue("Correct post time", !postResponse.getTime().isBefore(nowLDT));
+        assertTrue("Correct post time", !Utils.getLocalDateTimeFromLong(postResponse.getTime()).isBefore(nowLDT));
     }
 
     @Test
@@ -219,7 +220,7 @@ public class ProfileServiceTest {
         PersonSpecificationsBuilder builder = new PersonSpecificationsBuilder();
         Specification<Person> spec = builder.build();
         Page<Person> personPage = Page.empty();
-        Mockito.when(personRepository.findAll(spec, profileService.getPageable(offset, itemPerPage)))
+        Mockito.when(personRepository.findAll(spec, Utils.getPageable(offset, itemPerPage)))
                 .thenReturn(personPage);
 
         CommonListResponse response = profileService.searchUser(

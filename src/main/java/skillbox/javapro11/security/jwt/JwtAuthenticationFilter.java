@@ -34,7 +34,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         this.jwtTokenProvider = jwtTokenProvider;
         this.personRepository = personRepository;
         this.personService = personService;
-
     }
 
     @Override
@@ -69,11 +68,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             String token = jwtTokenProvider.createToken(person);
             response.addHeader(JwtParam.AUTHORIZATION_HEADER_STRING, token);
 
-            PersonResponse personResponse = personService.createPersonResponse(person, token);
             CommonResponseData commonResponseData = new CommonResponseData();
             commonResponseData.setError("string");
             commonResponseData.setTimestamp(LocalDateTime.now());
-            commonResponseData.setData(personResponse);
+            commonResponseData.setData(PersonResponse.fromPerson(person, token));
 
             ObjectMapper objectMapper = new ObjectMapper();
             response.getWriter().print(objectMapper.writeValueAsString(commonResponseData));

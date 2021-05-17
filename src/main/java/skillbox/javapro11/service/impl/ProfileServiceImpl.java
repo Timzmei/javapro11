@@ -3,12 +3,8 @@ package skillbox.javapro11.service.impl;
 import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.PostRequest;
 import skillbox.javapro11.api.request.ProfileEditRequest;
@@ -19,13 +15,12 @@ import skillbox.javapro11.model.entity.Post;
 import skillbox.javapro11.repository.PersonRepository;
 import skillbox.javapro11.repository.PostRepository;
 import skillbox.javapro11.repository.util.PersonSpecificationsBuilder;
+import skillbox.javapro11.repository.util.Utils;
 import skillbox.javapro11.service.AccountService;
 import skillbox.javapro11.service.ProfileService;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +43,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     public CommonResponseData getCurrentUser() {
-        return new CommonResponseData(PersonResponse.fromPerson(accountService.getCurrentPerson()), "string");
+        return new CommonResponseData(PersonResponse.fromPerson(accountService.getCurrentPerson(), null), "string");
     }
 
     public CommonResponseData editCurrentUser(@NotNull ProfileEditRequest profileEditRequest) {
@@ -61,7 +56,7 @@ public class ProfileServiceImpl implements ProfileService {
             currentPerson.setLastName(profileEditRequest.getLastName());
         }
         if (profileEditRequest.getBirthDate() != null) {
-            currentPerson.setBirthday(profileEditRequest.getBirthDate());
+            currentPerson.setBirthday(Utils.getLocalDateFromLong(profileEditRequest.getBirthDate()));
         }
         if (profileEditRequest.getPhone() != null) {
             currentPerson.setPhone(profileEditRequest.getPhone());
@@ -88,7 +83,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         personRepository.save(currentPerson);
 
-        return new CommonResponseData(PersonResponse.fromPerson(currentPerson), "string");
+        return new CommonResponseData(PersonResponse.fromPerson(currentPerson, null), "string");
     }
 
     @Override
@@ -105,13 +100,13 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     public CommonResponseData findUserById(long id) {
-        PersonResponse personResponse = PersonResponse.fromPerson(personRepository.getOne(id));
+        PersonResponse personResponse = PersonResponse.fromPerson(personRepository.getOne(id), null);
         return new CommonResponseData(personResponse, "string");
     }
 
     public CommonListResponse getUserWall(long userId, long offset, int itemPerPage) {
         Person person = personRepository.findById(userId);
-        Pageable pageable = getPageable(offset, itemPerPage);
+        Pageable pageable = Utils.getPageable(offset, itemPerPage);
 
         Page<Post> postPage = postRepository.findAllByPerson(person, pageable);
         //build response
@@ -128,8 +123,7 @@ public class ProfileServiceImpl implements ProfileService {
     public CommonResponseData postOnUserWall(long userId, long publishDate, PostRequest postBody) {
         Person author = personRepository.findById(userId);
 
-        LocalDateTime publishLocalDateTime = getLocalDateTimeFromLong(publishDate);
-        publishLocalDateTime = getCorrectPublishLocalDateTime(publishLocalDateTime);
+        LocalDateTime publishLocalDateTime = getCorrectPublishLocalDateTime(Utils.getLocalDateTimeFromLong(publishDate));
 
         Post post = new Post();
         post.setPerson(author);
@@ -158,7 +152,7 @@ public class ProfileServiceImpl implements ProfileService {
             long offset,
             int itemPerPage
     ) {
-        Pageable pageable = getPageable(offset, itemPerPage);
+        Pageable pageable = Utils.getPageable(offset, itemPerPage);
 
         PersonSpecificationsBuilder builder = new PersonSpecificationsBuilder();
 
@@ -206,46 +200,14 @@ public class ProfileServiceImpl implements ProfileService {
         return responseData;
     }
 
-    public LocalDateTime getLocalDateTimeFromLong(long timestamp) {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
-    }
-
-    public Pageable getPageable(long offset, int itemPerPage) {
-        //itemPerPage can't be equal 0, cause we'll use it like divisor
-        //I don't know why it may be equals 0, but anyway we are ready for this!
-        itemPerPage = itemPerPage == 0 ? 1 : itemPerPage;
-        int page = (int) (offset / itemPerPage);
-        return PageRequest.of(page, itemPerPage);
-    }
-
     public LocalDateTime getCorrectPublishLocalDateTime(LocalDateTime publishLocalDateTime) {
         return publishLocalDateTime.isBefore(LocalDateTime.now()) ? LocalDateTime.now() : publishLocalDateTime;
     }
 
     public List<PersonResponse> getPersonResponseListFromPersonList(List<Person> personList) {
         List<PersonResponse> personResponseList = new ArrayList<>();
-        personList.forEach(person -> personResponseList.add(getPersonResponseFromPerson(person)));
+        personList.forEach(person -> personResponseList.add(PersonResponse.fromPerson(person, null)));
         return personResponseList;
-    }
-
-    public PersonResponse getPersonResponseFromPerson(Person person) {
-        return new PersonResponse(
-                person.getId(),
-                person.getFirstName(),
-                person.getLastName(),
-                person.getRegistrationDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
-                person.getBirthday().atStartOfDay(ZoneId.systemDefault()).toEpochSecond(),
-                person.getEmail(),
-                person.getPhone(),
-                person.getPhoto(),
-                person.getAbout(),
-                person.getCity(),
-                person.getCountry(),
-                person.getPermissionMessage(),
-                person.getLastTimeOnline().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
-                person.isBlocked(),
-                null
-        );
     }
 
     public List<PostResponse> getPostResponseListFromPostList(List<Post> postList) {
@@ -258,8 +220,8 @@ public class ProfileServiceImpl implements ProfileService {
     public PostResponse getPostResponseFromPost(Post post) {
         PostResponse postResponse = new PostResponse();
         postResponse.setId(post.getId());
-        postResponse.setTime(post.getTime());
-        postResponse.setAuthor(getPersonResponseFromPerson(post.getPerson()));
+        postResponse.setTime(Utils.getLongFromLocalDateTime(post.getTime()));
+        postResponse.setAuthor(PersonResponse.fromPerson(post.getPerson(), null));
         postResponse.setTitle(post.getTitle());
         postResponse.setPostText(post.getText());
         postResponse.setBlocked(post.isBlocked());
@@ -283,7 +245,7 @@ public class ProfileServiceImpl implements ProfileService {
                 comment.getCommentText(),
                 comment.getId(),
                 comment.getPost().getId(),
-                comment.getTime(),
+                Utils.getLongFromLocalDateTime(comment.getTime()),
                 comment.getAuthorId(),
                 comment.isBlocked()
         );
