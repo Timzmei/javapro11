@@ -2,6 +2,8 @@ package skillbox.javapro11.service.impl;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import skillbox.javapro11.api.request.LikeRequest;
 import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.api.response.LikeResponse;
@@ -9,6 +11,7 @@ import skillbox.javapro11.api.response.ListLikeResponse;
 import skillbox.javapro11.enums.LikeType;
 import skillbox.javapro11.model.entity.CommentLike;
 import skillbox.javapro11.model.entity.Person;
+import skillbox.javapro11.model.entity.Post;
 import skillbox.javapro11.model.entity.PostLike;
 import skillbox.javapro11.repository.*;
 import skillbox.javapro11.service.AccountService;
@@ -18,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class LikeServiceImpl implements LikeService {
 	private final AccountService accountService;
 	private final PostLikeRepository postLikeRepository;
@@ -54,7 +58,8 @@ public class LikeServiceImpl implements LikeService {
 		}
 
 		if (type.equals(LikeType.POST.getType())) {
-			isLiked = postLikeRepository.findByPersonAndPostId(currentPerson,  itemId) != null;
+			Post post = postRepository.getOne(itemId);
+			isLiked = postLikeRepository.findByPersonAndPost(currentPerson, post) != null;
 		}
 		if (type.equals(LikeType.COMMENT.getType())) {
 			isLiked = commentLikeRepository.findByPersonAndCommentId(currentPerson, itemId) != null;
@@ -77,6 +82,7 @@ public class LikeServiceImpl implements LikeService {
 	}
 
 	@Override
+	@Transactional
 	public CommonResponseData putLike(LikeRequest likeRequest) {
 		Person currentPerson = accountService.getCurrentPerson();
 		if (likeRequest.getType().equals(LikeType.COMMENT.getType())) {
@@ -97,6 +103,7 @@ public class LikeServiceImpl implements LikeService {
 	}
 
 	@Override
+	@Transactional
 	public CommonResponseData deleteLike(long itemId, String type) {
 		if (type.equals(LikeType.POST.getType())) {
 			postLikeRepository.deleteByPostId(itemId);

@@ -4,5 +4,5 @@ create table post (
     post_text text,
     time timestamp not null,
     title varchar(255),
-    author_id bigserial not null,
+    author_id bigint not null,
     primary key (id));

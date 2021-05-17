@@ -20,7 +20,7 @@ public class Comment {
     private long id;
 
     @Column(name = "parent_id", columnDefinition = "int")
-    private long parentId;
+    private Long parentId;
 
     @Column(name = "comment_text", columnDefinition = "text")
     @NotNull
