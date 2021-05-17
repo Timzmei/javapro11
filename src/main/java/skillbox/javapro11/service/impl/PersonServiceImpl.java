@@ -11,6 +11,8 @@ import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.repository.PersonRepository;
 import skillbox.javapro11.service.PersonService;
 
+import java.time.ZoneId;
+
 @Service
 public class PersonServiceImpl implements PersonService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonServiceImpl.class);
@@ -54,11 +56,36 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public String changeEmail(Person curPerson, String email) {
         String message = "";// for checking error if necessary
-        curPerson = findPersonByEmail(email);
         curPerson.setEmail(email);
         save(curPerson);
         LOGGER.info("new email: " + email);
         return message;
     }
 
+    public PersonResponse createPersonResponse(Person person, String token) {
+        PersonResponse personResponse = new PersonResponse();
+        personResponse.setId(person.getId());
+        personResponse.setFirstName(person.getFirstName());
+        personResponse.setLastName(person.getLastName());
+        personResponse.setRegistrationDate(person.getRegistrationDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        try {
+            personResponse.setBirthDate(person.getBirthday().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        }
+        catch(NullPointerException e){
+            LOGGER.info(e.getMessage());
+            personResponse.setBirthDate(18269L); // для примера
+        }
+        personResponse.setEmail(person.getEmail());
+        personResponse.setPhone(person.getPhone());
+        personResponse.setPhoto(person.getPhoto());
+        personResponse.setAbout(person.getAbout());
+        personResponse.setCity(person.getCity());
+        personResponse.setCountry(person.getCountry());
+        personResponse.setMessagesPermission(person.getPermissionMessage());
+        personResponse.setLastOnlineTime(person.getLastTimeOnline().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        personResponse.setBlocked(person.isBlocked());
+        personResponse.setToken(token);
+
+        return personResponse;
+    }
 }

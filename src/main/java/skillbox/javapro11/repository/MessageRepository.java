@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
+    Message findById(long id);
+
     @Query( "SELECT COUNT(m) " +
             "FROM Message m " +
             "WHERE m.readStatus = 'SENT'" +

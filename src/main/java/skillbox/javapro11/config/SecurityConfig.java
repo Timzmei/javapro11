@@ -24,8 +24,6 @@ import skillbox.javapro11.security.jwt.JwtTokenProvider;
 import skillbox.javapro11.security.userdetails.UserDetailsServiceImpl;
 import skillbox.javapro11.service.PersonService;
 
-import javax.servlet.http.HttpServletResponse;
-
 
 @Configuration
 @EnableWebSecurity
@@ -62,7 +60,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .exceptionHandling()
-                //.authenticationEntryPoint((req, rsp, e) -> rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED))
+                /**Включить после отладки авторизации
+                 .authenticationEntryPoint((req, rsp, e) -> rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED))*/
                 .and()
                 //authorizeRequests() - все запросы через spring security
                 .authorizeRequests()

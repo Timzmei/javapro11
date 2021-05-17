@@ -94,11 +94,39 @@ public class DialogsControllerTest {
     }
 
     @Test
+    @DisplayName("Create dialog")
+    @WithMockUser
+    void createDialogTest() throws Exception {
+
+        DialogRequest dialogRequest = new DialogRequest();
+        int[] userIds = new int[1];
+        userIds[0] = 1;
+        dialogRequest.setUsersIds(userIds);
+
+        mockMvc.perform(post("/dialogs")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dialogRequest)))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
     @DisplayName("unreaded")
     @WithMockUser
     void getCountUnreadMessagesTest() throws Exception {
 
         mockMvc.perform(get("/dialogs/unreaded"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("delete dialog")
+    @WithMockUser
+    void deleteDialogTest() throws Exception {
+
+
+        mockMvc.perform(delete("/dialogs/1"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -120,11 +148,40 @@ public class DialogsControllerTest {
     }
 
     @Test
+    @DisplayName("delete User From Dialog")
+    @WithMockUser
+    void deleteUserFromDialogTest() throws Exception {
+
+        String[] usersIds = new String[1];
+        usersIds[0] = "1";
+
+        mockMvc.perform(delete("/dialogs/1/users")
+                .param("users_ids", usersIds))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
     @DisplayName("Get invite")
     @WithMockUser
     void getInviteDialogTest() throws Exception {
 
         mockMvc.perform(get("/dialogs/1/users/invite"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("join User to Dialog")
+    @WithMockUser
+    void joinToDialogTest() throws Exception {
+
+        DialogRequest dialogRequest = new DialogRequest();
+        String link = "link";
+        dialogRequest.setLink(link);
+        mockMvc.perform(put("/dialogs/1/users/join")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dialogRequest)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -148,6 +205,22 @@ public class DialogsControllerTest {
     }
 
     @Test
+    @DisplayName("send Message")
+    @WithMockUser
+    void sendMessagesTest() throws Exception {
+
+        DialogRequest dialogRequest = new DialogRequest();
+        String message = "text";
+        dialogRequest.setMessageText(message);
+        mockMvc.perform(post("/dialogs/1/messages")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dialogRequest)))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
     @DisplayName("delete Message")
     @WithMockUser
     void deleteMessageTest() throws Exception {
@@ -156,6 +229,21 @@ public class DialogsControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
 
+    }
+
+    @Test
+    @DisplayName("edit Message")
+    @WithMockUser
+    void editMessageTest() throws Exception {
+
+        DialogRequest dialogRequest = new DialogRequest();
+        String message = "text";
+        dialogRequest.setMessageText(message);
+        mockMvc.perform(put("/dialogs/1/messages/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dialogRequest)))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -170,6 +258,16 @@ public class DialogsControllerTest {
     }
 
     @Test
+    @DisplayName("read Message")
+    @WithMockUser
+    void readMessageTest() throws Exception {
+
+        mockMvc.perform(put("/dialogs/1/messages/1/read"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
     @DisplayName("get Status")
     @WithMockUser
     void getStatusTest() throws Exception {
@@ -178,6 +276,16 @@ public class DialogsControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
 
+    }
+
+    @Test
+    @DisplayName("change status Message")
+    @WithMockUser
+    void changeStatusTest() throws Exception {
+
+        mockMvc.perform(post("/dialogs/1/activity/1"))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
 }

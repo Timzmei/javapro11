@@ -7,8 +7,6 @@ import skillbox.javapro11.api.response.ResponseArrayUserIds;
 import skillbox.javapro11.model.entity.Dialog;
 import skillbox.javapro11.model.entity.Person;
 
-import skillbox.javapro11.api.response.DialogResponse;
-
 /**
  * Created by timur_guliev on 27.04.2021.
  */
@@ -18,6 +16,16 @@ public interface DialogsService {
     CommonResponseData deleteDialog(long id);
 
     Dialog createNewDialog(Person ownerDialog);
+
+    CommonResponseData joinToDialog(long idDialog, String link);
+
+    CommonResponseData sendMessage(long idDialog, String messageText);
+
+    CommonResponseData editMessage(long idDialog, long idMessage, String messageText);
+
+    CommonResponseData readMessage(long idDialog, long idMessage);
+
+    CommonResponseData changeStatusActivity(long idDialog, long idUser);
 
     CommonResponseData deleteUsersInDialog(long idDialog, String[] usersIds);
 

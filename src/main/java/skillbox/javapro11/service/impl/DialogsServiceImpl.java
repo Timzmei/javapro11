@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.DialogRequest;
 import skillbox.javapro11.api.response.*;
+import skillbox.javapro11.enums.ReadStatus;
 import skillbox.javapro11.model.entity.Dialog;
 import skillbox.javapro11.model.entity.Message;
 import skillbox.javapro11.model.entity.Person;
@@ -20,7 +21,9 @@ import skillbox.javapro11.service.DialogsService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by timur_guliev on 27.04.2021.
@@ -46,10 +49,10 @@ public class DialogsServiceImpl implements DialogsService {
 
     @Override
     public CommonResponseData createDialog(DialogRequest dialogRequest) {
-        Person ownerDialog = accountServiceImpl.getCurrentPerson();
+        Person currentPerson = accountServiceImpl.getCurrentPerson();
         DialogResponse dialogData = new DialogResponse();
-        Dialog newDialog = createNewDialog(ownerDialog);
-        createPerson2Dialog(ownerDialog, newDialog);
+        Dialog newDialog = createNewDialog(currentPerson);
+        createPerson2Dialog(currentPerson, newDialog);
         createPerson2Dialog(personRepository.findById(dialogRequest.getUsersIds()[0]), newDialog);
         dialogData.setId(newDialog.getId());
         return new CommonResponseData(dialogData, "string");
@@ -66,7 +69,7 @@ public class DialogsServiceImpl implements DialogsService {
     }
 
     @Override
-    public Dialog createNewDialog(Person ownerDialog) {
+    public Dialog createNewDialog(Person ownerDialog){
         Dialog dialog = new Dialog();
         dialog.setOwner(ownerDialog);
         return dialogRepository.save(dialog);
@@ -74,17 +77,82 @@ public class DialogsServiceImpl implements DialogsService {
 
     @Override
     public CommonResponseData deleteUsersInDialog(long idDialog, String[] usersIds) {
-        for (int i = 0; i < usersIds.length; i++) {
-//            person2DialogRepository.deletePrsonInDialog(idDialog, usersIds[i]);
+        for (int i = 0; i < usersIds.length; i++){
+            person2DialogRepository.deletePersInDialog(idDialog, Long.parseLong(usersIds[i]));
         }
+        DialogUserShortListResponse dialogData = new DialogUserShortListResponse();
+        dialogData.setUserIds(Arrays.stream(usersIds).map(Long::parseLong).collect(Collectors.toList()));
+        return new CommonResponseData(dialogData, "string");
+    }
 
-//        Dialog dialog = dialogRepository.findById(id);
-//        dialog.setDeleted(false);
-//        dialogRepository.save(dialog);
-//        DialogResponse dialogData = new DialogResponse();
-//        dialogData.setId(id);
-//        return new CommonResponseData(dialogData, "string");
-        return null;
+    @Override
+    public CommonResponseData joinToDialog(long idDialog, String link) {
+        Person currentPerson = accountServiceImpl.getCurrentPerson();
+        List<Long> usersIds = new ArrayList<>();
+        usersIds.add(currentPerson.getId());
+        createPerson2Dialog(currentPerson, dialogRepository.findById(idDialog));
+        DialogUserShortListResponse dialogData = new DialogUserShortListResponse();
+        dialogData.setUserIds(usersIds);
+        return new CommonResponseData(dialogData, "string");
+    }
+
+    @Override
+    public CommonResponseData sendMessage(long idDialog, String messageText) {
+        Person currentPerson = accountServiceImpl.getCurrentPerson();
+        createMessage(messageText, currentPerson, idDialog);
+
+        MessageResponse dialogData = getMessageResponse(messageText, currentPerson);
+        return new CommonResponseData(dialogData, "string");
+    }
+
+
+
+    @Override
+    public CommonResponseData editMessage(long idDialog, long idMessage, String messageText) {
+        Message message = messageRepository.findById(idMessage);
+        message.setText(messageText);
+        messageRepository.save(message);
+        Person currentPerson = accountServiceImpl.getCurrentPerson();
+        MessageResponse dialogData = getMessageResponse(messageText, currentPerson);
+        return new CommonResponseData(dialogData, "string");
+    }
+
+    @Override
+    public CommonResponseData readMessage(long idDialog, long idMessage) {
+        Message message = messageRepository.findById(idMessage);
+        message.setReadStatus(ReadStatus.READ);
+        messageRepository.save(message);
+        MessageResponse dialogData = new MessageResponse();
+        dialogData.setMessage("ok");
+        return new CommonResponseData(dialogData, "string");
+    }
+
+    @Override
+    public CommonResponseData changeStatusActivity(long idDialog, long idUser) {
+        StatusMessageResponse statusMessageResponse = new StatusMessageResponse();
+        statusMessageResponse.setMessage("ok");
+        return new CommonResponseData(statusMessageResponse, "string");
+    }
+
+    private MessageResponse getMessageResponse(String messageText, Person currentPerson) {
+        MessageResponse dialogData = new MessageResponse();
+        dialogData.setId(currentPerson.getId());
+        dialogData.setTime(Utils.getLongFromLocalDateTime(LocalDateTime.now()));
+        dialogData.setAuthorId(currentPerson.getId());
+        dialogData.setMessageText(messageText);
+        dialogData.setReadStatus("SENT");
+        return dialogData;
+    }
+
+    private void createMessage(String messageText, Person currentPerson, long idDialog) {
+        Dialog dialog = dialogRepository.findById(idDialog);
+        Message newMessage = new Message();
+        newMessage.setAuthor(currentPerson);
+        newMessage.setText(messageText);
+        newMessage.setTime(LocalDateTime.now());
+        newMessage.setReadStatus(ReadStatus.SENT);
+        newMessage.setDialog(dialog);
+        messageRepository.save(newMessage);
     }
 
     private void createPerson2Dialog(Person ownerDialog, Dialog dialog) {
