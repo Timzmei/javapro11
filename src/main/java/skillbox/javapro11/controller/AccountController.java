@@ -8,9 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import skillbox.javapro11.api.request.NotificationsRequest;
 import skillbox.javapro11.api.request.RegisterRequest;
+import skillbox.javapro11.api.request.SetEmailRequest;
 import skillbox.javapro11.api.request.SetPasswordRequest;
 import skillbox.javapro11.api.response.CommonResponse;
-import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.service.AccountService;
 
 @RestController
@@ -25,15 +25,7 @@ public class AccountController {
     public ResponseEntity<CommonResponse> personRegister(@RequestBody RegisterRequest registerRequest){
         LOGGER.trace("/api/v1/account/register");
 
-        String email = registerRequest.getEmail();
-        String message = "";
-        Person curPerson =  accountService.findPersonByEmail(email);
-        if (curPerson != null) {
-            message = String.format("User with email %s already exists", email);
-        }
-        else{
-            accountService.addNewPerson(registerRequest);
-        }
+        String message = accountService.registerNewUser(registerRequest);
         return new ResponseEntity<>(new CommonResponse(message), HttpStatus.OK);
     }
 
@@ -58,10 +50,10 @@ public class AccountController {
     }
 
     @PutMapping("/email")
-    public ResponseEntity<CommonResponse> emailChange(@RequestBody String email){
-        LOGGER.trace("/api/v1/account/password/email");
+    public ResponseEntity<CommonResponse> emailChange(@RequestBody SetEmailRequest email){
+        LOGGER.trace("/api/v1/account/email");
 
-        String message = accountService.changePersonEmail(email);
+        String message = accountService.changePersonEmail(email.getEmail());
         return new ResponseEntity<>(new CommonResponse(message), HttpStatus.OK);
     }
 

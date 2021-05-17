@@ -3,6 +3,7 @@ package skillbox.javapro11.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.RegisterRequest;
 import skillbox.javapro11.model.entity.Person;
@@ -15,6 +16,9 @@ public class PersonServiceImpl implements PersonService {
 
     @Autowired
     private PersonRepository personRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Person findPersonByEmail(String email) {
@@ -30,7 +34,8 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public Person add(RegisterRequest registerRequest) {
         Person newPerson = new Person(registerRequest);
-        LOGGER.info("new Person in DB: " + registerRequest.toString());
+        newPerson.setPassword(passwordEncoder.encode(registerRequest.getPasswd1()));
+        LOGGER.info("new Person in DB: " + registerRequest.getEmail());
         return personRepository.save(newPerson);
     }
 
@@ -38,17 +43,19 @@ public class PersonServiceImpl implements PersonService {
     public String changePassword(String email, String password) {
         String message = ""; // for checking error if necessary
         Person curPerson = findPersonByEmail(email);
-        curPerson.setPassword(password);
+        LOGGER.info("curPerson in DB: " + curPerson);
+        LOGGER.info("new password: " + password);
+        curPerson.setPassword(passwordEncoder.encode(password));
         save(curPerson);
         return message;
     }
 
     @Override
-    public String changeEmail(String email) {
+    public String changeEmail(Person curPerson, String email) {
         String message = "";// for checking error if necessary
-        Person curPerson = findPersonByEmail(email);
         curPerson.setEmail(email);
         save(curPerson);
+        LOGGER.info("new email: " + email);
         return message;
     }
 }
