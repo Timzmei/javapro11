@@ -8,14 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import skillbox.javapro11.ServiceTestConfiguration;
 import skillbox.javapro11.api.request.CommentRequest;
 import skillbox.javapro11.api.request.PostRequest;
-import skillbox.javapro11.api.response.CommentResponse;
-import skillbox.javapro11.api.response.CommonListResponse;
-import skillbox.javapro11.api.response.CommonResponseData;
-import skillbox.javapro11.api.response.PostResponse;
-import skillbox.javapro11.api.response.StatusMessageResponse;
+import skillbox.javapro11.api.response.*;
 import skillbox.javapro11.enums.PermissionMessage;
 import skillbox.javapro11.model.entity.Comment;
 import skillbox.javapro11.model.entity.Person;
@@ -32,6 +31,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 @SpringBootTest(classes = ServiceTestConfiguration.class)
@@ -199,7 +199,46 @@ class PostServiceTest {
     @Test
     @DisplayName("Getting all comment")
     void getComments() {
-    }
+      long postId = 11;
+      int offset = 0;
+      int itemPerPage = 1;
+      Person person = accountService.getCurrentPerson();
+      Optional<Post> post = Optional.of(new Post(postId,
+          LocalDateTime.now(),
+          person,
+          "post 1", "post text 1",
+          false, false,
+          new ArrayList<>(), new ArrayList<>()));
+
+      Mockito.when(postRepository.findById(postId)).thenReturn(post);
+      Comment com1 = new Comment(1, null,
+          "comment text 1", post.get(),
+          LocalDateTime.now(), person.getId(),
+          false, false);
+      Comment com2 = new Comment(2, null,
+          "comment text 2", post.get(),
+          LocalDateTime.now().plusMinutes(2), person.getId(),
+          false, false);
+      Comment com3 = new Comment(3, null,
+          "comment text 3", post.get(),
+          LocalDateTime.now().plusMinutes(5), person.getId(),
+          false, false);
+      ArrayList<Comment> comments = new ArrayList<>();
+      comments.add(com1);
+      comments.add(com2);
+      comments.add(com3);
+
+      Pageable pageable = Utils.getPageable(offset, itemPerPage, Sort.by(Sort.DEFAULT_DIRECTION, "time"));
+      Page<Comment> page = new PageImpl<>(comments, pageable, comments.size());
+      given(commentRepository.findAllByPostIdAndDeletedFalse(postId, pageable)).willReturn(page);
+
+      CommonListResponse response = postService.getComments(postId, itemPerPage, offset);
+
+      assertTrue(response.getError().isEmpty());
+      assertEquals("check count data", 3, response.getData().size());
+      CommentResponse data = (CommentResponse) response.getData().get(0);
+      assertEquals("check time first comment", Utils.getTimestampFromLocalDateTime(com1.getTime()), data.getTime());
+  }
 
 
     @Test
