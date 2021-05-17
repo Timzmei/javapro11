@@ -1,5 +1,6 @@
 package skillbox.javapro11.api.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StatusMessageResponse extends ResponseData {
-    private String message;
+public class IdMessageResponse extends ResponseData {
+    @JsonProperty(value = "message_id")
+    private long messageId;
 }

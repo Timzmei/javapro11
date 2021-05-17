@@ -50,7 +50,7 @@ public class PostResponse extends ResponseData {
         return new PostResponse(
                 post.getId(),
                 Utils.getLongFromLocalDateTime(post.getTime()),
-                PersonResponse.fromPerson(post.getPerson()),
+                PersonResponse.fromPerson(post.getPerson(), null),
                 post.getTitle(),
                 post.getText(),
                 post.isBlocked(),

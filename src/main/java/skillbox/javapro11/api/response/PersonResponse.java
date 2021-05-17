@@ -57,10 +57,6 @@ public class PersonResponse extends ResponseData {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String token;
 
-    public static PersonResponse fromPerson(Person person){
-        return fromPerson(person, null);
-    }
-
     public static PersonResponse fromPerson(Person person, String token) {
         return new PersonResponse(
                 person.getId(),
@@ -77,7 +73,7 @@ public class PersonResponse extends ResponseData {
                 person.getPermissionMessage(),
                 Utils.getLongFromLocalDateTime(person.getLastTimeOnline()),
                 person.isBlocked(),
-                token == null || token.isEmpty() ? null : token
+                token
         );
     }
 

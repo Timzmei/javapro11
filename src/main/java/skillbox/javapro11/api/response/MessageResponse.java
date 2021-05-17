@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class MessageResponse extends ResponseData{
@@ -20,11 +22,13 @@ public class MessageResponse extends ResponseData{
     private long authorId;
 
     @JsonProperty(value = "recipient_id")
-    private int recipientId;
+    private long recipientId;
 
     @JsonProperty(value = "message_text")
     private String messageText;
 
     @JsonProperty(value = "read_status")
     private String readStatus;
+
+    private String message;
 }

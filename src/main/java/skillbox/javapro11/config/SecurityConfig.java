@@ -22,6 +22,7 @@ import skillbox.javapro11.security.jwt.JwtAuthenticationFilter;
 import skillbox.javapro11.security.jwt.JwtTokenFilter;
 import skillbox.javapro11.security.jwt.JwtTokenProvider;
 import skillbox.javapro11.security.userdetails.UserDetailsServiceImpl;
+import skillbox.javapro11.service.PersonService;
 
 
 @Configuration
@@ -40,6 +41,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
     @Autowired
     private PersonRepository personRepository;
+
+    @Autowired
+    private PersonService personService;
 
     @Value("${front.host}")
     private String frontHost;
@@ -78,7 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     public JwtAuthenticationFilter customUsernamePasswordAuthenticationFilter()
             throws Exception {
         JwtAuthenticationFilter customUsernamePasswordAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager(),
-                jwtTokenProvider, personRepository);
+                jwtTokenProvider, personRepository, personService);
         customUsernamePasswordAuthenticationFilter
                 .setAuthenticationManager(authenticationManagerBean());
         customUsernamePasswordAuthenticationFilter
