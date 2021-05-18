@@ -73,7 +73,6 @@ class PostServiceTest {
     @Test
     @DisplayName("Getting post search")
     public void getPostSearchTest() {
-        CommonListResponse commonListResponse = new CommonListResponse();
         String text = "test";
         long postId = 1L;
         long dataFrom = 12;
