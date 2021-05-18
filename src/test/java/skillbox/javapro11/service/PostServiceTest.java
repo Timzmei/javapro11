@@ -88,13 +88,21 @@ class PostServiceTest {
                 false, false,
                 new ArrayList<>(), new ArrayList<>());
 
-        Page<Post> page = Page.empty();
-        page.getContent().add(post1);
+        Mockito.when(postRepository.findById(postId)).thenReturn(Optional.of(post1));
 
-//        Mockito.when(postRepository.findAllPostsBySearch())
+        ArrayList<Post> posts = new ArrayList<>();
+        posts.add(post1);
+
+        Pageable pageable = Utils.getPageable(offset, itemPerPage, Sort.by(Sort.Direction.DESC, "time"));
+        Page<Post> page = new PageImpl<>(posts, pageable, posts.size());
+
+        LocalDateTime dateFromTime = Utils.getLocalDateTimeFromLong(dataFrom);
+        LocalDateTime dateToTime = Utils.getLocalDateTimeFromLong(dataTo);
+        given(postRepository.findAllPostsBySearch(pageable, text, dateFromTime, dateToTime)).willReturn(page);
 
         CommonListResponse response = postService.getPostSearch(text, dataFrom, dataTo, offset, itemPerPage);
 
+        assertTrue(response.getError().isEmpty());
         assertEquals("check data", commonListResponse.getData(), response.getData());
         assertEquals("total field value", 0L, response.getTotal());
         assertEquals("offset field value", offset, response.getOffset());
