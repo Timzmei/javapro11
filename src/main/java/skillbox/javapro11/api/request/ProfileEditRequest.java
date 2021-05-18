@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import skillbox.javapro11.enums.PermissionMessage;
 
-import java.time.LocalDate;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,7 +18,7 @@ public class ProfileEditRequest {
     private String lastName;
 
     @JsonProperty("birth_date")
-    private LocalDate birthDate;
+    private Long birthDate;
 
     private String phone;
 

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import skillbox.javapro11.model.entity.Post;
+import skillbox.javapro11.repository.util.Utils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class PostResponse extends ResponseData {
 
     private long id;
 
-    private LocalDateTime time;
+    private Long time;
 
     private PersonResponse author;
 
@@ -48,8 +49,8 @@ public class PostResponse extends ResponseData {
     public static PostResponse fromPost(Post post) {
         return new PostResponse(
                 post.getId(),
-                post.getTime(),
-                PersonResponse.fromPerson(post.getPerson()),
+                Utils.getLongFromLocalDateTime(post.getTime()),
+                PersonResponse.fromPerson(post.getPerson(), null),
                 post.getTitle(),
                 post.getText(),
                 post.isBlocked(),

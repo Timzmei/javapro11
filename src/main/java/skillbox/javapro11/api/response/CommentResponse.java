@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import skillbox.javapro11.model.entity.Comment;
+import skillbox.javapro11.repository.util.Utils;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class CommentResponse extends ResponseData {
     @JsonProperty(value="post_id")
     private Long postId;
 
-    private LocalDateTime time;
+    private Long time;
 
     @JsonProperty(value="author_id")
     private long authorId;
@@ -46,7 +46,7 @@ public class CommentResponse extends ResponseData {
                 comment.getCommentText(),
                 comment.getId(),
                 comment.getPost().getId(),
-                comment.getTime(),
+                Utils.getLongFromLocalDateTime(comment.getTime()),
                 comment.getAuthorId(),
                 comment.isBlocked()
         );
