@@ -84,7 +84,7 @@ class PostServiceTest {
         Post post1 = new Post(postId,
                 LocalDateTime.now(),
                 person,
-                "post 1", "post text 1",
+                "post 1", text,
                 false, false,
                 new ArrayList<>(), new ArrayList<>());
 
@@ -103,11 +103,10 @@ class PostServiceTest {
         CommonListResponse response = postService.getPostSearch(text, dataFrom, dataTo, offset, itemPerPage);
 
         assertTrue(response.getError().isEmpty());
-        assertEquals("check data", commonListResponse.getData(), response.getData());
-        assertEquals("total field value", 0L, response.getTotal());
+        assertEquals("total field value", 1L, response.getTotal());
         assertEquals("offset field value", offset, response.getOffset());
         assertEquals("itemPerPage field value", itemPerPage, response.getPerPage());
-        assertEquals("list size", 0, response.getData().size());
+        assertEquals("list size", 1, response.getData().size());
     }
 
     @Test
