@@ -6,7 +6,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
 import skillbox.javapro11.JavaPro11Application;
 import skillbox.javapro11.api.request.LikeRequest;
 import skillbox.javapro11.api.response.CommonResponseData;
@@ -20,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.util.AssertionErrors.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
-//@Transactional
 @SpringBootTest(classes = JavaPro11Application.class)
 @WithUserDetails("my@mail.ru")
 @Sql(value = {"classpath:scripts/add-data-for-likeservice-test.sql"},

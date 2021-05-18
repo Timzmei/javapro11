@@ -115,10 +115,11 @@ public class LikeControllerTest {
 		LikeRequest likeRequest = new LikeRequest(1L, LikeType.POST.getType());
 
 		Mockito.when(likeService.putLike(likeRequest)).thenReturn(response);
+		System.out.println(likeService.putLike(likeRequest));
 
 		mockMvc.perform(put("/likes")
-				.content(objectMapper.writeValueAsString(likeRequest))
-				.contentType(MediaType.APPLICATION_JSON))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(likeRequest)))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andDo(print());

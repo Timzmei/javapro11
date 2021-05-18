@@ -9,10 +9,7 @@ import skillbox.javapro11.api.response.CommonResponseData;
 import skillbox.javapro11.api.response.LikeResponse;
 import skillbox.javapro11.api.response.ListLikeResponse;
 import skillbox.javapro11.enums.LikeType;
-import skillbox.javapro11.model.entity.CommentLike;
-import skillbox.javapro11.model.entity.Person;
-import skillbox.javapro11.model.entity.Post;
-import skillbox.javapro11.model.entity.PostLike;
+import skillbox.javapro11.model.entity.*;
 import skillbox.javapro11.repository.*;
 import skillbox.javapro11.service.AccountService;
 import skillbox.javapro11.service.LikeService;
@@ -48,6 +45,7 @@ public class LikeServiceImpl implements LikeService {
 	}
 
 	@Override
+//	@Transactional
 	public CommonResponseData isLiked(Long userId, long itemId, String type) {
 		boolean isLiked = false;
 		Person currentPerson;
@@ -58,11 +56,10 @@ public class LikeServiceImpl implements LikeService {
 		}
 
 		if (type.equals(LikeType.POST.getType())) {
-			Post post = postRepository.getOne(itemId);
-			isLiked = postLikeRepository.findByPersonAndPost(currentPerson, post) != null;
+			isLiked = postLikeRepository.findByPersonAndPost(currentPerson, itemId) != null;
 		}
 		if (type.equals(LikeType.COMMENT.getType())) {
-			isLiked = commentLikeRepository.findByPersonAndCommentId(currentPerson, itemId) != null;
+			isLiked = commentLikeRepository.findByPersonAndComment(currentPerson, itemId) != null;
 		}
 
 		return new CommonResponseData(new LikeResponse(isLiked), "string");
