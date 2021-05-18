@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.RegisterRequest;
 import skillbox.javapro11.enums.NotificationTypeCode;
 import skillbox.javapro11.model.entity.Person;
+import skillbox.javapro11.security.jwt.JwtParam;
 import skillbox.javapro11.security.jwt.JwtTokenProvider;
 import skillbox.javapro11.service.AccountService;
 
@@ -21,6 +22,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private EmailServiceImpl emailServiceImpl;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @Override
     public String saveNotificationSetting(NotificationTypeCode notificationTypeCode, Boolean enable) {
@@ -42,7 +46,11 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public String getMailByToken(String token) {
-        return new JwtTokenProvider().getUserEmailFromToken(token);
+        String tokenClean = token.replace(JwtParam.TOKEN_BEARER_PREFIX, "");
+        LOGGER.info("tokenClean: " + tokenClean);
+        String email = jwtTokenProvider.getUserEmailFromToken(tokenClean);
+        LOGGER.info("getMailByToken(): " + email);
+        return email;
     }
 
     @Override
@@ -62,7 +70,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public String changePersonPassword(String token, String password) {
-        return personServiceImpl.changePassword(getMailByToken(token), password);
+        LOGGER.info("token: " + token);
+        String email = getMailByToken(token);
+        LOGGER.info("changePersonPassword() for email: " + email);
+        return personServiceImpl.changePassword(email, password);
     }
 
     @Override
