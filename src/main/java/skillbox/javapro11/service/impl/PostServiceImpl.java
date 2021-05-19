@@ -173,7 +173,6 @@ public class PostServiceImpl implements PostService {
 
     commentRepository.save(newComment);
 
-//    CommentResponse commentResponse = modelMapper.map(newComment, CommentResponse.class);
     return new CommonResponseData(CommentResponse.fromComment(newComment), "");
   }
 
@@ -214,7 +213,7 @@ public class PostServiceImpl implements PostService {
     }
     comment.setDeleted(false);
     commentRepository.save(comment);
-//    response.setData(modelMapper.map(comment, CommentResponse.class));
+
     response.setData(CommentResponse.fromComment(comment));
     return response;
   }
