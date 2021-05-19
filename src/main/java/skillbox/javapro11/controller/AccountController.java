@@ -45,7 +45,7 @@ public class AccountController {
     public ResponseEntity<CommonResponse> passwordChange(@RequestBody SetPasswordRequest setPasswordRequest){
         LOGGER.trace("/api/v1/account/password/set");
 
-        String message = accountService.changePersonPassword(setPasswordRequest.getToken(), setPasswordRequest.getPassword());
+        String message = accountService.changePersonPassword(setPasswordRequest.getToken(), setPasswordRequest.getPassword().getPassword());
         return new ResponseEntity<>(new CommonResponse(message), HttpStatus.OK);
     }
 
