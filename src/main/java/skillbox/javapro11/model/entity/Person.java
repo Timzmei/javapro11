@@ -72,6 +72,7 @@ public class Person {
         this.lastName = registerRequest.getLastName();
         this.registrationDate = LocalDateTime.now();
         this.lastTimeOnline = LocalDateTime.now();
+        this.birthday = null;
         this.isApproved = true;
         this.permissionMessage = PermissionMessage.valueOf("ALL");
         this.isBlocked = false;

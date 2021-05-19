@@ -30,7 +30,12 @@ public class Utils {
   }
 
   public static Long getLongFromLocalDate(LocalDate date){
-    return date.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli();
+    try{
+      return date.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli();
+    }
+    catch (NullPointerException ex){
+      return null;
+    }
   }
 
   public static Long getLongFromLocalDateTime(LocalDateTime date) {
