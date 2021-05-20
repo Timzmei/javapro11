@@ -25,12 +25,13 @@ import java.util.List;
 public class NewsController {
 
     private AccountService accountService;
-    private PostRepository postService; //temporary implementation, in the future must be replaced by PostService
+
+    private PostRepository postRepository; //temporary implementation, in the future must be replaced by PostService
 
     @Autowired
     public NewsController(AccountService accountService, PostRepository postService, ProfileService profileService) {
         this.accountService = accountService;
-        this.postService = postService;
+        this.postRepository = postService;
     }
 
     @GetMapping("/feeds")
@@ -38,7 +39,7 @@ public class NewsController {
             direction = Sort.Direction.DESC) Pageable pageable) {
 
         Person person = accountService.getCurrentPerson();
-        Page<Post> posts = postService.findAllByPerson(person, pageable);
+        Page<Post> posts = postRepository.findAllByPerson(person, pageable);
         List<PostResponse> postResponseList = PostResponse.fromPostList(posts.toList());
         return new CommonListResponse("", LocalDateTime.now(), new ArrayList<>(postResponseList));
     }

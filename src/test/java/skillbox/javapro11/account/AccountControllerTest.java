@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import skillbox.javapro11.api.request.NotificationsRequest;
+import skillbox.javapro11.api.request.PasswordRequest;
 import skillbox.javapro11.api.request.RegisterRequest;
 import skillbox.javapro11.api.request.SetPasswordRequest;
 import skillbox.javapro11.api.response.CommonResponse;
@@ -120,7 +121,7 @@ public class AccountControllerTest {
     @Test
     public void testPasswordChange() throws Exception {
         SetPasswordRequest passwordRequest =
-                new SetPasswordRequest("token", "password");
+                new SetPasswordRequest("token", new PasswordRequest("password"));
 
         mockMvc.perform(
                 put("/account/password/set")

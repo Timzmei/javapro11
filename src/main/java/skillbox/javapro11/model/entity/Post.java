@@ -22,40 +22,31 @@ public class Post {
     private long id;
 
     @NotNull
+    @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime time;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private Person person;
 
-    @Column(columnDefinition = "varchar(255)")
     @NotNull
+    @Column(columnDefinition = "varchar(255)")
     private String title;
 
-    @Column(name = "post_text", columnDefinition = "text")
     @NotNull
+    @Column(name = "post_text", columnDefinition = "text")
     private String text;
 
     @Column(name = "is_blocked", nullable = false)
     private boolean isBlocked;
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
+
     @OneToMany(mappedBy="post")
     private List<PostLike> postLikeList = new ArrayList<>();
 
-    @OneToMany(mappedBy="post")
+    @OneToMany(mappedBy="post", fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
-    @Override
-    public String toString() {
-        return "Post{" +
-                "id=" + id +
-                ", time=" + time +
-                ", person=" + person +
-                ", title='" + title + '\'' +
-                ", text='" + text + '\'' +
-                ", isBlocked=" + isBlocked +
-                ", postLikeList.size()=" + postLikeList.size() +
-                ", comments.size()=" + comments.size() +
-                '}';
-    }
 }
