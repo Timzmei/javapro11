@@ -13,8 +13,8 @@ test_job:
         - mvn test
     tags:
         - test
-    only:
-        - master
+    # only:
+    #     - master
 build:
     image: maven:3.6.2-jdk-11-slim
     stage: build jar
@@ -23,8 +23,8 @@ build:
     artifacts:
         paths:
             - target/*.jar
-    only:
-        - master
+    # only:
+    #     - master
 docker build:
     services:
         - docker:19.03.13-dind
@@ -34,8 +34,8 @@ docker build:
         - docker build --build-arg SPRING_ACTIVE_PROFILE=dev -t $DOCKER_REPO:latest .
         - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD docker.io
         - docker push $DOCKER_REPO:latest
-    only:
-        - master
+    # only:
+    #     - master
 deploy:
     image: ubuntu:latest
     stage: deploy
