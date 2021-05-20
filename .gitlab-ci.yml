@@ -23,6 +23,8 @@ build:
     artifacts:
         paths:
             - target/*.jar
+    tags:
+        - build
     # only:
     #     - master
 docker build:
