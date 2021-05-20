@@ -11,8 +11,8 @@ test_job:
         - mvn clean
         - mvn compile
     #     - mvn test
-    # tags:
-    #     - test
+    tags:
+        - test
     # only:
     #     - master
 build:
