@@ -1,14 +1,13 @@
 package skillbox.javapro11.model.entity;
 
 import com.sun.istack.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -19,8 +18,8 @@ public class Comment {
     @NotNull
     private long id;
 
-    @Column(name = "parent_id", columnDefinition = "int")
-    private long parentId;
+    @Column(name = "parent_id", columnDefinition = "bigint")
+    private Long parentId;
 
     @Column(name = "comment_text", columnDefinition = "text")
     @NotNull
@@ -39,4 +38,7 @@ public class Comment {
 
     @Column(name = "is_blocked", nullable = false)
     private boolean isBlocked;
+
+    @Column(name = "is_deleted")
+    private boolean deleted;
 }

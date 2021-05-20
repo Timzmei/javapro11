@@ -52,7 +52,7 @@ public interface DialogRepository extends JpaRepository<Dialog, Long> {
             "GROUP BY d")
     Page<Dialog> getDialogsOfPerson(Pageable pageable, Person currentPerson);
 
-    @Query( "SELECT inviteCode " +
+    @Query( "SELECT d.inviteCode " +
             "FROM Dialog d " +
             "WHERE d.id = :idDialog ")
     String getInviteByDialog(long idDialog);
