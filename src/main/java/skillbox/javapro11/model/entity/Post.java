@@ -48,4 +48,5 @@ public class Post {
 
     @OneToMany(mappedBy="post", fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
+
 }

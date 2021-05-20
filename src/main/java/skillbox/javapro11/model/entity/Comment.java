@@ -18,6 +18,7 @@ public class Comment {
     @NotNull
     private long id;
 
+
     @Column(name = "parent_id", columnDefinition = "bigint")
     private Long parentId;
 

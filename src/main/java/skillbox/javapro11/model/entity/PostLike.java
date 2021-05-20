@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.Objects;
 
 @Data
 @AllArgsConstructor
@@ -32,5 +32,19 @@ public class PostLike {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PostLike like = (PostLike) o;
+        return id == like.id &&
+                Objects.equals(time, like.time) &&
+                Objects.equals(person, like.person) &&
+                Objects.equals(post, like.post);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, time, person, post);
+    }
 }
