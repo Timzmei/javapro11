@@ -34,8 +34,9 @@ public class PersonRepositoryTest {
 
     @Test
     public void testFindByEmail(){
-        String email = "mail@mail.ru";
+        String email = "test@mail.ru";
         Person curPerson = personRepository.findByEmail(email);
+        System.out.println(curPerson.getEmail());
         assertThat(curPerson).isNotNull();
     }
 
@@ -44,6 +45,6 @@ public class PersonRepositoryTest {
         Person curPerson = personRepository.findById(1L);
 
         assertThat(curPerson).isNotNull();
-        assertThat(curPerson.getFirstName()).isEqualTo("Petr");
+        assertThat(curPerson.getFirstName()).isEqualTo("Vlad");
     }
 }
