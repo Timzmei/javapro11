@@ -6,7 +6,7 @@ spring:
       ddl-auto: none
   datasource:
     platform: postgres
-    url: jdbc:postgresql://localhost:5432/test?useUnicode=true&characterEncoding=utf8&createDatabaseIfNotExist=true
+    url: jdbc:postgresql://postgres:5432/test?useUnicode=true&characterEncoding=utf8&createDatabaseIfNotExist=true
     username: postgres
     password: password
     driverClassName: org.postgresql.Driver
