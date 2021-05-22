@@ -18,8 +18,10 @@ test_job:
 build:
     image: maven:3.6.2-jdk-11-slim
     stage: build jar
+    before_script:
+    - source .develop.env
     script:
-        - mvn clean install -Dspring.profiles.active=dev && mvn package -B -e -Dspring.profiles.active=dev
+        - mvn clean install -Dspring.profiles.active=$SPRING_ACTIVE_PROFILE && mvn package -B -e -Dspring.profiles.active=$SPRING_ACTIVE_PROFILE
     artifacts:
         paths:
             - target/*.jar
