@@ -7,5 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class SetPasswordRequest {
     private String token;
-    private String password;
+    private PasswordRequest password;
 }

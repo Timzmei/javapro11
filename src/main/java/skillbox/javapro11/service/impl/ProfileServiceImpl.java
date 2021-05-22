@@ -83,7 +83,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         personRepository.save(currentPerson);
 
-        return new CommonResponseData(PersonResponse.fromPerson(currentPerson, null), "string");
+        return new CommonResponseData(PersonResponse.fromPerson(currentPerson), "string");
     }
 
     @Override
@@ -100,7 +100,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     public CommonResponseData findUserById(long id) {
-        PersonResponse personResponse = PersonResponse.fromPerson(personRepository.getOne(id), null);
+        PersonResponse personResponse = PersonResponse.fromPerson(personRepository.getOne(id));
         return new CommonResponseData(personResponse, "string");
     }
 
@@ -202,52 +202,5 @@ public class ProfileServiceImpl implements ProfileService {
 
     public LocalDateTime getCorrectPublishLocalDateTime(LocalDateTime publishLocalDateTime) {
         return publishLocalDateTime.isBefore(LocalDateTime.now()) ? LocalDateTime.now() : publishLocalDateTime;
-    }
-
-    public List<PersonResponse> getPersonResponseListFromPersonList(List<Person> personList) {
-        List<PersonResponse> personResponseList = new ArrayList<>();
-        personList.forEach(person -> personResponseList.add(PersonResponse.fromPerson(person, null)));
-        return personResponseList;
-    }
-
-    public List<PostResponse> getPostResponseListFromPostList(List<Post> postList) {
-        List<PostResponse> postResponseList = new ArrayList<>();
-        postList.forEach(post -> postResponseList.add(getPostResponseFromPost(post)));
-        return postResponseList;
-    }
-
-    @Override
-    public PostResponse getPostResponseFromPost(Post post) {
-        PostResponse postResponse = new PostResponse();
-        postResponse.setId(post.getId());
-        postResponse.setTime(Utils.getLongFromLocalDateTime(post.getTime()));
-        postResponse.setAuthor(PersonResponse.fromPerson(post.getPerson(), null));
-        postResponse.setTitle(post.getTitle());
-        postResponse.setPostText(post.getText());
-        postResponse.setBlocked(post.isBlocked());
-        postResponse.setLikes(post.getPostLikeList().size());
-        postResponse.setComments(getCommentResponseListFromCommentList(post.getComments()));
-        postResponse.setType(post.getTime().isBefore(LocalDateTime.now()) ? PostType.POSTED : PostType.QUEUED);
-        return postResponse;
-    }
-
-    @Override
-    public List<CommentResponse> getCommentResponseListFromCommentList(List<Comment> commentList) {
-        List<CommentResponse> commentDTOList = new ArrayList<>();
-        commentList.forEach(comment -> commentDTOList.add(getCommentResponseFromComment(comment)));
-        return commentDTOList;
-    }
-
-    @Override
-    public CommentResponse getCommentResponseFromComment(Comment comment) {
-        return new CommentResponse(
-                comment.getParentId(),
-                comment.getCommentText(),
-                comment.getId(),
-                comment.getPost().getId(),
-                Utils.getLongFromLocalDateTime(comment.getTime()),
-                comment.getAuthorId(),
-                comment.isBlocked()
-        );
     }
 }

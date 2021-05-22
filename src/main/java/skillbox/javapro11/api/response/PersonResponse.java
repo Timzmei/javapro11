@@ -57,6 +57,10 @@ public class PersonResponse extends ResponseData {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String token;
 
+    public static PersonResponse fromPerson(Person person) {
+        return  fromPerson(person, null);
+    }
+
     public static PersonResponse fromPerson(Person person, String token) {
         return new PersonResponse(
                 person.getId(),
@@ -79,7 +83,7 @@ public class PersonResponse extends ResponseData {
 
     public static List<PersonResponse> fromPersonList(List<Person> personList) {
         List<PersonResponse> personResponseList = new ArrayList<>();
-        personList.forEach(person -> personResponseList.add(fromPerson(person, null)));
+        personList.forEach(person -> personResponseList.add(fromPerson(person)));
         return personResponseList;
     }
 }
