@@ -27,7 +27,7 @@ test_job:
     - pwd
     - mvn clean
     - mvn compile
-    - mvn test -e -X
+    # - mvn test -e -X
   tags:
     - test
 #   only:
