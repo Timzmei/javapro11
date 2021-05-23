@@ -169,7 +169,6 @@ public class DialogsControllerTest {
         mockMvc.perform(get("/dialogs/1/users/invite"))
                 .andDo(print())
                 .andExpect(status().isOk());
-        
     }
 
     @Test
