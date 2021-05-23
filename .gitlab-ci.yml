@@ -27,9 +27,9 @@ test_job:
   script:
     # - pwd
     # - mvn clean
-    - mvn $MAVEN_OPTS compile
-    - mvn $MAVEN_OPTS test
-    - mvn verify
+    # - mvn $MAVEN_OPTS compile
+    # - mvn $MAVEN_OPTS test
+    - mvn test -B
   artifacts:
     when: always
     reports:
