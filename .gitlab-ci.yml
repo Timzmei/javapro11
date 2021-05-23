@@ -63,15 +63,17 @@ docker build:
 
   before_script:
     - source .develop.env
+    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD $DOCKER_REGISTRY
 
   script:
-    - docker build --build-arg SPRING_ACTIVE_PROFILE=$SPRING_ACTIVE_PROFILE -t $DOCKER_REPO .
+    - docker build --pull -t "$DOCKER_REGISTRY_IMAGE" .
+    # - docker build --build-arg SPRING_ACTIVE_PROFILE=$SPRING_ACTIVE_PROFILE -t $DOCKER_REPO .
 
     # - docker build --build-arg SPRING_ACTIVE_PROFILE=dev -t $DOCKER_REPO .
 
     # - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD docker.io
-    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-    - docker push $DOCKER_REPO
+    # - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+    - docker push "$DOCKER_REGISTRY_IMAGE"
 
 
 #   only:
