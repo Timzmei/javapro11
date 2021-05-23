@@ -41,7 +41,8 @@ public class PersonRepositoryTest {
 
     @Test
     public void testFindById(){
-        Person curPerson = personRepository.findById(1L);
+        long id = personRepository.findByFirstName("Vlad").getId();
+        Person curPerson = personRepository.findById(id);
         assertThat(curPerson).isNotNull();
         assertThat(curPerson.getFirstName()).isEqualTo("Vlad");
     }
