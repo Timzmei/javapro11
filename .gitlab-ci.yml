@@ -33,6 +33,8 @@ test_job:
   artifacts:
     when: always
     reports:
+      paths: 
+        - target/surefire-reports/TEST-*.xml
       junit:
         - target/surefire-reports/TEST-*.xml
         - target/failsafe-reports/TEST-*.xml
