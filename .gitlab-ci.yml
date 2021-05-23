@@ -69,7 +69,8 @@ docker build:
 
     # - docker build --build-arg SPRING_ACTIVE_PROFILE=dev -t $DOCKER_REPO .
 
-    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD docker.io
+    # - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD docker.io
+    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     - docker push $DOCKER_REPO
 
 
