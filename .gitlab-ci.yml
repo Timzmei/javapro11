@@ -63,7 +63,7 @@ docker build:
 
   before_script:
     - source .develop.env
-    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD $DOCKER_REGISTRY
+    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD index.docker.io
 
   script:
     - docker build --pull -t "$DOCKER_REGISTRY_IMAGE" .
