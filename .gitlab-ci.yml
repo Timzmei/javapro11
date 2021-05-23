@@ -31,10 +31,11 @@ test_job:
     # - mvn $MAVEN_OPTS test
     - mvn test -B
   artifacts:
-    when: always
+    name: "test_reports"
+    when: on_failure
+    paths: 
+      - target/surefire-reports/
     reports:
-      paths: 
-        - target/surefire-reports/TEST-*.xml
       junit:
         - target/surefire-reports/TEST-*.xml
         - target/failsafe-reports/TEST-*.xml
