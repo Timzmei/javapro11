@@ -28,7 +28,7 @@ test_job:
     # - pwd
     # - mvn clean
     - mvn $MAVEN_OPTS compile
-    - mvn $MAVEN_OPTS test -e -X
+    - mvn $MAVEN_OPTS test
   artifacts:
     when: always
     reports:
