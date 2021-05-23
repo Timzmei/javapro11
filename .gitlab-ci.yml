@@ -58,7 +58,7 @@ build:
 docker build:
   services:
     - docker:dind
-  image: docker:stable
+  image: docker:19.03.12
   stage: build and push docker image
 
   before_script:
