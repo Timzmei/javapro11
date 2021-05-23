@@ -7,6 +7,9 @@ variables:
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: password
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2 
+  DOCKER_TLS_CERTDIR: ''
 
 # connect:
 #   image: postgres
@@ -60,11 +63,6 @@ docker build:
     - docker:20.10.6-dind
   image: docker:20.10.6
   stage: build and push docker image
-
-  variables:
-  DOCKER_HOST: tcp://docker:2375/
-  DOCKER_DRIVER: overlay2 
-  DOCKER_TLS_CERTDIR: ''
 
   before_script:
     - source .develop.env
