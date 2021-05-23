@@ -206,6 +206,11 @@ public class ProfileServiceTest {
         CommonResponseData response = profileService.postOnUserWall(person.getId(), nowL, postRequest);
         PostResponse postResponse = (PostResponse) response.getData();
 
+        System.out.println(postResponse.getTime());
+
+        System.out.println(Utils.getLocalDateTimeFromLong(postResponse.getTime()).isBefore(nowLDT));
+
+
         assertEquals("Check author by email", person.getEmail(), postResponse.getAuthor().getEmail());
         assertEquals("Check title", title, postResponse.getTitle());
         assertEquals("Check text", text, postResponse.getPostText());
