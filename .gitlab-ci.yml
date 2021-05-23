@@ -29,6 +29,7 @@ test_job:
     # - mvn clean
     - mvn $MAVEN_OPTS compile
     - mvn $MAVEN_OPTS test
+    - mvn verify
   artifacts:
     when: always
     reports:
