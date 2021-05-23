@@ -57,8 +57,8 @@ build:
 #     - master
 docker build:
   services:
-    - docker:dind
-  image: docker:19.03.12
+    - docker:20.10.6-dind
+  image: docker:20.10.6
   stage: build and push docker image
 
   before_script:
