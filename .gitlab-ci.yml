@@ -66,14 +66,14 @@ docker build:
     - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD" docker.io
 
   script:
-    - docker build --pull -t "$DOCKER_REGISTRY_IMAGE" .
+    - docker build --pull -t "$DOCKER_REPO" .
     # - docker build --build-arg SPRING_ACTIVE_PROFILE=$SPRING_ACTIVE_PROFILE -t $DOCKER_REPO .
 
     # - docker build --build-arg SPRING_ACTIVE_PROFILE=dev -t $DOCKER_REPO .
 
     # - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD docker.io
     # - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-    - docker push "$DOCKER_REGISTRY_IMAGE"
+    - docker push "$DOCKER_REPO"
 
 
 #   only:
