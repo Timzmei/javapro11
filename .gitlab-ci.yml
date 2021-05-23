@@ -37,7 +37,7 @@ build:
   image: maven:3.6.2-jdk-11-slim
   stage: build jar
   script:
-    - mvn $MAVEN_OPTS package
+    - mvn $MAVEN_OPTS package -e -X
     # - mvn clean install -e -X -Dspring.profiles.active=dev && mvn package -B -e -Dspring.profiles.active=dev
   artifacts:
     paths:
