@@ -6,6 +6,7 @@ variables:
   POSTGRES_DB: test
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: password
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
 connect:
   image: postgres
@@ -24,10 +25,10 @@ test_job:
   image: maven:3.6.2-jdk-11-slim
   stage: test
   script:
-    - pwd
-    - mvn clean
-    - mvn compile
-    # - mvn test -e -X
+    # - pwd
+    # - mvn clean
+    - mvn $MAVEN_OPTS compile
+    - mvn $MAVEN_OPTS test -e -X
   tags:
     - test
 #   only:
@@ -36,7 +37,8 @@ build:
   image: maven:3.6.2-jdk-11-slim
   stage: build jar
   script:
-    - mvn clean install -e -X -Dspring.profiles.active=dev && mvn package -B -e -Dspring.profiles.active=dev
+    - mvn $MAVEN_OPTS package
+    # - mvn clean install -e -X -Dspring.profiles.active=dev && mvn package -B -e -Dspring.profiles.active=dev
   artifacts:
     paths:
       - target/*.jar
