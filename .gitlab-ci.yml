@@ -57,13 +57,13 @@ build:
 #     - master
 docker build:
   services:
-    - docker:stable
+    - docker:dind
   image: docker:stable
   stage: build and push docker image
 
   before_script:
     - source .develop.env
-    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD index.docker.io
+    - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD" docker.io
 
   script:
     - docker build --pull -t "$DOCKER_REGISTRY_IMAGE" .
