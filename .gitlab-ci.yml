@@ -96,7 +96,9 @@ deploy:
     - pwd
     # - ssh root@$SERVER "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD docker.io; docker stop $APP_NAME; docker system prune -a -f; docker pull $DOCKER_REPO; docker-compose up -d; docker logout"
 
-    - ssh root@$SERVER "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD docker.io; docker stop $APP_NAME; docker system prune -a -f; docker pull $DOCKER_REPO:latest; docker container run -d --name $APP_NAME -p $PORT:8086 -e $DOCKER_REPO:latest; docker-compose up -d; docker logout"
+    # - ssh root@$SERVER "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD docker.io; docker stop $APP_NAME; docker system prune -a -f; docker pull $DOCKER_REPO:latest; docker container run -d --name $APP_NAME -p $PORT:8086 -e $DOCKER_REPO:latest; docker-compose up -d; docker logout"
+
+    - ssh root@$SERVER "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD docker.io; docker stop $APP_NAME; docker system prune -a -f; docker pull $DOCKER_REPO:latest; docker container run -d --name $APP_NAME -p $PORT:8086 -e $DOCKER_REPO:latest; docker logout"
 
 #   only:
 #     - master
