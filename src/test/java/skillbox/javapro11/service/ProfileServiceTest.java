@@ -211,6 +211,14 @@ public class ProfileServiceTest {
         System.out.println(Utils.getLocalDateTimeFromLong(postResponse.getTime()).isBefore(nowLDT));
 
 
+        System.out.println(postResponse.getTime());
+        System.out.println(nowL);
+        System.out.println(Utils.getLocalDateTimeFromLong(postResponse.getTime()));
+        System.out.println(nowLDT);
+        System.out.println(Utils.getLocalDateTimeFromLong(postResponse.getTime()).isBefore(nowLDT));
+        System.out.println(Utils.getLocalDateTimeFromLong(postResponse.getTime()).isAfter(nowLDT));
+
+
         assertEquals("Check author by email", person.getEmail(), postResponse.getAuthor().getEmail());
         assertEquals("Check title", title, postResponse.getTitle());
         assertEquals("Check text", text, postResponse.getPostText());
