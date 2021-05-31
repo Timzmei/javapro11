@@ -112,5 +112,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .allowedHeaders("Authorization", "Cache-Control", "Content-Type", "Access-Control-Allow-Origin")
                 .allowCredentials(true);
     }
-
 }

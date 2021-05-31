@@ -97,7 +97,7 @@ public class ProfileControllerTest {
         ProfileEditRequest profileEditRequest = new ProfileEditRequest(
                 "Petr",
                 "Petrov",
-                Utils.getLongFromLocalDate(localDate),
+                localDate.atStartOfDay(),
                 "phone",
                 "newPhoto",
                 "newAbout",
@@ -199,7 +199,7 @@ public class ProfileControllerTest {
 
         PostRequest postRequest = new PostRequest();
         String postRequestJSON = objectMapper.writeValueAsString(postRequest);
-        Mockito.when(profileService.postOnUserWall(1, 0, postRequest))
+        Mockito.when(profileService.postOnUserWall(1, postRequest))
                 .thenReturn(new CommonResponseData());
 
         mockMvc.perform(post("/users/1/wall")

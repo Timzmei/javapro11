@@ -6,7 +6,6 @@ import skillbox.javapro11.api.request.PostRequest;
 import skillbox.javapro11.api.request.ProfileEditRequest;
 import skillbox.javapro11.api.response.CommonListResponse;
 import skillbox.javapro11.api.response.CommonResponseData;
-import skillbox.javapro11.api.response.PersonResponse;
 import skillbox.javapro11.service.ProfileService;
 
 @RestController
@@ -45,17 +44,16 @@ public class ProfileController {
     @GetMapping("/{id}/wall")
     public CommonListResponse getPostsUserWall(
             @PathVariable("id") long id,
-            @RequestParam("offset") long offset,
-            @RequestParam("itemPerPage") int itemPerPage) {
+            @RequestParam(name = "offset", defaultValue = "0") long offset,
+            @RequestParam(name = "itemPerPage", defaultValue = "10") int itemPerPage) {
         return profileService.getUserWall(id, offset, itemPerPage);
     }
 
     @PostMapping("/{id}/wall")
     public CommonResponseData addPostUserWall(
             @PathVariable("id") long id,
-            @RequestParam("publish_date") long publishDate,
             @RequestBody PostRequest postRequestBody) {
-        return profileService.postOnUserWall(id, publishDate, postRequestBody);
+        return profileService.postOnUserWall(id, postRequestBody);
     }
 
     @GetMapping("/search")
@@ -66,8 +64,8 @@ public class ProfileController {
             @RequestParam(name = "age_to", required = false) Integer ageTo,
             @RequestParam(name = "country_id", required = false) String country,
             @RequestParam(name = "city_id", required = false) String city,
-            @RequestParam("offset") long offset,
-            @RequestParam("itemPerPage") int itemPerPage
+            @RequestParam(name = "offset", defaultValue = "0") long offset,
+            @RequestParam(name = "itemPerPage", defaultValue = "10") int itemPerPage
     ) {
         return profileService
                 .searchUser(firstName, lastName, ageFrom, ageTo, country, city, offset, itemPerPage);
