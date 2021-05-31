@@ -10,10 +10,6 @@ import skillbox.javapro11.model.entity.Post;
 
 import java.time.LocalDateTime;
 
-/**
- * Created by Sizenko Egor on 30.03.2021.
- */
-
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 	Page<Post> findAllByPerson(Person person, Pageable pageable);

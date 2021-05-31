@@ -16,7 +16,7 @@ public class Utils {
     int page = (int) (offset / itemPerPage);
     if (sort == null || sort.isEmpty()) {
       return PageRequest.of(page, itemPerPage);
-    }else{
+    } else {
       return PageRequest.of(page, itemPerPage, sort);
     }
   }

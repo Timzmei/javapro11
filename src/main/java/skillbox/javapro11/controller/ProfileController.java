@@ -45,7 +45,7 @@ public class ProfileController {
     public CommonListResponse getPostsUserWall(
             @PathVariable("id") long id,
             @RequestParam(name = "offset", defaultValue = "0") long offset,
-            @RequestParam(name = "itemPerPage", defaultValue = "10") int itemPerPage) {
+            @RequestParam(name = "itemPerPage", defaultValue = "20") int itemPerPage) {
         return profileService.getUserWall(id, offset, itemPerPage);
     }
 
@@ -65,7 +65,7 @@ public class ProfileController {
             @RequestParam(name = "country_id", required = false) String country,
             @RequestParam(name = "city_id", required = false) String city,
             @RequestParam(name = "offset", defaultValue = "0") long offset,
-            @RequestParam(name = "itemPerPage", defaultValue = "10") int itemPerPage
+            @RequestParam(name = "itemPerPage", defaultValue = "20") int itemPerPage
     ) {
         return profileService
                 .searchUser(firstName, lastName, ageFrom, ageTo, country, city, offset, itemPerPage);

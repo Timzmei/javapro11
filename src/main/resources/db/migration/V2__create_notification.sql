@@ -1,6 +1,6 @@
 CREATE TABLE notification
 (
-    id bigint NOT NULL,
+    id bigserial NOT NULL,
     type_id bigint NOT NULL,
     sent_time timestamp NOT NULL,
     entity_id bigint NOT NULL,
