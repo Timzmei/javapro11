@@ -56,7 +56,7 @@ public class ProfileServiceImpl implements ProfileService {
             currentPerson.setLastName(profileEditRequest.getLastName());
         }
         if (profileEditRequest.getBirthDate() != null) {
-            currentPerson.setBirthday(Utils.getLocalDateFromLong(profileEditRequest.getBirthDate()));
+            currentPerson.setBirthday(profileEditRequest.getBirthDate().toLocalDate());
         }
         if (profileEditRequest.getPhone() != null) {
             currentPerson.setPhone(profileEditRequest.getPhone());
@@ -120,14 +120,12 @@ public class ProfileServiceImpl implements ProfileService {
         );
     }
 
-    public CommonResponseData postOnUserWall(long userId, long publishDate, PostRequest postBody) {
+    public CommonResponseData postOnUserWall(long userId, PostRequest postBody) {
         Person author = personRepository.findById(userId);
-
-        LocalDateTime publishLocalDateTime = getCorrectPublishLocalDateTime(Utils.getLocalDateTimeFromLong(publishDate));
 
         Post post = new Post();
         post.setPerson(author);
-        post.setTime(publishLocalDateTime);
+        post.setTime(LocalDateTime.now());
         post.setTitle(postBody.getTitle());
         post.setText(postBody.getText());
         post.setBlocked(false);

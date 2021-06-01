@@ -1,10 +1,13 @@
 package skillbox.javapro11.api.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import skillbox.javapro11.enums.PermissionMessage;
+
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -18,7 +21,8 @@ public class ProfileEditRequest {
     private String lastName;
 
     @JsonProperty("birth_date")
-    private Long birthDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX", timezone="Europe/Moscow")
+    private LocalDateTime birthDate;
 
     private String phone;
 

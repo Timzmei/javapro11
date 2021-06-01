@@ -20,7 +20,7 @@ public interface ProfileService {
 
     CommonListResponse getUserWall(long userId, long offset, int itemPerPage);
 
-    CommonResponseData postOnUserWall(long userId, long publishDate, PostRequest postBody);
+    CommonResponseData postOnUserWall(long userId, PostRequest postBody);
 
     CommonListResponse searchUser(
             String firstName,

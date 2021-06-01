@@ -52,9 +52,8 @@ public class ProfileController {
     @PostMapping("/{id}/wall")
     public CommonResponseData addPostUserWall(
             @PathVariable("id") long id,
-            @RequestParam("publish_date") long publishDate,
             @RequestBody PostRequest postRequestBody) {
-        return profileService.postOnUserWall(id, publishDate, postRequestBody);
+        return profileService.postOnUserWall(id, postRequestBody);
     }
 
     @GetMapping("/search")

@@ -109,7 +109,7 @@ public class ProfileServiceTest {
         ProfileEditRequest profileEditRequest = new ProfileEditRequest(
                 "Petr",
                 "Petrov",
-                Utils.getLongFromLocalDate(localDate), // birth date
+                localDate.atStartOfDay(), // birth date
                 "+7(222)333-44-55",
                 "photoID",
                 null, // null mustn't change about value
@@ -203,7 +203,7 @@ public class ProfileServiceTest {
 
         Mockito.when(personRepository.findById(person.getId())).thenReturn(person);
 
-        CommonResponseData response = profileService.postOnUserWall(person.getId(), nowL, postRequest);
+        CommonResponseData response = profileService.postOnUserWall(person.getId(), postRequest);
         PostResponse postResponse = (PostResponse) response.getData();
 
         assertEquals("Check author by email", person.getEmail(), postResponse.getAuthor().getEmail());
