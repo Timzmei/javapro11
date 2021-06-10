@@ -22,5 +22,4 @@ CREATE TABLE person (
 	is_blocked boolean NOT NULL,
 	PRIMARY KEY (id));
 
- SELECT setval('person_id_seq', 50, true);
 

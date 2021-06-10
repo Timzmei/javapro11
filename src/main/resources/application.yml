@@ -38,4 +38,4 @@ cloudinary:
   url: cloudinary://889892999924949:HBEMk4_4zYqvw8Eg6e2vwqDQxy4@dmw3gspng
 
 front:
-  host: http://localhost:8080
+  host: http://45.141.100.249:8080

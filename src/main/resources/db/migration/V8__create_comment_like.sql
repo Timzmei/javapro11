@@ -7,4 +7,3 @@ create table comment_like(
     primary key (id)
 );
 
-ALTER SEQUENCE comment_like_id_seq START 10 INCREMENT 1;
