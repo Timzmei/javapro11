@@ -22,6 +22,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			" and is_deleted = false", nativeQuery = true)
 	Page<Post> findAllPostsBySearch(Pageable page, String text, LocalDateTime dateFrom, LocalDateTime dateTo);
 
-	@Query("SELECT p FROM Post p WHERE p.person.id = :id")
-    Page<Post> findAllByAuthorId(@Param("id") long id, Pageable page);
+
+	@Query("SELECT po FROM Post po WHERE person.id IN " +
+			"(SELECT t FROM Person p LEFT JOIN Friendship f ON f.dstPerson.id = p.id  " +
+			"INNER JOIN FriendshipStatus fs ON f.status.id = fs.id " +
+			"INNER JOIN Person t ON f.srcPerson.id = t.id WHERE p.id = :id AND fs.code = :code)")
+    Page<Post> findAllNews(@Param("id") long id, @Param("code") String code, Pageable page);
 }
